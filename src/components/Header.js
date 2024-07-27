@@ -211,6 +211,7 @@ const Child = styled.div`
 const Header = ({
   HeaderText,
   shopId,
+  showProfile,
   user,
   isEdit,
   isLogout,

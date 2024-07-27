@@ -82,6 +82,7 @@ function CafePage({
         <body className="App-header">
           <Header
             HeaderText={"Menu"}
+            showProfile={true}
             isEdit={() => setIsModalOpen(true)}
             isLogout={handleLogout}
             shopId={shopId}
