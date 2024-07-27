@@ -14,6 +14,7 @@ import socket from "./services/socketService";
 import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import CafePage from "./pages/CafePage";
+import SearchResult from "./pages/SearchResult";
 import Cart from "./pages/Cart";
 import Invoice from "./pages/Invoice";
 import Footer from "./components/Footer";
@@ -187,7 +188,29 @@ function App() {
                   guestSideOfClerk={guestSideOfClerk} // if being guest side
                   removeConnectedGuestSides={(e) => rmConnectedGuestSides(e)}
                 />
-                <Footer shopId={shopId} cartItemsLength={totalItemsCount} />
+                <Footer
+                  shopId={shopId}
+                  cartItemsLength={totalItemsCount}
+                  selectedPage={0}
+                />
+              </>
+            }
+          />
+          <Route
+            path="/:shopId/search"
+            element={
+              <>
+                <SearchResult
+                  user={user} // if logged
+                  guestSides={guestSides} // if being clerk
+                  guestSideOfClerk={guestSideOfClerk} // if being guest side
+                  removeConnectedGuestSides={(e) => rmConnectedGuestSides(e)}
+                />
+                <Footer
+                  shopId={shopId}
+                  cartItemsLength={totalItemsCount}
+                  selectedPage={1}
+                />
               </>
             }
           />
@@ -199,7 +222,11 @@ function App() {
                   sendParam={handleSetParam}
                   totalItemsCount={totalItemsCount}
                 />
-                <Footer shopId={shopId} cartItemsLength={totalItemsCount} />
+                <Footer
+                  shopId={shopId}
+                  cartItemsLength={totalItemsCount}
+                  selectedPage={2}
+                />
               </>
             }
           />
@@ -208,7 +235,11 @@ function App() {
             element={
               <>
                 <Invoice sendParam={handleSetParam} deviceType={deviceType} />
-                <Footer shopId={shopId} cartItemsLength={totalItemsCount} />
+                <Footer
+                  shopId={shopId}
+                  cartItemsLength={totalItemsCount}
+                  selectedPage={2}
+                />
               </>
             }
           />

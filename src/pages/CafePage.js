@@ -119,7 +119,7 @@ function CafePage({
             removeConnectedGuestSides={removeConnectedGuestSides}
           />
           <div style={{ marginTop: "5px" }}></div>
-          <SearchInput />
+          <SearchInput shopId={shopId} />
           <div style={{ marginTop: "15px" }}></div>
           <ItemTypeLister user={user} shopId={shopId} itemTypes={shopItems} />
           <div style={{ marginTop: "-13px" }}></div>

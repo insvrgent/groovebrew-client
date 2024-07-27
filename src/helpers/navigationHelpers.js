@@ -17,6 +17,10 @@ export const useNavigationHelpers = (params) => {
     navigate(`/${params}/`);
   };
 
+  const goToSearch = () => {
+    navigate(`/${params}/search`);
+  };
+
   const goToCart = () => {
     navigate(`/${params}/cart`);
   };
@@ -42,6 +46,7 @@ export const useNavigationHelpers = (params) => {
   return {
     goToLogin,
     goToShop,
+    goToSearch,
     goToCart,
     goToInvoice,
     goToGuestSideLogin,
