@@ -7,9 +7,10 @@ import SearchInput from "../components/SearchInput";
 import ItemLister from "../components/ItemLister";
 import Header from "../components/Header";
 
-function SearchResult({ user, shopItems }) {
+function SearchResult({ user, shopItems, sendParam }) {
   const [searchParams] = useSearchParams();
   const { shopId } = useParams();
+  sendParam(shopId);
   const [searchValue, setSearchValue] = useState(
     "dwadawa vvwqd21qb13 4kfawfdwa dhawldhawr dliawbdjawndlks",
   );

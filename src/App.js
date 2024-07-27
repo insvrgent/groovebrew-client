@@ -75,6 +75,7 @@ function App() {
 
   useEffect(() => {
     async function fetchData() {
+      console.log("gettingItems");
       try {
         const { response, data } = await getItemTypesWithItems(shopId);
         console.log(data);
@@ -234,6 +235,7 @@ function App() {
             element={
               <>
                 <SearchResult
+                  sendParam={handleSetParam}
                   user={user} // if logged
                   shopItems={shopItems}
                   guestSides={guestSides} // if being clerk
