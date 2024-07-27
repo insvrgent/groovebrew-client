@@ -21,6 +21,7 @@ import Footer from "./components/Footer";
 
 import GuestSideLogin from "./pages/GuestSideLogin";
 import GuestSide from "./pages/GuestSide";
+import { getItemTypesWithItems } from "./helpers/itemHelper.js";
 
 import {
   // checkToken,
@@ -41,6 +42,7 @@ function App() {
   const [shopId, setShopId] = useState("");
   const [totalItemsCount, setTotalItemsCount] = useState(0);
   const [deviceType, setDeviceType] = useState("");
+  const [shopItems, setShopItems] = useState([]);
 
   useEffect(() => {
     // Function to calculate totals from localStorage
@@ -70,6 +72,36 @@ function App() {
   const handleSetParam = (param) => {
     setShopId(param);
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const { response, data } = await getItemTypesWithItems(shopId);
+        console.log(data);
+        if (response.status === 200) {
+          setShopItems(data);
+          console.log(data);
+          // setLoading(false);
+          socket.emit("join-room", { token: getLocalStorage("auth"), shopId });
+
+          socket.on("joined-room", (response) => {
+            // const { isSpotifyNeedLogin } = response;
+            // setNeedSpotifyLogin(isSpotifyNeedLogin);
+          });
+
+          socket.on("transaction_created", () => {
+            console.log("transaction created");
+          });
+        } else {
+          // setScreenMessage("Kafe tidak tersedia");
+        }
+      } catch (error) {
+        console.error("Error fetching shop items:", error);
+      }
+    }
+
+    if (shopId != "") fetchData();
+  }, [shopId]);
 
   const rmConnectedGuestSides = async (gueseSideSessionId) => {
     const sessionLeft = await removeConnectedGuestSides(gueseSideSessionId);
@@ -182,6 +214,7 @@ function App() {
               <>
                 <CafePage
                   sendParam={handleSetParam}
+                  shopItems={shopItems}
                   socket={socket}
                   user={user} // if logged
                   guestSides={guestSides} // if being clerk
@@ -202,6 +235,7 @@ function App() {
               <>
                 <SearchResult
                   user={user} // if logged
+                  shopItems={shopItems}
                   guestSides={guestSides} // if being clerk
                   guestSideOfClerk={guestSideOfClerk} // if being guest side
                   removeConnectedGuestSides={(e) => rmConnectedGuestSides(e)}

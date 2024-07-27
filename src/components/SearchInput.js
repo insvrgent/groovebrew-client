@@ -44,7 +44,7 @@ const SearchIcon = styled.svg`
   pointer-events: none;
 `;
 
-export default function SearchInput({ shopId, autofocus }) {
+export default function SearchInput({ shopId, autofocus, onSearchChange }) {
   const [songName, setSongName] = useState("");
   const [debouncedSongName, setDebouncedSongName] = useState("");
   const navigate = useNavigate();
@@ -78,6 +78,7 @@ export default function SearchInput({ shopId, autofocus }) {
           navigate(`/${shopId}`);
         }
       }
+      if (onSearchChange) onSearchChange(songName);
     }
   }, [songName]);
 

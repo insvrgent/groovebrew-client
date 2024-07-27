@@ -1,46 +1,53 @@
 // src/CafePage.js
-
-import React, { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 
 import "../App.css";
 import SearchInput from "../components/SearchInput";
 import ItemLister from "../components/ItemLister";
 import Header from "../components/Header";
 
-import { ThreeDots } from "react-loader-spinner";
-
-import { getItemTypesWithItems } from "../helpers/itemHelper.js";
-import {
-  getLocalStorage,
-  updateLocalStorage,
-} from "../helpers/localStorageHelpers";
-
-function SearchResult({ user }) {
+function SearchResult({ user, shopItems }) {
   const [searchParams] = useSearchParams();
   const { shopId } = useParams();
+  const [searchValue, setSearchValue] = useState(
+    "dwadawa vvwqd21qb13 4kfawfdwa dhawldhawr dliawbdjawndlks",
+  );
 
-  const handleLogout = () => {
-    updateLocalStorage("auth", "");
+  // Function to handle search input change
+  const handleSearchChange = (value) => {
+    setSearchValue(value);
   };
 
+  const filteredItems = shopItems
+    .map((itemType) => {
+      // Filter items in the itemList based on searchValue
+      const filteredItemList = itemType.itemList.filter((item) =>
+        item.name.toLowerCase().includes(searchValue.toLowerCase()),
+      );
+
+      // Return itemType with only filtered items
+      return {
+        ...itemType,
+        itemList: filteredItemList,
+      };
+    })
+    .filter((itemType) => itemType.itemList.length > 0); // Only include itemTypes with matching items
+
+  console.log(filteredItems);
   return (
     <div className="App">
-      <body className="App-header">
+      <header className="App-header">
         <Header HeaderText={"Search"} shopId={shopId} user={user} />
         <div style={{ marginTop: "5px" }}></div>
-        <SearchInput shopId={shopId} autofocus={true} />
-        <div style={{ marginTop: "15px" }}></div>
-        {/* <ItemTypeLister user={user} shopId={shopId} itemTypes={shopItems} /> */}
-        <div style={{ marginTop: "-13px" }}></div>
-        {/* <MusicPlayer
-          socket={socket}
+        <SearchInput
           shopId={shopId}
-          user={user}
-          isSpotifyNeedLogin={isSpotifyNeedLogin}
+          autofocus={true}
+          onSearchChange={handleSearchChange}
         />
-        <div style={{ marginTop: "-15px" }}></div>
-        {shopItems.map((itemType) => (
+        <div style={{ marginTop: "15px" }}></div>
+        <div style={{ marginTop: "-13px" }}></div>
+        {filteredItems.map((itemType) => (
           <ItemLister
             shopId={shopId}
             user={user}
@@ -49,8 +56,8 @@ function SearchResult({ user }) {
             typeName={itemType.name}
             itemList={itemType.itemList}
           />
-        ))} */}
-      </body>
+        ))}
+      </header>
     </div>
   );
 }

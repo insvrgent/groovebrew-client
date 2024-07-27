@@ -21,6 +21,7 @@ import {
 
 function CafePage({
   sendParam,
+  shopItems,
   socket,
   user,
   guestSides,
@@ -35,8 +36,6 @@ function CafePage({
 
   const [loading, setLoading] = useState(true);
   const [screenMessage, setScreenMessage] = useState("");
-
-  const [shopItems, setShopItems] = useState([]);
 
   const [isSpotifyNeedLogin, setNeedSpotifyLogin] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,35 +64,8 @@ function CafePage({
   };
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const { response, data } = await getItemTypesWithItems(shopId);
-        console.log(data);
-        if (response.status === 200) {
-          setShopItems(data);
-          setLoading(false);
-          socket.emit("join-room", { token: getLocalStorage("auth"), shopId });
-
-          socket.on("joined-room", (response) => {
-            const { isSpotifyNeedLogin } = response;
-            setNeedSpotifyLogin(isSpotifyNeedLogin);
-          });
-
-          socket.on("transaction_created", () => {
-            console.log("transaction created");
-          });
-        } else {
-          setScreenMessage("Kafe tidak tersedia");
-        }
-      } catch (error) {
-        console.error("Error fetching shop items:", error);
-        setLoading(false); // Ensure loading state is turned off on error
-      }
-    }
-
-    fetchData();
-  }, [shopId]);
+    setLoading(false);
+  }, [shopItems]);
 
   if (loading)
     return (
