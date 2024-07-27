@@ -1,0 +1,106 @@
+.Cart {
+  overflow-x: hidden;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgba(88, 55, 50, 1);
+}
+
+.Cart-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 32px;
+  color: rgba(88, 55, 50, 1);
+  text-align: left;
+  margin-left: 20px;
+  margin-top: 17px;
+}
+
+.CheckoutContainer{
+  bottom: 0px;
+  position: fixed;
+}
+
+.OrderTypeContainer{
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-size: 1em;
+  padding: 10px 0;
+  margin-bottom: 7px;
+}
+
+.Note {
+  text-align: left;
+  color: rgba(88, 55, 50, 1);
+  font-size: 1em;
+  margin-bottom: 13px;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+.NoteContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-size: 1em;
+  padding: 10px 0;
+  margin-bottom: 7px;
+}
+
+.NoteInput {
+  width: 78vw;
+  height: 12vw;
+  border-radius: 20px;
+  margin: 0 auto;
+  padding: 10px;
+  font-size: 1.2em;
+  border: 1px solid rgba(88, 55, 50, 0.5);
+  margin-bottom: 27px;
+  resize: none; /* Prevent resizing */
+  overflow-wrap: break-word; /* Ensure text wraps */
+}
+
+.TotalContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-size: 1.5em;
+  padding: 10px 0;
+  margin-bottom: 17px;
+}
+.CheckoutButton {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 32px;
+
+  width: 80vw;
+  height: 18vw;
+  border-radius: 50px;
+  background-color: rgba(88, 55, 50, 1);
+  color: white;
+  border: none;
+  margin: 0px auto;
+  cursor: pointer;
+  margin-bottom: 23px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.BackToMenu {
+  text-align: center;
+  color: rgba(88, 55, 50, 1);
+  font-size: 1em;
+  margin-bottom: 25px;
+  cursor: pointer;
+}

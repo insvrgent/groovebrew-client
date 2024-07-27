@@ -1,0 +1,54 @@
+.footer-rect {
+  height: 75px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-around;
+  /* Adjust spacing between SVG icons */
+  align-items: center;
+  padding: 0 10vw;
+  /* Adjust horizontal padding inside the footer */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.footer-bottom {
+  width: calc(100vw);
+  /* Adjust size as needed, subtracting margin */
+  height: 75px;
+  /* Adjust size as needed */
+  margin-top: 10px;
+}
+
+.footer-icon {
+  width: 34px;
+  height: 34px;
+  fill: black;
+  /* Add any additional styles for SVG icons */
+  margin: 0 10px;
+  /* Adjust spacing between SVG icons */
+}
+
+.circle {
+  position: absolute;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  border-radius: 50%;
+  margin-top: -15px;
+  margin-left: 20px;
+
+  /* Just making it pretty */
+  background: #38a9e4;
+  color: white;
+  font-family:
+    Helvetica,
+    Arial Black,
+    sans;
+  font-size: 20px;
+  text-align: center;
+}

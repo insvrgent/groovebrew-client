@@ -1,0 +1,165 @@
+.music-player {
+  position: relative;
+  width: 95%;
+  margin: 0px auto;
+  /* Added padding for top and bottom */
+  color: white;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 15px;
+  /* Add border-radius to the music player container */
+  transition: height 0.3s ease;
+}
+
+.current-bgr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 122px;
+  /* Adjust height as needed */
+  background-image: url('https://s3-alpha-sig.figma.com/img/3678/baa2/4bf884c3841dee965b827acbd7555b98?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bKQcSkMF~H8797MOcDHKeUzRWE1Ei9V2SWIyc4LsB-xzHOzMfd5WUNyFnDVr5pOMJdOWNI2xtsxaeVoH4h6g84vAyK6MUrCvWKhsxYrRK4O-3A0VTeIdGKICTMMj~EXZ7mjFoG5JwSGAGyj7Jx8iKS1OkoT0mTl7RDCRTvdChWZyv24BQaXsl~DfbNizjInhvwCvl3IcsdZBEnGYNSq2BbM4ZzU6w07-zMvNvC~EYPm33pAYXkDUsMh4XEQGc9gMAsNxJJZ4a5bo2vGwHREkkBDYgNGhwetefH6B0iZ7OnTqEFm3mcO3bAZtKdH0Evrcu2hNL-62pkK4JtdQ6~Anww__');
+  background-size: cover;
+  /* Adjust background image size */
+  background-position: center;
+  /* Center the background image */
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+  border-radius: 15px 15px 0 0;
+  /* Rounded corners at the top */
+}
+
+.current-name {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  margin: 35px 30px;
+  font-size: 16px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  /* Text shadow for readability */
+}
+
+.current-artist {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  margin: -32px 30px;
+  font-size: 18px;
+  color: #ddd;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  /* Text shadow for readability */
+}
+
+.progress-container {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  margin: 12px 30px;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 27px;
+  /* Adjusted padding for spacing */
+}
+
+.current-time,
+.track-length {
+  font-size: 14px;
+  width: 40px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  /* Text shadow for readability */
+}
+
+.progress-bar {
+  flex-grow: 1;
+  margin: 0 10px;
+}
+
+.expandable-container {
+  position: relative;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.5s ease;
+  /* Smooth transition for max-height and padding */
+  background-color: rgba(0, 0, 0, 0.8);
+  /* Example background color */
+}
+
+.expandable-container.expanded {
+  position: relative;
+  max-height: 400px;
+  /* Adjust the max-height as needed */
+  overflow-y: auto;
+  /* Allow vertical scrolling */
+}
+
+.expand-button {
+  font-size: 20px;
+  padding-bottom: 10px;
+  position: relative;
+  left: 0;
+  right: 0;
+  height: 25px;
+  background-color: rgb(108, 255, 128);
+  border-radius: 0 0 15px 15px;
+  /* Rounded corners at the bottom */
+  cursor: pointer;
+  text-align: center;
+  line-height: 40px;
+  /* Center text vertically */
+}
+
+.expand-button h5 {
+  margin-top: 0px;
+}
+
+.expand-button:hover {
+  background-color: rgb(108, 255, 128);
+}
+
+/* Adjust height of the music player container when expanded */
+.music-player.expanded {
+  height: auto;
+  /* Automatically adjust height based on content */
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: rgb(108, 255, 128);
+}
+
+.search-box input[type="text"] {
+  flex-grow: 1;
+  border: none;
+  border-radius: 25px;
+  /* Round the corners */
+  padding: 10px 15px;
+  font-size: 16px;
+  outline: none;
+  /* Remove default outline */
+}
+
+.search-box .search-icon {
+  margin-right: 5px;
+  color: #888;
+  font-size: 20px;
+  /* Adjust icon size */
+  cursor: pointer;
+  /* Change cursor to pointer on hover */
+  width: 24px;
+  /* Set width for icon */
+  height: 24px;
+  /* Set height for icon */
+  fill: #888;
+  /* Adjust fill color */
+}
+
+/* Add hover effect for the search icon */
+.search-box .search-icon:hover {
+  color: #555;
+}

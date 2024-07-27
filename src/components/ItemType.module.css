@@ -1,0 +1,72 @@
+.item-type {
+    width: calc(25vw - 20px);
+    /* Adjust size as needed, subtracting margin */
+    height: calc(39vw - 20px);
+    /* Adjust size as needed */
+    margin: 1px 10px -5px;
+    /* Left and right margin */
+    overflow: hidden;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.item-type-rect {
+    position: relative;
+    height: 20vw;
+    width: 20vw;
+    object-fit: cover;
+    border-radius: 15px;
+    /* Rounded corners */
+    background-color: #fff;
+    /* Background color of the item */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Optional: Shadow for better visual */
+}
+
+.item-type-name {
+    position: relative;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    top: 13px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    /* Adjust font size as needed */
+    color: #333;
+    width: calc(25vw - 30px);
+    /* Adjust size as needed, subtracting margin */
+    text-align: center;
+    background-color: transparent;
+}
+
+.item-type-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 15px;
+    /* Rounded corners */
+}
+
+.item-type-image-input {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.item-type-create {
+    position: absolute;
+    margin-top: 130px;
+    width: 20vw;
+}
+
+.border {
+    border: 1px solid #000000;
+}
+
+.noborder {
+    border: 1px solid #ffffff00;
+}

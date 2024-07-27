@@ -1,0 +1,62 @@
+.song-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 10px;
+}
+
+.decisionbgrnd {
+  position: absolute;
+  height: 90%;
+  width: 200vw;
+  transform: scale(1.01,1.194);
+  opacity: 50%;
+}
+
+.bgrnd {
+  position: absolute;
+  height: 90%;
+  width: 200vw;
+  transform: scale(2,1.2);
+  z-index: 2;
+}
+
+.decision {
+  z-index: 3;
+}
+
+.song-image {
+  width: 70px;
+  height: 70px;
+  max-width: 70px; /* Optional: Set a maximum width to prevent the image from being too large */
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.song-details {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.song-name {
+  text-align: start;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.artist-name {
+  text-align: start;
+  font-size: 0.9rem;
+  color: white;
+  margin: 0;
+}
+
+.song-duration {
+  font-size: 0.9rem;
+  color: white;
+}

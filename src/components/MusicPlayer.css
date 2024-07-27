@@ -1,0 +1,217 @@
+.music-player {
+  position: relative;
+  width: 95%;
+  margin: -10px auto 20px;
+  /* Added padding for top and bottom */
+  color: white;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 15px;
+  /* Add border-radius to the music player container */
+  transition: height 0.3s ease;
+}
+
+.current-bgr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 142px;
+  /* Adjust height as needed */
+  background-size: cover;
+  /* Adjust background image size */
+  background-position: center;
+  /* Center the background image */
+  filter: blur(1.5px);
+  -webkit-filter: blur(1.5px);
+  border-radius: 15px 15px 0 0;
+  background-color: rgb(95 121 89);
+  /* Rounded corners at the top */
+  text-align: right;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.current-name {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  margin: 35px 30px;
+  font-size: 16px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  /* Text shadow for readability */
+}
+
+.current-artist {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  margin: -32px 30px;
+  font-size: 18px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  /* Text shadow for readability */
+}
+
+.progress-container {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  margin: 12px 30px;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 27px;
+  /* Adjusted padding for spacing */
+}
+
+.current-time,
+.track-length {
+  font-size: 14px;
+  width: 40px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  /* Text shadow for readability */
+}
+
+.progress-bar {
+  flex-grow: 1;
+  margin: 0 10px;
+}
+
+.expandable-container {
+  position: relative;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.5s ease;
+  /* Smooth transition for max-height and padding */
+  background-color: rgba(0, 0, 0, 0.8);
+  /* Example background color */
+}
+
+.expandable-container.expanded {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  position: relative;
+  max-height: 400px;
+  /* Adjust the max-height as needed */
+  overflow-y: auto;
+  /* Allow vertical scrolling */
+}
+
+.expand-button {
+  font-size: 20px;
+  padding-bottom: 10px;
+  position: relative;
+  left: 0;
+  right: 0;
+  height: 25px;
+  background-color: rgb(108, 255, 128);
+  border-radius: 0 0 15px 15px;
+  /* Rounded corners at the bottom */
+  cursor: pointer;
+  text-align: center;
+  line-height: 40px;
+  /* Center text vertically */
+}
+
+.expand-button h5 {
+  margin-top: 0px;
+}
+
+.expand-button:hover {
+  background-color: rgb(108, 255, 128);
+}
+
+/* Adjust height of the music player container when expanded */
+.music-player.expanded {
+  height: auto;
+  /* Automatically adjust height based on content */
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: rgb(108, 255, 128);
+}
+
+.search-box input[type="text"] {
+  flex-grow: 1;
+  border: none;
+  border-radius: 25px;
+  /* Round the corners */
+  padding: 10px 15px;
+  font-size: 16px;
+  outline: none;
+  /* Remove default outline */
+}
+
+.search-box .search-icon {
+  margin-right: 5px;
+  color: #888;
+  font-size: 20px;
+  /* Adjust icon size */
+  cursor: pointer;
+  /* Change cursor to pointer on hover */
+  width: 24px;
+  /* Set width for icon */
+  height: 24px;
+  /* Set height for icon */
+  fill: #888;
+  /* Adjust fill color */
+}
+
+.auth-box {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: rgb(108, 255, 128);
+}
+
+.auth-box input[type="text"] {
+  flex-grow: 1;
+  border: none;
+  border-radius: 25px;
+  /* Round the corners */
+  padding: 10px 15px;
+  font-size: 16px;
+  outline: none;
+  /* Remove default outline */
+}
+
+.auth-box .auth-icon {
+  margin-right: 5px;
+  color: #888;
+  font-size: 20px;
+  /* Adjust icon size */
+  cursor: pointer;
+  /* Change cursor to pointer on hover */
+  width: 24px;
+  /* Set width for icon */
+  height: 24px;
+  /* Set height for icon */
+  fill: #888;
+  /* Adjust fill color */
+}
+
+/* Add hover effect for the search icon */
+.search-box .search-icon:hover {
+  color: #555;
+}
+.rectangle {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.diagonal-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-24deg);
+  font-size: 24px;
+  font-weight: bold;
+  color: #676767;
+  white-space: nowrap;
+}

@@ -1,0 +1,29 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(200px, 1fr)
+  ); /* Responsive grid */
+  gap: 20px; /* Gap between rectangles */
+  padding: 10px;
+}
+
+.rectangle {
+  height: 150px; /* Height of each rectangle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px; /* Rounded corners */
+  font-size: 24px;
+  background-color: rgb(114, 114, 114);
+}
+
+/* Media query for mobile devices */
+@media (max-width: 600px) {
+  .dashboard {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(100%, 1fr)
+    ); /* Single column for mobile */
+  }
+}

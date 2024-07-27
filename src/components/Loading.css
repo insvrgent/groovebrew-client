@@ -1,0 +1,19 @@
+/* Loader.module.css */
+.Loader {
+  display: flex; /* Enable Flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  background-color: white;
+  z-index: 200;
+}
+
+.LoaderChild {
+  width: 80px; /* Set the width to 80px */
+  height: 400px;
+  color: black;
+}
