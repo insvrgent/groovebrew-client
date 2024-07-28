@@ -30,7 +30,7 @@ export default function Footer({ shopId, cartItemsLength, selectedPage }) {
 
         {/* Cart Icon */}
         <div onClick={goToCart} className={styles["footer-icon"]}>
-          {cartItemsLength !== "0" && (
+          {cartItemsLength != "0" && (
             <div className={styles.circle}>{cartItemsLength}</div>
           )}
           <svg

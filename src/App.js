@@ -83,12 +83,7 @@ function App() {
           setShopItems(data);
           console.log(data);
           // setLoading(false);
-          socket.emit("join-room", { token: getLocalStorage("auth"), shopId });
-
-          socket.on("joined-room", (response) => {
-            // const { isSpotifyNeedLogin } = response;
-            // setNeedSpotifyLogin(isSpotifyNeedLogin);
-          });
+          // socket.emit("join-room", { token: getLocalStorage("auth"), shopId });
 
           socket.on("transaction_created", () => {
             console.log("transaction created");
@@ -127,17 +122,19 @@ function App() {
   // }, [navigate, socket, shopId]);
 
   useEffect(() => {
-    if (getLocalStorage("auth")) {
-      console.log("emitting");
-      socket.emit("checkUserToken", {
-        token: getLocalStorage("auth"),
-      });
-    } else if (getLocalStorage("authGuestSide")) {
+    if (socket == null) return;
+
+    if (getLocalStorage("authGuestSide")) {
       socket.emit("checkGuestSideToken", {
         token: getLocalStorage("authGuestSide"),
       });
+    } else {
+      console.log("emitting");
+      socket.emit("checkUserToken", {
+        token: getLocalStorage("auth"),
+        shopId,
+      });
     }
-    setDeviceType("guestDevice");
 
     socket.on("transaction_created", async (data) => {
       console.log("transaction notification");
@@ -145,13 +142,11 @@ function App() {
 
     socket.on("checkUserTokenRes", async (data) => {
       if (data.status !== 200) {
-        removeLocalStorage("authGuestSide");
         removeLocalStorage("auth");
-        console.log("auth failed");
+        setDeviceType("guestDevice");
+        console.log("guestDevice");
       } else {
         console.log("auth success");
-        console.log(data.data.user);
-
         setUser(data.data.user);
         if (data.data.user.cafeId == shopId) {
           const connectedGuestSides = await getConnectedGuestSides();
@@ -166,7 +161,6 @@ function App() {
     socket.on("checkGuestSideTokenRes", (data) => {
       if (data.status !== 200) {
         removeLocalStorage("authGuestSide");
-        removeLocalStorage("auth");
         navigate("/guest-side");
         console.log("isntguestside");
       } else {
@@ -187,7 +181,7 @@ function App() {
     return () => {
       socket.off("signout-guest-session");
     };
-  }, [navigate, socket]);
+  }, [socket, shopId]);
 
   return (
     <div className="App">
@@ -257,6 +251,7 @@ function App() {
                 <Cart
                   sendParam={handleSetParam}
                   totalItemsCount={totalItemsCount}
+                  deviceType={deviceType}
                 />
                 <Footer
                   shopId={shopId}

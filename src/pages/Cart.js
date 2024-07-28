@@ -9,7 +9,7 @@ import { getCartDetails } from "../helpers/itemHelper.js";
 import { getItemsByCafeId } from "../helpers/cartHelpers"; // Import getItemsByCafeId
 import Modal from "../components/Modal"; // Import the reusable Modal component
 
-export default function Cart({ sendParam, totalItemsCount }) {
+export default function Cart({ sendParam, totalItemsCount, deviceType }) {
   const { shopId } = useParams();
   sendParam(shopId);
 
@@ -166,17 +166,18 @@ export default function Cart({ sendParam, totalItemsCount }) {
             itemList={itemType.itemList}
           />
         ))}
-
-        <div className={styles.EmailContainer}>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
-            className={styles.EmailInput}
-          />
-        </div>
+        {deviceType != "guestDevice" && (
+          <div className={styles.EmailContainer}>
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={handleEmailChange}
+              className={styles.EmailInput}
+            />
+          </div>
+        )}
         <div className={styles.OrderTypeContainer}>
           <span htmlFor="orderType">Order Type:</span>
           <select

@@ -1,5 +1,5 @@
 import API_BASE_URL from "../config.js";
-import { getLocalStorage } from "./localStorageHelpers";
+import { getLocalStorage, updateLocalStorage } from "./localStorageHelpers";
 import { getItemsByCafeId } from "../helpers/cartHelpers.js";
 
 export const handlePaymentFromClerk = async (
@@ -148,6 +148,8 @@ export const handlePaymentFromGuestDevice = async (
     if (response.ok) {
       // Handle success response
       console.log("Transaction successful!");
+      const data = await response.json();
+      updateLocalStorage("auth", data.auth);
       // Optionally return response data or handle further actions upon success
       return true;
     } else {

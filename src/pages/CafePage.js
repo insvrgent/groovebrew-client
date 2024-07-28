@@ -37,7 +37,7 @@ function CafePage({
   const [loading, setLoading] = useState(true);
   const [screenMessage, setScreenMessage] = useState("");
 
-  const [isSpotifyNeedLogin, setNeedSpotifyLogin] = useState(false);
+  const [isSpotifyNeedLogin, setNeedSpotifyLogin] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -66,6 +66,17 @@ function CafePage({
   useEffect(() => {
     setLoading(false);
   }, [shopItems]);
+
+  useEffect(() => {
+    async function fetchData() {
+      socket.on("joined-room", (response) => {
+        const { isSpotifyNeedLogin } = response;
+        setNeedSpotifyLogin(isSpotifyNeedLogin);
+      });
+    }
+
+    if (socket) fetchData();
+  }, [socket]);
 
   if (loading)
     return (

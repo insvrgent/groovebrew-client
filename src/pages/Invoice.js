@@ -64,7 +64,7 @@ export default function Invoice({ sendParam, deviceType }) {
         orderType,
         tableNumber,
       );
-    } else if (deviceType == "guestDevice") {
+    } else if (deviceType == "guestSide") {
       const pay = await handlePaymentFromGuestSide(
         shopId,
         email,

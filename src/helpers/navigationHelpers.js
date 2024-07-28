@@ -31,7 +31,7 @@ export const useNavigationHelpers = (params) => {
         `/${params}/invoice?orderType=${orderType}&tableNumber=${tableNumber}&email=${email}`,
       );
     } else {
-      navigate(`/${params}/invoice?orderType=${orderType}}&email=${email}`);
+      navigate(`/${params}/invoice?orderType=${orderType}&email=${email}`);
     }
   };
 
