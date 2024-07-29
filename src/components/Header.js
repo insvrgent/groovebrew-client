@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
+import { useLocation } from "react-router-dom";
 import { useNavigationHelpers } from "../helpers/navigationHelpers";
 
 const HeaderBar = styled.div`
@@ -225,6 +226,7 @@ const Header = ({
   const [animate, setAnimate] = useState("");
   const rectangleRef = useRef(null);
   const [guestSideOf, setGuestSideOf] = useState(null);
+  const location = useLocation();
 
   const handleImageClick = () => {
     if (showRectangle) {
@@ -251,7 +253,10 @@ const Header = ({
   };
 
   useEffect(() => {
-    if (showRectangle) {
+    const queryParams = new URLSearchParams(location.search);
+    const hasModalParam = queryParams.has("modal");
+
+    if (showRectangle && !hasModalParam) {
       document.addEventListener("mousedown", handleClickOutside);
       window.addEventListener("scroll", handleScroll);
     } else {
@@ -263,7 +268,7 @@ const Header = ({
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [showRectangle]);
+  }, [showRectangle, location.search]);
 
   useEffect(() => {
     setGuestSideOf(guestSideOfClerk);

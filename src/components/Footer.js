@@ -2,8 +2,16 @@ import React from "react";
 import styles from "./Footer.module.css"; // assuming you have a CSS module for Footer
 import { useNavigationHelpers } from "../helpers/navigationHelpers";
 
-export default function Footer({ shopId, cartItemsLength, selectedPage }) {
-  const { goToShop, goToSearch, goToCart } = useNavigationHelpers(shopId);
+export default function Footer({
+  shopId,
+  tableId,
+  cartItemsLength,
+  selectedPage,
+}) {
+  const { goToShop, goToSearch, goToCart } = useNavigationHelpers(
+    shopId,
+    tableId,
+  );
 
   return (
     <div className={styles.item}>

@@ -27,11 +27,12 @@ function CafePage({
   guestSides,
   guestSideOfClerk,
   removeConnectedGuestSides,
+  setModal,
 }) {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
-  const { shopId } = useParams();
-  sendParam(shopId);
+  const { shopId, tableId } = useParams();
+  sendParam({ shopId, tableId });
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,6 @@ function CafePage({
   useEffect(() => {
     if (user.cafeId != null && user.cafeId != shopId) {
       navigate("/" + user.cafeId);
-      sendParam(user.cafeId);
     }
     if (user.password == "unsetunsetunset") setIsModalOpen(true);
   }, [user]);
@@ -94,7 +94,7 @@ function CafePage({
           <Header
             HeaderText={"Menu"}
             showProfile={true}
-            isEdit={() => setIsModalOpen(true)}
+            isEdit={() => setModal("edit")}
             isLogout={handleLogout}
             shopId={shopId}
             user={user}
