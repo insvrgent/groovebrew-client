@@ -33,6 +33,7 @@ function CafePage({
   const token = searchParams.get("token");
   const { shopId, tableId } = useParams();
   sendParam({ shopId, tableId });
+
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -97,6 +98,7 @@ function CafePage({
             isEdit={() => setModal("edit")}
             isLogout={handleLogout}
             shopId={shopId}
+            tableId={tableId}
             user={user}
             guestSides={guestSides}
             guestSideOfClerk={guestSideOfClerk}

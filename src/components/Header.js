@@ -212,6 +212,7 @@ const Child = styled.div`
 const Header = ({
   HeaderText,
   shopId,
+  tableId,
   showProfile,
   user,
   isEdit,
@@ -221,7 +222,7 @@ const Header = ({
   removeConnectedGuestSides,
 }) => {
   const { goToLogin, goToGuestSideLogin, goToAdminCafes } =
-    useNavigationHelpers(shopId);
+    useNavigationHelpers(shopId, tableId);
   const [showRectangle, setShowRectangle] = useState(false);
   const [animate, setAnimate] = useState("");
   const rectangleRef = useRef(null);

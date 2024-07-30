@@ -9,8 +9,9 @@ import Header from "../components/Header";
 
 function SearchResult({ user, shopItems, sendParam }) {
   const [searchParams] = useSearchParams();
-  const { shopId } = useParams();
-  sendParam(shopId);
+  const { shopId, tableId } = useParams();
+  sendParam({ shopId, tableId });
+
   const [searchValue, setSearchValue] = useState(
     "dwadawa vvwqd21qb13 4kfawfdwa dhawldhawr dliawbdjawndlks",
   );
@@ -39,7 +40,12 @@ function SearchResult({ user, shopItems, sendParam }) {
   return (
     <div className="App">
       <header className="App-header">
-        <Header HeaderText={"Search"} shopId={shopId} user={user} />
+        <Header
+          HeaderText={"Search"}
+          shopId={shopId}
+          tableId={tableId}
+          user={user}
+        />
         <div style={{ marginTop: "5px" }}></div>
         <SearchInput
           shopId={shopId}

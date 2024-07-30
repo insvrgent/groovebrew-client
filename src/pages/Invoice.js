@@ -12,17 +12,15 @@ import {
 } from "../helpers/transactionHelpers";
 
 export default function Invoice({ sendParam, deviceType }) {
-  const { shopId } = useParams();
+  const { shopId, tableId } = useParams();
+  sendParam({ shopId, tableId });
+
   const location = useLocation(); // Use useLocation hook instead of useSearchParams
   const searchParams = new URLSearchParams(location.search); // Pass location.search directly
 
   const email = searchParams.get("email");
   const orderType = searchParams.get("orderType");
   const tableNumber = searchParams.get("tableNumber");
-
-  useEffect(() => {
-    sendParam(shopId);
-  }, [sendParam, shopId]);
 
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);

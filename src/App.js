@@ -163,6 +163,10 @@ function App() {
     handleModalFromURL();
   }, [shopId]);
 
+  useEffect(() => {
+    console.log(shopId + tableId);
+  }, [navigate]);
+
   // Function to open the modal
   const setModal = (content) => {
     setIsModalOpen(true);

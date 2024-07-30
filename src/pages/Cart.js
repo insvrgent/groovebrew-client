@@ -10,10 +10,10 @@ import { getItemsByCafeId } from "../helpers/cartHelpers"; // Import getItemsByC
 import Modal from "../components/Modal"; // Import the reusable Modal component
 
 export default function Cart({ sendParam, totalItemsCount, deviceType }) {
-  const { shopId } = useParams();
-  sendParam(shopId);
+  const { shopId, tableId } = useParams();
+  sendParam({ shopId, tableId });
 
-  const { goToShop, goToInvoice } = useNavigationHelpers(shopId);
+  const { goToShop, goToInvoice } = useNavigationHelpers(shopId, tableId);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [orderType, setOrderType] = useState("pickup");
@@ -186,9 +186,14 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
             onChange={handleOrderTypeChange}
           >
             <option value="pickup">Pickup</option>
-            <option value="serve">Serve</option>
+            {tableId == null && <option value="serve">Serve</option>}
+
+            {/* tableId harus di check terlebih dahulu untuk mendapatkan tableNo */}
+            {tableId != null && (
+              <option value="serve">Serve to table {tableId}</option>
+            )}
           </select>
-          {orderType === "serve" && (
+          {orderType === "serve" && tableId == null && (
             <input
               type="text"
               placeholder="Table Number"
