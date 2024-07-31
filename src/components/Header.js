@@ -212,10 +212,12 @@ const Child = styled.div`
 const Header = ({
   HeaderText,
   shopId,
+  shopName,
+  shopClerks,
   tableId,
   showProfile,
   user,
-  isEdit,
+  setModal,
   isLogout,
   guestSides,
   guestSideOfClerk,
@@ -279,57 +281,83 @@ const Header = ({
   return (
     <HeaderBar>
       <Title>{HeaderText}</Title>
-      <ProfileImage
-        src="https://static-00.iconduck.com/assets.00/profile-major-icon-1024x1024-9rtgyx30.png"
-        alt="Profile"
-        onClick={handleImageClick}
-        animate={showRectangle && animate}
-      />
-      <ProfileName animate={showRectangle && animate}>
-        {user.username !== undefined ? user.username : "guest"}
-      </ProfileName>
-      {showRectangle && (
-        <Rectangle ref={rectangleRef} animate={animate}>
-          <ChildContainer>
-            {guestSideOfClerk && guestSideOfClerk.clerkUsername && (
-              <Child hasChildren>
-                this is the guest side of {guestSideOfClerk.clerkUsername}
-              </Child>
-            )}
-            {user.username === undefined && !guestSideOfClerk && (
-              <Child onClick={goToLogin}>Click to login</Child>
-            )}
-            {user.username !== undefined && (
-              <Child onClick={isEdit}>Edit</Child>
-            )}
-            {shopId && user.username !== undefined && user.roleId === 1 && (
-              <Child onClick={goToAdminCafes}>Your Cafes</Child>
-            )}
-            {user.username !== undefined && user.roleId === 2 && (
-              <Child hasChildren>
-                connected guest sides
-                <Child onClick={goToGuestSideLogin}>+ Add guest side</Child>
-                {guestSides &&
-                  guestSides.map((key, index) => (
-                    <Child key={index}>
-                      guest side {index + 1}
-                      <button
-                        onClick={() =>
-                          removeConnectedGuestSides(guestSides[index][3])
-                        }
-                      >
-                        remove
-                      </button>
+      <div style={{ visibility: showProfile ? "visible" : "hidden" }}>
+        <ProfileImage
+          src="https://static-00.iconduck.com/assets.00/profile-major-icon-1024x1024-9rtgyx30.png"
+          alt="Profile"
+          onClick={handleImageClick}
+          animate={showRectangle && animate}
+        />
+        <ProfileName animate={showRectangle && animate}>
+          {showProfile && user.username !== undefined ? user.username : "guest"}
+        </ProfileName>
+        {showRectangle && (
+          <Rectangle ref={rectangleRef} animate={animate}>
+            <ChildContainer>
+              {guestSideOfClerk && guestSideOfClerk.clerkUsername && (
+                <Child hasChildren>
+                  this is the guest side of {guestSideOfClerk.clerkUsername}
+                </Child>
+              )}
+              {user.username === undefined && !guestSideOfClerk && (
+                <Child onClick={goToLogin}>Click to login</Child>
+              )}
+              {user.username !== undefined && (
+                <Child onClick={() => setModal("edit_account")}>Edit</Child>
+              )}
+              {shopId && user.username !== undefined && user.roleId === 1 && (
+                <>
+                  <Child onClick={goToAdminCafes}>see your other cafes</Child>
+                  <Child onClick={() => setModal("edit_account")}>
+                    {shopName} table maps
+                  </Child>
+                  <Child hasChildren>
+                    {shopName} clerks
+                    <Child onClick={() => setModal("craete_account_clerk")}>
+                      + Add clerk
                     </Child>
-                  ))}
-              </Child>
-            )}
-            {user.username !== undefined && (
-              <Child onClick={isLogout}>Logout</Child>
-            )}
-          </ChildContainer>
-        </Rectangle>
-      )}
+                    {shopClerks &&
+                      shopClerks.map((key, index) => (
+                        <Child key={index}>
+                          {shopClerks[index].username}
+                          <button
+                            onClick={() =>
+                              removeConnectedGuestSides(guestSides[index][3])
+                            }
+                          >
+                            remove
+                          </button>
+                        </Child>
+                      ))}
+                  </Child>
+                </>
+              )}
+              {user.username !== undefined && user.roleId === 2 && (
+                <Child hasChildren>
+                  connected guest sides
+                  <Child onClick={goToGuestSideLogin}>+ Add guest side</Child>
+                  {guestSides &&
+                    guestSides.map((key, index) => (
+                      <Child key={index}>
+                        guest side {index + 1}
+                        <button
+                          onClick={() =>
+                            removeConnectedGuestSides(guestSides[index][3])
+                          }
+                        >
+                          remove
+                        </button>
+                      </Child>
+                    ))}
+                </Child>
+              )}
+              {user.username !== undefined && (
+                <Child onClick={isLogout}>Logout</Child>
+              )}
+            </ChildContainer>
+          </Rectangle>
+        )}
+      </div>
     </HeaderBar>
   );
 };

@@ -1,11 +1,14 @@
-import API_BASE_URL from '../config.js';
+import API_BASE_URL from "../config.js";
+import { getLocalStorage } from "./localStorageHelpers";
 
-export async function getTable(shopId, tableNo) {
+export async function getTables(shopId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/table/get-table/${shopId}?tableNo=${tableNo}`, {
-      method: 'GET',
+    const token = getLocalStorage("auth");
+    const response = await fetch(`${API_BASE_URL}/table/get-tables/${shopId}`, {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -16,6 +19,29 @@ export async function getTable(shopId, tableNo) {
     const tableDetail = await response.json();
     return tableDetail;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
+  }
+}
+
+export async function getTable(shopId, tableNo) {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/table/get-table/${shopId}?tableNo=${tableNo}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const tableDetail = await response.json();
+    return tableDetail;
+  } catch (error) {
+    console.error("Error:", error);
   }
 }

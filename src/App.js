@@ -24,6 +24,7 @@ import { getItemTypesWithItems } from "./helpers/itemHelper.js";
 
 import {
   getConnectedGuestSides,
+  getClerks,
   removeConnectedGuestSides,
 } from "./helpers/userHelpers.js";
 import {
@@ -37,12 +38,14 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState([]);
+  const [shopClerks, setShopClerks] = useState([]);
   const [guestSideOfClerk, setGuestSideOfClerk] = useState(null);
   const [guestSides, setGuestSides] = useState([]);
   const [shopId, setShopId] = useState("");
   const [tableId, setTableId] = useState("");
   const [totalItemsCount, setTotalItemsCount] = useState(0);
   const [deviceType, setDeviceType] = useState("");
+  const [shop, setShop] = useState([]);
   const [shopItems, setShopItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -76,8 +79,9 @@ function App() {
     async function fetchData() {
       console.log("gettingItems");
       try {
-        const { response, data } = await getItemTypesWithItems(shopId);
+        const { response, cafe, data } = await getItemTypesWithItems(shopId);
         if (response.status === 200) {
+          setShop(cafe);
           setShopItems(data);
           socket.on("transaction_created", () => {
             console.log("transaction created");
@@ -121,7 +125,8 @@ function App() {
         setDeviceType("guestDevice");
       } else {
         setUser(data.data.user);
-        console.log(data.data.user);
+        if (data.data.user.password == "unsetunsetunset")
+          setModal("complete_account");
         if (data.data.user.cafeId == shopId) {
           const connectedGuestSides = await getConnectedGuestSides();
           setGuestSides(connectedGuestSides.sessionDatas);
@@ -129,6 +134,12 @@ function App() {
           setDeviceType("clerk");
         } else {
           setDeviceType("guestDevice");
+        }
+        if (data.data.user.roleId == 1) {
+          // shopClerks is can only be obtained by the shop owner
+          // so every user that is admin will try to getting shopClerks, even not yet proven that this is their shop
+          const shopClerks = await getClerks(shopId);
+          setShopClerks(shopClerks);
         }
       }
     });
@@ -195,7 +206,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <Routes>
-          <Route path="/" element={<Dashboard user={user} />} />
+          <Route
+            path="/"
+            element={<Dashboard user={user} setModal={setModal} />}
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/:shopId/:tableId?"
@@ -203,7 +217,9 @@ function App() {
               <>
                 <CafePage
                   sendParam={handleSetParam}
+                  shopName={shop.name}
                   shopItems={shopItems}
+                  shopClerks={shopClerks}
                   socket={socket}
                   user={user}
                   guestSides={guestSides}
@@ -231,6 +247,7 @@ function App() {
                   guestSides={guestSides}
                   guestSideOfClerk={guestSideOfClerk}
                   removeConnectedGuestSides={rmConnectedGuestSides}
+                  setModal={setModal} // Pass the function to open modal
                 />
                 <Footer
                   shopId={shopId}

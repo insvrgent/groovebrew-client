@@ -1,15 +1,18 @@
 // src/CafePage.js
 import React, { useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 
 import "../App.css";
 import SearchInput from "../components/SearchInput";
 import ItemLister from "../components/ItemLister";
 import Header from "../components/Header";
 
+import { updateLocalStorage } from "../helpers/localStorageHelpers";
+
 function SearchResult({ user, shopItems, sendParam }) {
   const [searchParams] = useSearchParams();
   const { shopId, tableId } = useParams();
+  const navigate = useNavigate();
   sendParam({ shopId, tableId });
 
   const [searchValue, setSearchValue] = useState(
@@ -40,12 +43,7 @@ function SearchResult({ user, shopItems, sendParam }) {
   return (
     <div className="App">
       <header className="App-header">
-        <Header
-          HeaderText={"Search"}
-          shopId={shopId}
-          tableId={tableId}
-          user={user}
-        />
+        <Header HeaderText={"Search"} />
         <div style={{ marginTop: "5px" }}></div>
         <SearchInput
           shopId={shopId}

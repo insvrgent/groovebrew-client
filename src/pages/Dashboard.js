@@ -9,7 +9,7 @@ import { getOwnedCafes } from "../helpers/cafeHelpers";
 
 import { ThreeDots } from "react-loader-spinner";
 
-const Dashboard = ({ user }) => {
+const Dashboard = ({ user, setModal }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,6 +58,8 @@ const Dashboard = ({ user }) => {
         isEdit={() => setIsModalOpen(true)}
         isLogout={handleLogout}
         user={user}
+        showProfile={true}
+        setModal={setModal}
       />
       {user && user.roleId < 2 && (
         <div className={styles.dashboard}>

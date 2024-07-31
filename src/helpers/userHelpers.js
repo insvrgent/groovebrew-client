@@ -141,7 +141,6 @@ export const updateUser = async (formData) => {
       return data;
     } catch (error) {
       console.error("Error updating user:", error);
-      throw error;
     }
   }
 };
@@ -165,7 +164,58 @@ export const getAllCafeOwner = async (formData) => {
       return data;
     } catch (error) {
       console.error("Error updating user:", error);
-      throw error;
+    }
+  }
+};
+
+export const createClerks = async (shopId, email, username, password) => {
+  const token = getLocalStorage("auth");
+  if (token) {
+    try {
+      const response = await fetch(
+        API_BASE_URL + "/user/create-clerk/" + shopId,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: email,
+            username: username,
+            password: password,
+          }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error getting clerk:", error);
+    }
+  }
+};
+
+export const getClerks = async (shopId) => {
+  const token = getLocalStorage("auth");
+  if (token) {
+    try {
+      const response = await fetch(API_BASE_URL + "/user/get-clerk/" + shopId, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error getting clerk:", error);
     }
   }
 };

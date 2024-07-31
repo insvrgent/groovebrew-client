@@ -21,7 +21,9 @@ import {
 
 function CafePage({
   sendParam,
+  shopName,
   shopItems,
+  shopClerks,
   socket,
   user,
   guestSides,
@@ -46,7 +48,6 @@ function CafePage({
     if (user.cafeId != null && user.cafeId != shopId) {
       navigate("/" + user.cafeId);
     }
-    if (user.password == "unsetunsetunset") setIsModalOpen(true);
   }, [user]);
 
   useEffect(() => {
@@ -95,9 +96,11 @@ function CafePage({
           <Header
             HeaderText={"Menu"}
             showProfile={true}
-            isEdit={() => setModal("edit")}
+            setModal={setModal}
             isLogout={handleLogout}
             shopId={shopId}
+            shopName={shopName}
+            shopClerks={shopClerks}
             tableId={tableId}
             user={user}
             guestSides={guestSides}

@@ -42,7 +42,7 @@ const LoginPage = () => {
           }
 
           // navigate(destination, { replace: true });
-          window.location.href = window.location.hostname + destination;
+          window.location.href = destination;
         }
       } else {
         console.error("Login failed");
