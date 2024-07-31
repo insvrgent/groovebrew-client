@@ -308,7 +308,7 @@ const Header = ({
               {shopId && user.username !== undefined && user.roleId === 1 && (
                 <>
                   <Child onClick={goToAdminCafes}>see your other cafes</Child>
-                  <Child onClick={() => setModal("edit_account")}>
+                  <Child onClick={() => setModal("edit_tables")}>
                     {shopName} table maps
                   </Child>
                   <Child hasChildren>

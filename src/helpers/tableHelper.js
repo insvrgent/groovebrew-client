@@ -16,8 +16,8 @@ export async function getTables(shopId) {
       return false;
     }
 
-    const tableDetail = await response.json();
-    return tableDetail;
+    const tables = await response.json();
+    return tables;
   } catch (error) {
     console.error("Error:", error);
   }
@@ -32,7 +32,7 @@ export async function getTable(shopId, tableNo) {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (!response.ok) {

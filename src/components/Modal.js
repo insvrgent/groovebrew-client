@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Modal.module.css";
+import TableMaps from "../components/TableMaps";
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
@@ -23,6 +24,7 @@ const Modal = ({ isOpen, onClose, children }) => {
         <button onClick={onClose} className={styles.closeButton}>
           Close
         </button>
+        <TableMaps />
       </div>
     </div>
   );
