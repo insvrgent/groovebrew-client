@@ -7,7 +7,6 @@ const getTables = async (cafeId) => {
     { tableId: 2, xposition: 30, yposition: 1, cafeId: 5, tableNo: 2 },
     { tableId: 3, xposition: 50, yposition: 70, cafeId: 5, tableNo: 3 },
     { tableId: 4, xposition: 200, yposition: 70, cafeId: 5, tableNo: 4 },
-    { tableId: 5, xposition: -200, yposition: 70, cafeId: 5, tableNo: 4 },
   ];
 };
 
@@ -86,14 +85,17 @@ const TableCanvas = () => {
       yposition: (table.yposition - minY) * scale + padding,
     }));
 
-    // Draw the tables as rectangles and print table numbers
+    // Draw the tables as rectangles first
     scaledTables.forEach((table) => {
       context.beginPath();
       context.rect(table.xposition, table.yposition, rectWidth, rectHeight);
       context.fillStyle = "blue";
       context.fill();
       context.stroke();
+    });
 
+    // Then draw the table numbers on top
+    scaledTables.forEach((table) => {
       context.font = "12px Arial";
       context.fillStyle = "white";
       context.textAlign = "center";
