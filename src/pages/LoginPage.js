@@ -20,7 +20,7 @@ const LoginPage = () => {
         localStorage.setItem("auth", response.token);
 
         if (response.cafeId !== null) {
-          navigate(`/${response.cafeId}`);
+          window.location.href = response.cafeId;
         } else {
           let destination = "/";
 
@@ -41,7 +41,8 @@ const LoginPage = () => {
             }
           }
 
-          navigate(destination, { replace: true });
+          // navigate(destination, { replace: true });
+          window.location.href = window.location.hostname + destination;
         }
       } else {
         console.error("Login failed");

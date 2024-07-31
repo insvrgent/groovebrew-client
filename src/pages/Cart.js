@@ -16,7 +16,7 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
   const { goToShop, goToInvoice } = useNavigationHelpers(shopId, tableId);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [orderType, setOrderType] = useState("pickup");
+  const [orderType, setOrderType] = useState("serve");
   const [tableNumber, setTableNumber] = useState("");
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,6 +62,22 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
       return () => textarea.removeEventListener("input", handleResize);
     }
   }, [shopId]);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+
+    if (textarea) {
+      const handleResize = () => {
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      };
+
+      handleResize(); // Initial resize
+
+      textarea.addEventListener("input", handleResize);
+      return () => textarea.removeEventListener("input", handleResize);
+    }
+  }, [textareaRef.current]);
 
   const refreshTotal = async () => {
     try {
@@ -119,22 +135,22 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
     }
 
     if (orderType === "serve") {
-      if (tableNumber !== "") {
-        const table = await getTable(shopId, tableNumber);
+      if (tableNumber !== "" || tableId != null) {
+        const table = await getTable(shopId, tableNumber || tableId);
         if (!table) {
           setModalContent(
             <div>Table not found. Please enter a valid table number.</div>,
           );
           setIsModalOpen(true);
         } else {
-          goToInvoice(orderType, tableNumber, email);
+          goToInvoice(orderType, tableNumber || tableId, email);
         }
       } else {
         setModalContent(<div>Please enter a table number.</div>);
         setIsModalOpen(true);
       }
     } else {
-      goToInvoice(orderType, tableNumber, email);
+      goToInvoice(orderType, tableNumber || tableId, email);
     }
 
     setIsCheckoutLoading(false); // Stop loading animation
@@ -172,6 +188,7 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
             <input
               type="email"
               id="email"
+              placeholder="log this transaction (optional)"
               value={email}
               onChange={handleEmailChange}
               className={styles.EmailInput}
@@ -185,13 +202,13 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
             value={orderType}
             onChange={handleOrderTypeChange}
           >
+            {tableId != null && (
+              <option value="serve">Serve to table {tableId}</option>
+            )}
             <option value="pickup">Pickup</option>
             {tableId == null && <option value="serve">Serve</option>}
 
             {/* tableId harus di check terlebih dahulu untuk mendapatkan tableNo */}
-            {tableId != null && (
-              <option value="serve">Serve to table {tableId}</option>
-            )}
           </select>
           {orderType === "serve" && tableId == null && (
             <input

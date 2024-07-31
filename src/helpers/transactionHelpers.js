@@ -92,7 +92,8 @@ export const handlePaymentFromGuestSide = async (
         }),
       },
     );
-
+    const res = await response.json();
+    console.log(res);
     if (response.ok) {
       // Handle success response
       console.log("Transaction successful!");
@@ -100,7 +101,7 @@ export const handlePaymentFromGuestSide = async (
       return true;
     } else {
       // Handle error response
-      console.error("Transaction failed:", response.statusText);
+      console.error("Transaction failed:", response.message);
       return false;
     }
   } catch (error) {

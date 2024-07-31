@@ -19,12 +19,21 @@
   margin-top: 17px;
 }
 
-.CheckoutContainer{
+.CheckoutContainer {
   bottom: 0px;
   position: fixed;
 }
 
-.OrderTypeContainer{
+.EmailContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-size: 1em;
+  padding: 10px 0;
+  margin-bottom: 7px;
+}
+.OrderTypeContainer {
   display: flex;
   justify-content: space-between;
   width: 80vw;
@@ -95,7 +104,6 @@
   align-items: center;
   justify-content: center;
 }
-
 
 .BackToMenu {
   text-align: center;

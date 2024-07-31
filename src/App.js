@@ -121,9 +121,11 @@ function App() {
         setDeviceType("guestDevice");
       } else {
         setUser(data.data.user);
-        if (data.data.user.cafeId === shopId) {
+        console.log(data.data.user);
+        if (data.data.user.cafeId == shopId) {
           const connectedGuestSides = await getConnectedGuestSides();
           setGuestSides(connectedGuestSides.sessionDatas);
+          console.log("getting guest side");
           setDeviceType("clerk");
         } else {
           setDeviceType("guestDevice");
@@ -258,7 +260,7 @@ function App() {
             }
           />
           <Route
-            path="/:shopId/:tableId?invoice"
+            path="/:shopId/:tableId?/invoice"
             element={
               <>
                 <Invoice sendParam={handleSetParam} deviceType={deviceType} />
