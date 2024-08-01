@@ -60,7 +60,7 @@ export default function Invoice({ sendParam, deviceType }) {
         email,
         isCash ? "cash" : "cashless",
         orderType,
-        tableNumber,
+        tableNumber
       );
     } else if (deviceType == "guestSide") {
       const pay = await handlePaymentFromGuestSide(
@@ -68,14 +68,14 @@ export default function Invoice({ sendParam, deviceType }) {
         email,
         isCash ? "cash" : "cashless",
         orderType,
-        tableNumber,
+        tableNumber
       );
     } else if (deviceType == "guestDevice") {
       const pay = await handlePaymentFromGuestDevice(
         shopId,
         isCash ? "cash" : "cashless",
         orderType,
-        tableNumber,
+        tableNumber
       );
     }
 

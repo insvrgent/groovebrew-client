@@ -2,12 +2,37 @@ import API_BASE_URL from "../config.js";
 import { getLocalStorage, updateLocalStorage } from "./localStorageHelpers";
 import { getItemsByCafeId } from "../helpers/cartHelpers.js";
 
+export async function getTransactions(shopId, demand) {
+  try {
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/get-transactions/${shopId}?demandLength=${demand}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const transactions = await response.json();
+    return transactions;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 export const handlePaymentFromClerk = async (
   shopId,
   user_email,
   payment_type,
   serving_type,
-  tableNo,
+  tableNo
 ) => {
   try {
     const token = getLocalStorage("auth");
@@ -36,7 +61,7 @@ export const handlePaymentFromClerk = async (
           tableNo,
           transactions: structuredItems,
         }),
-      },
+      }
     );
 
     if (response.ok) {
@@ -61,7 +86,7 @@ export const handlePaymentFromGuestSide = async (
   user_email,
   payment_type,
   serving_type,
-  tableNo,
+  tableNo
 ) => {
   try {
     const token = getLocalStorage("authGuestSide");
@@ -90,7 +115,7 @@ export const handlePaymentFromGuestSide = async (
           tableNo,
           transactions: structuredItems,
         }),
-      },
+      }
     );
     const res = await response.json();
     console.log(res);
@@ -115,7 +140,7 @@ export const handlePaymentFromGuestDevice = async (
   shopId,
   payment_type,
   serving_type,
-  tableNo,
+  tableNo
 ) => {
   try {
     const token = getLocalStorage("auth");
@@ -143,7 +168,7 @@ export const handlePaymentFromGuestDevice = async (
           tableNo,
           transactions: structuredItems,
         }),
-      },
+      }
     );
 
     if (response.ok) {

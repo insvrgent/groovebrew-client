@@ -72,6 +72,15 @@ export const useNavigationHelpers = (shopId, tableId) => {
     navigate(url);
   };
 
+  const goToTransactions = () => {
+    let url = `/${shopId}`;
+    if (tableId) {
+      url += `/${tableId}`;
+    }
+    url += "/transactions";
+    navigate(url);
+  };
+
   const goToGuestSideLogin = () => {
     let url = `/${shopId}`;
     if (tableId) {
@@ -91,6 +100,7 @@ export const useNavigationHelpers = (shopId, tableId) => {
     goToSearch,
     goToCart,
     goToInvoice,
+    goToTransactions,
     goToGuestSideLogin,
     goToAdminCafes,
   };

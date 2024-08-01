@@ -1,6 +1,8 @@
 import React from "react";
 import styles from "./Modal.module.css";
+import TablesPage from "./TablesPage.js";
 import TableMaps from "../components/TableMaps";
+import Transactions from "../pages/Transactions";
 
 const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
   if (!isOpen) return null;
@@ -23,8 +25,10 @@ const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
         <button onClick={onClose} className={styles.closeButton}>
           &times;
         </button>
-        {modalContent === "edit_tables" && <TableMaps shopId={shopId} />}
-        {modalContent === "new_transaction" && <TableMaps shopId={shopId} />}
+        {modalContent === "edit_tables" && <TablesPage shopId={shopId} />}
+        {modalContent === "new_transaction" && (
+          <Transactions propsShopId={shopId} />
+        )}
       </div>
     </div>
   );

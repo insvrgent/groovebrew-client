@@ -8,10 +8,8 @@ export default function Footer({
   cartItemsLength,
   selectedPage,
 }) {
-  const { goToShop, goToSearch, goToCart } = useNavigationHelpers(
-    shopId,
-    tableId,
-  );
+  const { goToShop, goToSearch, goToCart, goToTransactions } =
+    useNavigationHelpers(shopId, tableId);
 
   return (
     <div className={styles.item}>
@@ -50,7 +48,7 @@ export default function Footer({
         </div>
 
         {/* Profile Icon */}
-        <div className={styles["footer-icon"]}>
+        <div onClick={goToTransactions} className={styles["footer-icon"]}>
           <svg
             viewBox="0 0 34 34"
             style={{ fill: selectedPage === 3 ? "black" : "#8F8787" }}

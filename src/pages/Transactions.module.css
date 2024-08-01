@@ -1,4 +1,4 @@
-.Invoice {
+.Transactions {
   overflow-x: hidden;
   background-color: white;
   display: flex;
@@ -9,7 +9,7 @@
   background-color: #e9e9e9;
 }
 
-.Invoice-title {
+.Transactions-title {
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-style: normal;
@@ -20,7 +20,7 @@
   margin-top: 17px;
 }
 
-.Invoice-detail {
+.Transactions-detail {
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-style: normal;

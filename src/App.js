@@ -16,6 +16,7 @@ import CafePage from "./pages/CafePage";
 import SearchResult from "./pages/SearchResult";
 import Cart from "./pages/Cart";
 import Invoice from "./pages/Invoice";
+import Transactions from "./pages/Transactions";
 import Footer from "./components/Footer";
 
 import GuestSideLogin from "./pages/GuestSideLogin";
@@ -286,6 +287,23 @@ function App() {
                   tableId={tableId}
                   cartItemsLength={totalItemsCount}
                   selectedPage={2}
+                />
+              </>
+            }
+          />
+          <Route
+            path="/:shopId/:tableId?/transactions"
+            element={
+              <>
+                <Transactions
+                  sendParam={handleSetParam}
+                  deviceType={deviceType}
+                />
+                <Footer
+                  shopId={shopId}
+                  tableId={tableId}
+                  cartItemsLength={totalItemsCount}
+                  selectedPage={3}
                 />
               </>
             }
