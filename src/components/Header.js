@@ -332,6 +332,12 @@ const Header = ({
                   </Child>
                 </>
               )}
+              {user.username !== undefined &&
+                (user.roleId === 1 || user.roleId === 2) && (
+                  <Child onClick={() => setModal("update_stock")}>
+                    update stock
+                  </Child>
+                )}
               {user.username !== undefined && user.roleId === 2 && (
                 <Child hasChildren>
                   connected guest sides

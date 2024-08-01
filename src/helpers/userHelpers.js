@@ -78,7 +78,7 @@ export async function removeConnectedGuestSides(guestSideSessionId) {
           body: JSON.stringify({
             guestSideSessionId,
           }),
-        },
+        }
       );
       if (response.status === 200) {
         const { message, guestSideList } = await response.json();
@@ -168,6 +168,66 @@ export const getAllCafeOwner = async (formData) => {
   }
 };
 
+export const createCafeOwner = async (shopId, email, username, password) => {
+  const token = getLocalStorage("auth");
+  if (token) {
+    try {
+      const response = await fetch(
+        API_BASE_URL + "/user/create-clerk/" + shopId,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: email,
+            username: username,
+            password: password,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error getting clerk:", error);
+    }
+  }
+};
+
+export const deleteCafeOwner = async (shopId, email, username, password) => {
+  const token = getLocalStorage("auth");
+  if (token) {
+    try {
+      const response = await fetch(
+        API_BASE_URL + "/user/create-clerk/" + shopId,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: email,
+            username: username,
+            password: password,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error getting clerk:", error);
+    }
+  }
+};
+
 export const createClerks = async (shopId, email, username, password) => {
   const token = getLocalStorage("auth");
   if (token) {
@@ -185,7 +245,7 @@ export const createClerks = async (shopId, email, username, password) => {
             username: username,
             password: password,
           }),
-        },
+        }
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

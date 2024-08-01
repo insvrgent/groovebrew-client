@@ -4,8 +4,8 @@ import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import AccountUpdateModal from "../components/AccountUpdateModal";
 import { updateLocalStorage } from "../helpers/localStorageHelpers";
-import { getAllCafeOwner } from "../helpers/userHelpers";
-import { getOwnedCafes } from "../helpers/cafeHelpers";
+import { getAllCafeOwner, createCafeOwner } from "../helpers/userHelpers";
+import { getOwnedCafes, createCafe, updateCafe } from "../helpers/cafeHelpers";
 
 import { ThreeDots } from "react-loader-spinner";
 
@@ -14,30 +14,32 @@ const Dashboard = ({ user, setModal }) => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [items, setItems] = useState([]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newItem, setNewItem] = useState({ name: "", type: "" });
 
   useEffect(() => {
     if (user && user.roleId === 0) {
       setLoading(true);
-      // Example of calling getAllCafeOwner if roleId is 0
       getAllCafeOwner()
         .then((data) => {
-          setItems(data); // Assuming getAllCafeOwners returns an array of cafe owners
+          setItems(data);
           setLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching cafe owners:", error);
+          setLoading(false);
         });
     }
     if (user && user.roleId === 1) {
-      // Example of calling getAllCafeOwner if roleId is 0
       setLoading(true);
       getOwnedCafes(user.userId)
         .then((data) => {
-          setItems(data); // Assuming getAllCafeOwners returns an array of cafe owners
+          setItems(data);
           setLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching cafe owners:", error);
+          console.error("Error fetching owned cafes:", error);
+          setLoading(false);
         });
     }
   }, [user]);
@@ -49,6 +51,32 @@ const Dashboard = ({ user, setModal }) => {
   const handleLogout = () => {
     updateLocalStorage("auth", "");
     navigate(0);
+  };
+
+  const handleCreateItem = () => {
+    if (user.roleId < 1) {
+      // Create admin functionality
+      createCafeOwner(newItem.name)
+        .then(() => {
+          setItems([...items, { name: newItem.name }]);
+          setIsCreating(false);
+          setNewItem({ name: "", type: "" });
+        })
+        .catch((error) => {
+          console.error("Error creating admin:", error);
+        });
+    } else {
+      // Create cafe functionality
+      createCafe(newItem.name)
+        .then(() => {
+          setItems([...items, { name: newItem.name }]);
+          setIsCreating(false);
+          setNewItem({ name: "", type: "" });
+        })
+        .catch((error) => {
+          console.error("Error creating cafe:", error);
+        });
+    }
   };
 
   return (
@@ -74,9 +102,19 @@ const Dashboard = ({ user, setModal }) => {
             </div>
           ))}
           {user && user.roleId < 1 ? (
-            <div className={styles.rectangle}>Create Admin</div>
+            <div
+              className={styles.rectangle}
+              onClick={() => setIsCreating(true)}
+            >
+              Create Admin
+            </div>
           ) : (
-            <div className={styles.rectangle}>Create Cafe</div>
+            <div
+              className={styles.rectangle}
+              onClick={() => setIsCreating(true)}
+            >
+              Create Cafe
+            </div>
           )}
         </div>
       )}
@@ -87,6 +125,20 @@ const Dashboard = ({ user, setModal }) => {
           isOpen={isModalOpen}
           onClose={handleModalClose}
         />
+      )}
+
+      {isCreating && (
+        <div className={styles.createModal}>
+          <h2>Create New {user.roleId < 1 ? "Admin" : "Cafe"}</h2>
+          <input
+            type="text"
+            value={newItem.name}
+            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+            placeholder="Name"
+          />
+          <button onClick={handleCreateItem}>Create</button>
+          <button onClick={() => setIsCreating(false)}>Cancel</button>
+        </div>
       )}
     </>
   );

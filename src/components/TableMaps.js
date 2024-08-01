@@ -101,10 +101,10 @@ const TableCanvas = ({ shopId }) => {
       context.textBaseline = "middle";
       context.fillText(
         table.tableId === (selectedTable?.tableId || newTable?.tableId)
-          ? tableNo == 0
+          ? tableNo === 0
             ? "clerk"
             : tableNo
-          : table.tableNo == 0
+          : table.tableNo === 0
           ? "clerk"
           : table.tableNo,
         table.xposition + rectWidth / 2,
@@ -257,9 +257,9 @@ const TableCanvas = ({ shopId }) => {
   const handleSetTableNo = (event) => {
     const newValue = event.target.value;
     // Prevent setting value to '0' or starting with '0'
-    // if (newValue === "" || /^[1-9][0-9]*$/.test(newValue)) {
-    setTableNo(newValue);
-    // }
+    if (newValue === "" || /^[1-9][0-9]*$/.test(newValue)) {
+      setTableNo(newValue);
+    }
   };
 
   return (
@@ -333,6 +333,7 @@ const TableCanvas = ({ shopId }) => {
                 type="text"
                 placeholder="Table No"
                 value={tableNo}
+                disabled={tableNo === 0 ? "disabled" : ""}
                 onChange={handleSetTableNo}
                 style={{
                   marginRight: "10px",
@@ -376,8 +377,12 @@ const TableCanvas = ({ shopId }) => {
                 }}
                 onClick={() => handleSelect(table)}
               >
-                Table {table.tableNo} - Position: ({table.xposition},{" "}
-                {table.yposition})
+                {
+                  table.tableNo === 0
+                    ? "Clerk" // Display "Clerk" if tableNo is 0
+                    : `Table ${table.tableNo}` // Display "Table {tableNo}" otherwise
+                }{" "}
+                - Position: ({table.xposition}, {table.yposition})
               </li>
             ))}
           </ul>

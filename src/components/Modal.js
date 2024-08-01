@@ -24,6 +24,7 @@ const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
           &times;
         </button>
         {modalContent === "edit_tables" && <TableMaps shopId={shopId} />}
+        {modalContent === "new_transaction" && <TableMaps shopId={shopId} />}
       </div>
     </div>
   );
