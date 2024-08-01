@@ -297,9 +297,12 @@ function App() {
           <Route path="/guest-side" element={<GuestSide socket={socket} />} />
         </Routes>
       </header>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        {modalContent}
-      </Modal>
+      <Modal
+        shopId={shopId}
+        isOpen={isModalOpen}
+        modalContent={modalContent}
+        onClose={closeModal}
+      />
     </div>
   );
 }

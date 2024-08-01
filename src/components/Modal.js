@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Modal.module.css";
 import TableMaps from "../components/TableMaps";
 
-const Modal = ({ isOpen, onClose, children }) => {
+const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
   if (!isOpen) return null;
 
   // Function to handle clicks on the overlay
@@ -20,11 +20,10 @@ const Modal = ({ isOpen, onClose, children }) => {
   return (
     <div onClick={handleOverlayClick} className={styles.modalOverlay}>
       <div className={styles.modalContent} onClick={handleContentClick}>
-        {children}
         <button onClick={onClose} className={styles.closeButton}>
-          Close
+          &times;
         </button>
-        <TableMaps />
+        {modalContent === "edit_tables" && <TableMaps shopId={shopId} />}
       </div>
     </div>
   );
