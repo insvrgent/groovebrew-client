@@ -22,6 +22,7 @@ import {
 function CafePage({
   sendParam,
   shopName,
+  shopOwnerId,
   shopItems,
   shopClerks,
   socket,
@@ -100,6 +101,7 @@ function CafePage({
             isLogout={handleLogout}
             shopId={shopId}
             shopName={shopName}
+            shopOwnerId={shopOwnerId}
             shopClerks={shopClerks}
             tableId={tableId}
             user={user}
@@ -110,7 +112,12 @@ function CafePage({
           <div style={{ marginTop: "5px" }}></div>
           <SearchInput shopId={shopId} />
           <div style={{ marginTop: "15px" }}></div>
-          <ItemTypeLister user={user} shopId={shopId} itemTypes={shopItems} />
+          <ItemTypeLister
+            user={user}
+            shopOwnerId={shopOwnerId}
+            shopId={shopId}
+            itemTypes={shopItems}
+          />
           <div style={{ marginTop: "-13px" }}></div>
           <h2 className="title">Music Req.</h2>
           <MusicPlayer
@@ -123,6 +130,7 @@ function CafePage({
           {shopItems.map((itemType) => (
             <ItemLister
               shopId={shopId}
+              shopOwnerId={shopOwnerId}
               user={user}
               key={itemType.itemTypeId}
               itemTypeId={itemType.itemTypeId}

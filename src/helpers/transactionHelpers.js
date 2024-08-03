@@ -2,6 +2,29 @@ import API_BASE_URL from "../config.js";
 import { getLocalStorage, updateLocalStorage } from "./localStorageHelpers";
 import { getItemsByCafeId } from "../helpers/cartHelpers.js";
 
+export async function confirmTransaction(transactionId) {
+  try {
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/confirm-transaction/${transactionId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 export async function getTransactions(shopId, demand) {
   try {
     const token = getLocalStorage("auth");
@@ -140,7 +163,8 @@ export const handlePaymentFromGuestDevice = async (
   shopId,
   payment_type,
   serving_type,
-  tableNo
+  tableNo,
+  socketId
 ) => {
   try {
     const token = getLocalStorage("auth");
@@ -167,6 +191,7 @@ export const handlePaymentFromGuestDevice = async (
           serving_type,
           tableNo,
           transactions: structuredItems,
+          socketId,
         }),
       }
     );

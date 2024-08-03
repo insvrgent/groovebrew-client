@@ -13,13 +13,12 @@
 
 .modalContent {
   background: white;
-  padding: 20px;
   border-radius: 5px;
-  width: 80%;
+  width: 90%;
   height: 80%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
-  overflow: auto; /* Add this line to enable scrolling */
+  overflow: hidden; /* Add this line to enable scrolling */
 }
 
 .closeButton {

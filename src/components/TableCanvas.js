@@ -4,7 +4,7 @@ const TableCanvas = ({
   tables,
   selectedTable,
   newTable,
-  setTableNo,
+  isAdmin,
   handleSelectTable,
   handleAddTable,
   moveTable,
@@ -91,11 +91,12 @@ const TableCanvas = ({
       context.fillStyle = "white";
       context.textAlign = "center";
       context.textBaseline = "middle";
+      console.log(selectedTable);
       context.fillText(
         table.tableId === (selectedTable?.tableId || newTable?.tableId)
           ? tableNo === 0
             ? "clerk"
-            : tableNo
+            : tableNo || (isAdmin ? "" : table.tableNo)
           : table.tableNo === 0
           ? "clerk"
           : table.tableNo,
@@ -106,7 +107,7 @@ const TableCanvas = ({
   }, [tables, canvasSize, newTable, selectedTable, tableNo]);
 
   return (
-    <div ref={containerRef} style={{ width: "100%", height: "100%" }}>
+    <div ref={containerRef} style={{ height: "20%" }}>
       <canvas
         ref={canvasRef}
         style={{
@@ -116,7 +117,7 @@ const TableCanvas = ({
         }}
         onClick={handleSelectTable}
       />
-      <div>
+      <div style={{ visibility: isAdmin ? "" : "hidden" }}>
         {!selectedTable && !newTable && (
           <button
             onClick={handleAddTable}
@@ -127,11 +128,11 @@ const TableCanvas = ({
               backgroundColor: "#007bff",
               color: "#fff",
               border: "none",
-              borderRadius: "4px",
               fontSize: "16px",
               cursor: "pointer",
               marginBottom: "10px",
               transition: "background-color 0.3s ease",
+              visibility: isAdmin ? "" : "hidden",
             }}
           >
             Add Table
@@ -143,6 +144,7 @@ const TableCanvas = ({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              display: isAdmin ? "visible" : "hidden",
             }}
           >
             <div

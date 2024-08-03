@@ -2,12 +2,21 @@ import React, { useEffect, useState } from "react";
 import styles from "./Transactions.module.css";
 import { useParams } from "react-router-dom";
 import { ColorRing } from "react-loader-spinner";
-import { getTransactions } from "../helpers/transactionHelpers";
+import {
+  getTransactions,
+  confirmTransaction,
+} from "../helpers/transactionHelpers";
+import { getTables } from "../helpers/tableHelper";
+import TableCanvas from "../components/TableCanvas";
 
 export default function Transactions({ propsShopId, sendParam, deviceType }) {
   const { shopId, tableId } = useParams();
   if (sendParam) sendParam({ shopId, tableId });
 
+  const [confirmed, setConfirmed] = useState(false);
+  const [message, setMessage] = useState("");
+  const [tables, setTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
@@ -15,8 +24,6 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
     const fetchTransactions = async () => {
       try {
         const response = await getTransactions(shopId || propsShopId, 5);
-        console.log("modallll");
-        console.log(response);
         setTransactions(response);
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -24,7 +31,20 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
     };
 
     fetchTransactions();
-  }, [shopId]);
+  }, [shopId || propsShopId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedTables = await getTables(shopId || propsShopId);
+        setTables(fetchedTables);
+      } catch (error) {
+        console.error("Error fetching tables:", error);
+      }
+    };
+
+    fetchData();
+  }, [shopId || propsShopId]);
 
   const calculateTotalPrice = (detailedTransactions) => {
     return detailedTransactions.reduce((total, dt) => {
@@ -32,13 +52,13 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
     }, 0);
   };
 
-  const handlePayment = async (isCash) => {
+  const handleConfirm = async (transactionId) => {
     setIsPaymentLoading(true);
     try {
-      // Implement payment logic here
-      console.log(`Processing ${isCash ? "cash" : "cashless"} payment`);
-      // Simulate payment process
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const c = await confirmTransaction(transactionId);
+      if (c) setMessage("success");
+      else setMessage("not confirmed");
+      setConfirmed(true);
     } catch (error) {
       console.error("Error processing payment:", error);
     } finally {
@@ -51,11 +71,15 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
       <div style={{ marginTop: "30px" }}></div>
       <h2 className={styles["Transactions-title"]}>Transactions</h2>
       <div style={{ marginTop: "30px" }}></div>
-      <div>
+      <TableCanvas tables={tables} selectedTable={selectedTable} />
+      <div className={styles.TransactionListContainer}>
         {transactions.map((transaction) => (
           <div
             key={transaction.transactionId}
             className={styles.RoundedRectangle}
+            onClick={() =>
+              setSelectedTable(transaction.Table || { tableId: 0 })
+            }
           >
             <h2 className={styles["Transactions-detail"]}>
               Transaction ID: {transaction.transactionId}
@@ -87,12 +111,15 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
             <div className={styles.TotalContainer}>
               <button
                 className={styles.PayButton}
-                onClick={() => handlePayment(false)}
+                onClick={() => handleConfirm(transaction.transactionId)}
+                disabled={transaction.confirmed || isPaymentLoading} // Disable button if confirmed or loading
               >
                 {isPaymentLoading ? (
                   <ColorRing height="50" width="50" color="white" />
+                ) : transaction.confirmed ? (
+                  "Confirmed" // Display "Confirmed" if the transaction is confirmed
                 ) : (
-                  "Confirm"
+                  "Confirm" // Display "Confirm" otherwise
                 )}
               </button>
             </div>

@@ -23,6 +23,8 @@ import GuestSideLogin from "./pages/GuestSideLogin";
 import GuestSide from "./pages/GuestSide";
 import { getItemTypesWithItems } from "./helpers/itemHelper.js";
 
+import MaterialList from "./pages/MaterialList";
+
 import {
   getConnectedGuestSides,
   getClerks,
@@ -115,6 +117,17 @@ function App() {
       });
     }
 
+    //for guest
+    socket.on("transaction_pending", async (data) => {
+      console.log("transaction notification");
+      setModal("transaction_pending");
+    });
+    socket.on("transaction_success", async (data) => {
+      console.log("transaction notification");
+      setModal("transaction_success");
+    });
+
+    //for clerk
     socket.on("transaction_created", async (data) => {
       console.log("transaction notification");
       setModal("new_transaction");
@@ -136,7 +149,7 @@ function App() {
         } else {
           setDeviceType("guestDevice");
         }
-        if (data.data.user.roleId == 1) {
+        if (data.data.user.roleId == 1 && user.userId == shop.ownerId) {
           // shopClerks is can only be obtained by the shop owner
           // so every user that is admin will try to getting shopClerks, even not yet proven that this is their shop
           const shopClerks = await getClerks(shopId);
@@ -209,7 +222,9 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Dashboard user={user} setModal={setModal} />}
+            element={
+              <Dashboard user={user} socket={socket} setModal={setModal} />
+            }
           />
           <Route path="/login" element={<LoginPage />} />
           <Route
@@ -219,6 +234,7 @@ function App() {
                 <CafePage
                   sendParam={handleSetParam}
                   shopName={shop.name}
+                  shopOwnerId={shop.ownerId}
                   shopItems={shopItems}
                   shopClerks={shopClerks}
                   socket={socket}
@@ -241,7 +257,8 @@ function App() {
             path="/:shopId/:tableId?/search"
             element={
               <>
-                <SearchResult
+                <MaterialList
+                  cafeId={shopId}
                   sendParam={handleSetParam}
                   user={user}
                   shopItems={shopItems}
@@ -281,7 +298,11 @@ function App() {
             path="/:shopId/:tableId?/invoice"
             element={
               <>
-                <Invoice sendParam={handleSetParam} deviceType={deviceType} />
+                <Invoice
+                  sendParam={handleSetParam}
+                  socket={socket}
+                  deviceType={deviceType}
+                />
                 <Footer
                   shopId={shopId}
                   tableId={tableId}

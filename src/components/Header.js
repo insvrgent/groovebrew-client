@@ -213,6 +213,7 @@ const Header = ({
   HeaderText,
   shopId,
   shopName,
+  shopOwnerId,
   shopClerks,
   tableId,
   showProfile,
@@ -305,21 +306,56 @@ const Header = ({
               {user.username !== undefined && (
                 <Child onClick={() => setModal("edit_account")}>Edit</Child>
               )}
-              {shopId && user.username !== undefined && user.roleId === 1 && (
-                <>
-                  <Child onClick={goToAdminCafes}>see your other cafes</Child>
-                  <Child onClick={() => setModal("edit_tables")}>
-                    {shopName} table maps
-                  </Child>
-                  <Child hasChildren>
-                    {shopName} clerks
-                    <Child onClick={() => setModal("craete_account_clerk")}>
-                      + Add clerk
+              {shopId &&
+                user.userId == shopOwnerId &&
+                user.username !== undefined &&
+                user.roleId === 1 && (
+                  <>
+                    <Child onClick={goToAdminCafes}>see your other cafes</Child>
+                    <Child onClick={() => setModal("edit_tables")}>
+                      {shopName} table maps
                     </Child>
-                    {shopClerks &&
-                      shopClerks.map((key, index) => (
+                    <Child hasChildren>
+                      {shopName} clerks
+                      <Child onClick={() => setModal("craete_account_clerk")}>
+                        + Add clerk
+                      </Child>
+                      {shopClerks &&
+                        shopClerks.map((key, index) => (
+                          <Child key={index}>
+                            {shopClerks[index].username}
+                            <button
+                              onClick={() =>
+                                removeConnectedGuestSides(guestSides[index][3])
+                              }
+                            >
+                              remove
+                            </button>
+                          </Child>
+                        ))}
+                    </Child>
+                    <Child onClick={() => setModal("add_material")}>
+                      add material
+                    </Child>
+                  </>
+                )}
+              {user.username !== undefined &&
+                ((user.userId == shopOwnerId && user.roleId === 1) ||
+                  (user.cafeId == shopId && user.roleId === 2)) && (
+                  <Child onClick={() => setModal("update_stock")}>
+                    update stock
+                  </Child>
+                )}
+              {user.username !== undefined &&
+                user.roleId == 2 &&
+                user.cafeId == shopId && (
+                  <Child hasChildren>
+                    connected guest sides
+                    <Child onClick={goToGuestSideLogin}>+ Add guest side</Child>
+                    {guestSides &&
+                      guestSides.map((key, index) => (
                         <Child key={index}>
-                          {shopClerks[index].username}
+                          guest side {index + 1}
                           <button
                             onClick={() =>
                               removeConnectedGuestSides(guestSides[index][3])
@@ -330,33 +366,7 @@ const Header = ({
                         </Child>
                       ))}
                   </Child>
-                </>
-              )}
-              {user.username !== undefined &&
-                (user.roleId === 1 || user.roleId === 2) && (
-                  <Child onClick={() => setModal("update_stock")}>
-                    update stock
-                  </Child>
                 )}
-              {user.username !== undefined && user.roleId === 2 && (
-                <Child hasChildren>
-                  connected guest sides
-                  <Child onClick={goToGuestSideLogin}>+ Add guest side</Child>
-                  {guestSides &&
-                    guestSides.map((key, index) => (
-                      <Child key={index}>
-                        guest side {index + 1}
-                        <button
-                          onClick={() =>
-                            removeConnectedGuestSides(guestSides[index][3])
-                          }
-                        >
-                          remove
-                        </button>
-                      </Child>
-                    ))}
-                </Child>
-              )}
               {user.username !== undefined && (
                 <Child onClick={isLogout}>Logout</Child>
               )}

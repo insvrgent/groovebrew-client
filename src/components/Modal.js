@@ -3,6 +3,10 @@ import styles from "./Modal.module.css";
 import TablesPage from "./TablesPage.js";
 import TableMaps from "../components/TableMaps";
 import Transactions from "../pages/Transactions";
+import Transaction_pending from "../pages/Transaction_pending";
+import Transaction_success from "../pages/Transaction_success";
+import MaterialList from "../pages/MaterialList.js";
+import MaterialMutationsPage from "../pages/MaterialMutationsPage.js";
 
 const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
   if (!isOpen) return null;
@@ -28,6 +32,12 @@ const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
         {modalContent === "edit_tables" && <TablesPage shopId={shopId} />}
         {modalContent === "new_transaction" && (
           <Transactions propsShopId={shopId} />
+        )}{" "}
+        {modalContent === "transaction_pending" && <Transaction_pending />}
+        {modalContent === "transaction_success" && <Transaction_success />}
+        {modalContent === "add_material" && <MaterialList cafeId={shopId} />}
+        {modalContent === "update_stock" && (
+          <MaterialMutationsPage cafeId={shopId} />
         )}
       </div>
     </div>

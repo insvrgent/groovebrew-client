@@ -175,9 +175,18 @@ const TablesPage = ({ shopId }) => {
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      style={{
+        overflowX: "hidden", // Correct property name for horizontal overflow
+        backgroundColor: "#e9e9e9", // Remove duplicate property
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        fontSize: "calc(10px + 2vmin)",
+        color: "rgba(88, 55, 50, 1)",
+      }}
     >
       <TableCanvas
+        isAdmin={true}
         tables={tables}
         selectedTable={selectedTable}
         newTable={newTable}

@@ -11,7 +11,7 @@ import {
   handlePaymentFromGuestDevice,
 } from "../helpers/transactionHelpers";
 
-export default function Invoice({ sendParam, deviceType }) {
+export default function Invoice({ sendParam, deviceType, socket }) {
   const { shopId, tableId } = useParams();
   sendParam({ shopId, tableId });
 
@@ -71,11 +71,13 @@ export default function Invoice({ sendParam, deviceType }) {
         tableNumber
       );
     } else if (deviceType == "guestDevice") {
+      const socketId = socket.id;
       const pay = await handlePaymentFromGuestDevice(
         shopId,
         isCash ? "cash" : "cashless",
         orderType,
-        tableNumber
+        tableNumber,
+        socketId
       );
     }
 

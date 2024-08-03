@@ -17,6 +17,7 @@ const ItemLister = ({
   itemTypeId,
   refreshTotal,
   shopId,
+  shopOwnerId,
   user,
   typeName,
   itemList,
@@ -27,7 +28,7 @@ const ItemLister = ({
     itemList.map((item) => ({
       ...item,
       qty: getItemQtyFromCart(shopId, item.itemId),
-    })),
+    }))
   );
   const [isEdit, setIsEditing] = useState(false);
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
@@ -111,17 +112,22 @@ const ItemLister = ({
 
   return (
     <>
-      {(items.length > 0 || (user && user.roleId == 1)) && (
+      {(items.length > 0 ||
+        (user && user.roleId == 1 && user.userId == shopOwnerId)) && (
         <div className={styles["item-lister"]}>
           <div className={styles["title-container"]}>
             <input
               ref={typeNameInputRef}
-              className={`${styles.title} ${user && user.roleId == 1 && isEdit ? styles.border : styles.noborder}`}
+              className={`${styles.title} ${
+                user && user.roleId == 1 && user.userId == shopOwnerId && isEdit
+                  ? styles.border
+                  : styles.noborder
+              }`}
               value={editedTypeName}
               onChange={(e) => setEditedTypeName(e.target.value)}
               disabled={!isEdit}
             />
-            {user && user.roleId == 1 && (
+            {user && user.roleId == 1 && user.userId == shopOwnerId && (
               <>
                 <button
                   className={styles["edit-typeItem-button"]}
@@ -141,31 +147,34 @@ const ItemLister = ({
             )}
           </div>
           <div className={styles["item-list"]}>
-            {user && user.roleId == 1 && isEdit && (
-              <>
-                <button
-                  className={styles["add-item-button"]}
-                  onClick={toggleAddNewItem}
-                >
-                  {isAddingNewItem ? "Cancel" : "Add new Item"}
-                </button>
-                {isAddingNewItem && (
-                  <Item
-                    blank={true}
-                    handleCreateItem={(name, price, qty, selectedImage) =>
-                      createItem(
-                        shopId,
-                        name,
-                        price,
-                        qty,
-                        selectedImage,
-                        itemTypeId,
-                      )
-                    }
-                  />
-                )}
-              </>
-            )}
+            {user &&
+              user.roleId == 1 &&
+              user.userId == shopOwnerId &&
+              isEdit && (
+                <>
+                  <button
+                    className={styles["add-item-button"]}
+                    onClick={toggleAddNewItem}
+                  >
+                    {isAddingNewItem ? "Cancel" : "Add new Item"}
+                  </button>
+                  {isAddingNewItem && (
+                    <Item
+                      blank={true}
+                      handleCreateItem={(name, price, qty, selectedImage) =>
+                        createItem(
+                          shopId,
+                          name,
+                          price,
+                          qty,
+                          selectedImage,
+                          itemTypeId
+                        )
+                      }
+                    />
+                  )}
+                </>
+              )}
             {items.map((item) => {
               return !forCart || (forCart && item.qty > 0) ? (
                 <Item
@@ -183,16 +192,19 @@ const ItemLister = ({
               ) : null;
             })}
 
-            {user && user.roleId == 1 && isEdit && (
-              <>
-                <button
-                  className={styles["add-item-button"]}
-                  onClick={handleRemoveType}
-                >
-                  Remove
-                </button>
-              </>
-            )}
+            {user &&
+              user.roleId == 1 &&
+              user.userId == shopOwnerId &&
+              isEdit && (
+                <>
+                  <button
+                    className={styles["add-item-button"]}
+                    onClick={handleRemoveType}
+                  >
+                    Remove
+                  </button>
+                </>
+              )}
           </div>
         </div>
       )}

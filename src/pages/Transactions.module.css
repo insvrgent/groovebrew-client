@@ -31,46 +31,22 @@
   margin-top: 17px;
 }
 
-.PaymentOption {
-  overflow-x: hidden;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: rgba(88, 55, 50, 1);
-  border-radius: 15px 15px 0 0;
-
-  position: fixed;
-  bottom: 75px;
-  right: 0;
-  left: 0;
-}
-
-.PaymentOptionMargin {
-  z-index: -1;
-  overflow-x: hidden;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: rgba(88, 55, 50, 1);
-
-  position: relative;
-  height: 229.39px;
+.TransactionListContainer {
+  overflow-y: auto; /* Enables vertical scrolling */
+  max-height: 600px; /* Adjust based on your design */
 }
 
 .TotalContainer {
   display: flex;
   justify-content: space-between;
-  width: 80vw;
+  width: 100%; /* Ensures it takes up full width */
   margin: 0 auto;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
   font-style: normal;
   font-size: 1.5em;
-  padding: 10px 0;
+  padding: 10px;
+  box-sizing: border-box; /* Includes padding in width */
   margin-bottom: 17px;
 }
 
@@ -78,43 +54,22 @@
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-style: normal;
-  font-size: 32px;
-
-  width: 80vw;
-  height: 18vw;
+  font-size: 24px; /* Adjusted for better readability */
+  padding: 12px 24px; /* Added padding for a better look */
   border-radius: 50px;
   background-color: rgba(88, 55, 50, 1);
   color: white;
   border: none;
-  margin: 0px auto;
-  cursor: pointer;
-  margin-bottom: 23px;
-}
-
-.Pay2Button {
-  text-align: center;
-  color: rgba(88, 55, 50, 1);
-  font-size: 1em;
-  margin-bottom: 25px;
-  cursor: pointer;
-}
-
-.Confirm {
-  display: flex;
-  justify-content: space-between;
-  width: 80vw;
   margin: 0 auto;
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-  font-size: 1.5em;
-  padding: 10px 0;
-  margin-bottom: 17px;
+  cursor: pointer;
+  display: block; /* Centering the button */
+  margin-bottom: 23px;
+  text-align: center;
 }
 
 .RoundedRectangle {
   border-radius: 20px;
-  padding-top: 5px;
+  padding: 15px; /* Adjusted for better spacing */
   margin: 26px;
   background-color: #f9f9f9;
 }
