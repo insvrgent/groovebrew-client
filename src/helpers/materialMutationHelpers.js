@@ -63,3 +63,19 @@ export const getMaterialMutationById = async (mutationId) => {
     throw error;
   }
 };
+
+// Get all material mutations by materialId
+export const getMaterialMutationsByMaterialId = async (materialId) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/mutation/get-material-mutations-by-material/${materialId}`,
+      getHeaders()
+    );
+    if (!response.ok)
+      throw new Error("Failed to retrieve material mutations by material ID.");
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

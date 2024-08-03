@@ -25,7 +25,21 @@ export const useNavigationHelpers = (shopId, tableId) => {
     // Perform the navigation
     navigate(url);
   };
+  const goToScan = () => {
+    // Construct the base URL for the shop
+    let url = `/scan`;
 
+    // Perform the navigation
+    navigate(url);
+  };
+
+  const goToNonTable = () => {
+    // Construct the base URL for the shop
+    let url = `/${shopId}`;
+
+    // Perform the navigation
+    navigate(url);
+  };
   const goToShop = () => {
     // Construct the base URL for the shop
     let url = `/${shopId}`;
@@ -103,5 +117,7 @@ export const useNavigationHelpers = (shopId, tableId) => {
     goToTransactions,
     goToGuestSideLogin,
     goToAdminCafes,
+    goToScan,
+    goToNonTable,
   };
 };

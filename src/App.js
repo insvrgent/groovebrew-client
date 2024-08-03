@@ -11,6 +11,7 @@ import {
 import socket from "./services/socketService";
 
 import Dashboard from "./pages/Dashboard";
+import ScanMeja from "./pages/ScanMeja";
 import LoginPage from "./pages/LoginPage";
 import CafePage from "./pages/CafePage";
 import SearchResult from "./pages/SearchResult";
@@ -22,8 +23,6 @@ import Footer from "./components/Footer";
 import GuestSideLogin from "./pages/GuestSideLogin";
 import GuestSide from "./pages/GuestSide";
 import { getItemTypesWithItems } from "./helpers/itemHelper.js";
-
-import MaterialList from "./pages/MaterialList";
 
 import {
   getConnectedGuestSides,
@@ -228,6 +227,26 @@ function App() {
           />
           <Route path="/login" element={<LoginPage />} />
           <Route
+            path="/scan"
+            element={
+              <>
+                <ScanMeja
+                  sendParam={handleSetParam}
+                  shopName={shop.name}
+                  shopOwnerId={shop.ownerId}
+                  shopItems={shopItems}
+                  shopClerks={shopClerks}
+                  socket={socket}
+                  user={user}
+                  guestSides={guestSides}
+                  guestSideOfClerk={guestSideOfClerk}
+                  removeConnectedGuestSides={rmConnectedGuestSides}
+                  setModal={setModal} // Pass the function to open modal
+                />
+              </>
+            }
+          />
+          <Route
             path="/:shopId/:tableId?"
             element={
               <>
@@ -257,7 +276,7 @@ function App() {
             path="/:shopId/:tableId?/search"
             element={
               <>
-                <MaterialList
+                <SearchResult
                   cafeId={shopId}
                   sendParam={handleSetParam}
                   user={user}

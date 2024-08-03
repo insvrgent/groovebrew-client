@@ -4,7 +4,7 @@ import {
   getMaterials,
   createMaterial,
   deleteMaterial,
-} from "../helpers/materialHelpers"; // Update import
+} from "../helpers/materialHelpers";
 
 const MaterialList = ({ cafeId }) => {
   const [materials, setMaterials] = useState([]);
@@ -14,7 +14,7 @@ const MaterialList = ({ cafeId }) => {
   const [deleting, setDeleting] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showForm, setShowForm] = useState(false); // For form visibility
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -22,7 +22,7 @@ const MaterialList = ({ cafeId }) => {
       try {
         const data = await getMaterials(cafeId);
         setMaterials(data);
-        setError(null); // Clear any previous error
+        setError(null);
       } catch (error) {
         console.error("Error fetching materials:", error);
         setError("Failed to fetch materials.");
@@ -41,6 +41,7 @@ const MaterialList = ({ cafeId }) => {
     const formData = new FormData();
     formData.append("name", newMaterialName);
     formData.append("unit", newMaterialUnit);
+    console.log(newMaterialImage);
     if (newMaterialImage) {
       formData.append("image", newMaterialImage);
     }
@@ -50,10 +51,10 @@ const MaterialList = ({ cafeId }) => {
       setNewMaterialName("");
       setNewMaterialUnit("kilogram");
       setNewMaterialImage(null);
-      setShowForm(false); // Hide the form after successful creation
+      setShowForm(false);
       const data = await getMaterials(cafeId);
       setMaterials(data);
-      setError(null); // Clear any previous error
+      setError(null);
     } catch (error) {
       console.error("Error creating material:", error);
       setError("Failed to create material.");
@@ -69,7 +70,7 @@ const MaterialList = ({ cafeId }) => {
       setMaterials(
         materials.filter((material) => material.materialId !== materialId)
       );
-      setError(null); // Clear any previous error
+      setError(null);
     } catch (error) {
       console.error("Error deleting material:", error);
       setError("Failed to delete material.");
@@ -80,7 +81,7 @@ const MaterialList = ({ cafeId }) => {
 
   return (
     <div style={styles.container}>
-      <h2>Materials List</h2>
+      <h1 style={styles.heading}>Materials List</h1>
 
       {/* Display error message if any */}
       {error && <p style={styles.error}>{error}</p>}
@@ -126,9 +127,13 @@ const MaterialList = ({ cafeId }) => {
               onChange={(e) => setNewMaterialUnit(e.target.value)}
               style={styles.input}
             >
+              <option value="gram">Gram</option>
+              <option value="ons">Ons</option>
               <option value="kilogram">Kilogram</option>
+              <option value="kuintal">Kuintal</option>
               <option value="liter">Liter</option>
               <option value="piece">Piece</option>
+              <option value="meter">Meter</option>
             </select>
           </div>
           <div style={styles.formGroup}>
@@ -142,7 +147,7 @@ const MaterialList = ({ cafeId }) => {
               style={styles.input}
             />
           </div>
-          <button type="submit" style={styles.button} disabled={loading}>
+          <button type="submit" style={styles.submitButton} disabled={loading}>
             {loading ? "Creating..." : "Create Material"}
           </button>
         </form>
@@ -152,17 +157,20 @@ const MaterialList = ({ cafeId }) => {
       {loading ? (
         <p>Loading materials...</p>
       ) : (
-        <ul style={styles.list}>
+        <div style={styles.materialList}>
           {materials.map((material) => (
-            <li key={material.materialId} style={styles.listItem}>
-              {material.name} - {material.unit}
+            <div key={material.materialId} style={styles.materialCard}>
               {material.image && (
                 <img
-                  src={`${API_BASE_URL}/uploads/${material.image}`}
+                  src={`${API_BASE_URL}/${material.image}`}
                   alt={material.name}
                   style={styles.image}
                 />
               )}
+              <div style={styles.cardContent}>
+                <h3 style={styles.cardTitle}>{material.name}</h3>
+                <p>{material.unit}</p>
+              </div>
               <button
                 onClick={() => handleDeleteMaterial(material.materialId)}
                 disabled={deleting === material.materialId || loading}
@@ -170,9 +178,9 @@ const MaterialList = ({ cafeId }) => {
               >
                 {deleting === material.materialId ? "Deleting..." : "Delete"}
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
@@ -182,22 +190,24 @@ const MaterialList = ({ cafeId }) => {
 const styles = {
   container: {
     padding: "20px",
-    maxWidth: "600px",
+    maxWidth: "800px",
     margin: "0 auto",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+  },
+  heading: {
+    textAlign: "center",
   },
   toggleButton: {
-    marginBottom: "20px",
-    padding: "10px 15px",
+    display: "block",
+    width: "100%",
+    padding: "10px",
+    borderRadius: "5px",
     border: "none",
-    borderRadius: "4px",
     backgroundColor: "#007bff",
-    color: "#fff",
-    cursor: "pointer",
+    color: "white",
     fontSize: "16px",
-    transition: "background-color 0.3s",
+    cursor: "pointer",
+    marginBottom: "20px",
+    transition: "background-color 0.3s ease",
   },
   formContainer: {
     transition: "height 0.5s ease-in-out",
@@ -207,56 +217,77 @@ const styles = {
     marginBottom: "20px",
   },
   formGroup: {
-    marginBottom: "10px",
+    marginBottom: "15px",
   },
   label: {
     display: "block",
     marginBottom: "5px",
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   input: {
     width: "100%",
-    padding: "8px",
+    padding: "10px",
     border: "1px solid #ddd",
-    borderRadius: "4px",
+    borderRadius: "8px",
     boxSizing: "border-box",
   },
-  button: {
-    padding: "10px 15px",
+  submitButton: {
+    padding: "12px 20px",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
     backgroundColor: "#28a745",
     color: "#fff",
     cursor: "pointer",
     fontSize: "16px",
+    transition: "background-color 0.3s, transform 0.3s",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   },
   deleteButton: {
     marginLeft: "10px",
-    padding: "5px 10px",
+    padding: "8px 15px",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "8px",
     backgroundColor: "#dc3545",
     color: "#fff",
     cursor: "pointer",
     fontSize: "14px",
+    transition: "background-color 0.3s, transform 0.3s",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   },
-  list: {
-    listStyleType: "none",
-    padding: "0",
-    margin: "0",
-  },
-  listItem: {
-    padding: "10px",
-    borderBottom: "1px solid #ddd",
+  materialList: {
     display: "flex",
+    flexWrap: "wrap",
+    gap: "15px",
+    justifyContent: "center",
+    maxHeight: "500px", // Adjust the height as needed
+    overflowY: "auto", // Makes the container scrollable vertically
+  },
+  materialCard: {
+    flex: "1 1 200px",
+    padding: "15px",
+    borderRadius: "8px",
+    border: "1px solid #ddd",
+    backgroundColor: "#fff",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    display: "flex",
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "space-between",
+    textAlign: "center",
+  },
+  cardContent: {
+    marginBottom: "10px",
+  },
+  cardTitle: {
+    fontSize: "18px",
+    fontWeight: "600",
+    marginBottom: "5px",
   },
   image: {
-    marginLeft: "10px",
-    height: "50px",
-    width: "50px",
+    width: "80px",
+    height: "80px",
     objectFit: "cover",
+    borderRadius: "8px",
+    marginBottom: "10px",
   },
   error: {
     color: "#dc3545",
