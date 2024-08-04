@@ -26,9 +26,7 @@ const Searchinput = styled.input`
   outline: none;
   background-color: white;
   border: 1px solid #ccc;
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 
   &:focus {
     background-color: lightgray;
@@ -44,7 +42,12 @@ const SearchIcon = styled.svg`
   pointer-events: none;
 `;
 
-export default function SearchInput({ shopId, autofocus, onSearchChange }) {
+export default function SearchInput({
+  shopId,
+  tableId,
+  autofocus,
+  onSearchChange,
+}) {
   const [songName, setSongName] = useState("");
   const [debouncedSongName, setDebouncedSongName] = useState("");
   const navigate = useNavigate();
@@ -68,14 +71,18 @@ export default function SearchInput({ shopId, autofocus, onSearchChange }) {
   useEffect(() => {
     if (siteLoaded) {
       //Start the timer
-      if (autofocus)
-        navigate(`/${shopId}/search?query=${encodeURIComponent(songName)}`);
-      else if (songName != "")
-        navigate(`/${shopId}/search?query=${encodeURIComponent(songName)}`);
+      let url = "";
+      if (autofocus || songName != "") {
+        url = tableId
+          ? `/${shopId}/${tableId}/search?query=${encodeURIComponent(songName)}`
+          : `/${shopId}/search?query=${encodeURIComponent(songName)}`;
+        navigate(url);
+      }
 
       if (autofocus) {
         if (songName == "") {
-          navigate(`/${shopId}`);
+          if (tableId) navigate(`/${shopId}/${tableId}`);
+          else navigate(`/${shopId}`);
         }
       }
       if (onSearchChange) onSearchChange(songName);

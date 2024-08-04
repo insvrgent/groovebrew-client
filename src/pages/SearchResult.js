@@ -16,7 +16,7 @@ function SearchResult({ user, shopItems, sendParam }) {
   sendParam({ shopId, tableId });
 
   const [searchValue, setSearchValue] = useState(
-    "dwadawa vvwqd21qb13 4kfawfdwa dhawldhawr dliawbdjawndlks",
+    "dwadawa vvwqd21qb13 4kfawfdwa dhawldhawr dliawbdjawndlks"
   );
 
   // Function to handle search input change
@@ -28,7 +28,7 @@ function SearchResult({ user, shopItems, sendParam }) {
     .map((itemType) => {
       // Filter items in the itemList based on searchValue
       const filteredItemList = itemType.itemList.filter((item) =>
-        item.name.toLowerCase().includes(searchValue.toLowerCase()),
+        item.name.toLowerCase().includes(searchValue.toLowerCase())
       );
 
       // Return itemType with only filtered items
@@ -47,6 +47,7 @@ function SearchResult({ user, shopItems, sendParam }) {
         <div style={{ marginTop: "5px" }}></div>
         <SearchInput
           shopId={shopId}
+          tableId={tableId}
           autofocus={true}
           onSearchChange={handleSearchChange}
         />

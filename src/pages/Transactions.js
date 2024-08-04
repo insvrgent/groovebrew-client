@@ -73,58 +73,59 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
       <div style={{ marginTop: "30px" }}></div>
       <TableCanvas tables={tables} selectedTable={selectedTable} />
       <div className={styles.TransactionListContainer}>
-        {transactions.map((transaction) => (
-          <div
-            key={transaction.transactionId}
-            className={styles.RoundedRectangle}
-            onClick={() =>
-              setSelectedTable(transaction.Table || { tableId: 0 })
-            }
-          >
-            <h2 className={styles["Transactions-detail"]}>
-              Transaction ID: {transaction.transactionId}
-            </h2>
-            <h2 className={styles["Transactions-detail"]}>
-              Payment Type: {transaction.payment_type}
-            </h2>
-            <ul>
-              {transaction.DetailedTransactions.map((detail) => (
-                <li key={detail.detailedTransactionId}>
-                  <span>{detail.Item.name}</span> - {detail.qty} x Rp{" "}
-                  {detail.Item.price}
-                </li>
-              ))}
-            </ul>
-            <h2 className={styles["Transactions-detail"]}>
-              {transaction.serving_type === "pickup"
-                ? "Diambil di kasir"
-                : `Diantar ke meja nomor ${
-                    transaction.Table ? transaction.Table.tableNo : "N/A"
-                  }`}
-            </h2>
-            <div className={styles.TotalContainer}>
-              <span>Total:</span>
-              <span>
-                Rp {calculateTotalPrice(transaction.DetailedTransactions)}
-              </span>
+        {transactions &&
+          transactions.map((transaction) => (
+            <div
+              key={transaction.transactionId}
+              className={styles.RoundedRectangle}
+              onClick={() =>
+                setSelectedTable(transaction.Table || { tableId: 0 })
+              }
+            >
+              <h2 className={styles["Transactions-detail"]}>
+                Transaction ID: {transaction.transactionId}
+              </h2>
+              <h2 className={styles["Transactions-detail"]}>
+                Payment Type: {transaction.payment_type}
+              </h2>
+              <ul>
+                {transaction.DetailedTransactions.map((detail) => (
+                  <li key={detail.detailedTransactionId}>
+                    <span>{detail.Item.name}</span> - {detail.qty} x Rp{" "}
+                    {detail.Item.price}
+                  </li>
+                ))}
+              </ul>
+              <h2 className={styles["Transactions-detail"]}>
+                {transaction.serving_type === "pickup"
+                  ? "Diambil di kasir"
+                  : `Diantar ke meja nomor ${
+                      transaction.Table ? transaction.Table.tableNo : "N/A"
+                    }`}
+              </h2>
+              <div className={styles.TotalContainer}>
+                <span>Total:</span>
+                <span>
+                  Rp {calculateTotalPrice(transaction.DetailedTransactions)}
+                </span>
+              </div>
+              <div className={styles.TotalContainer}>
+                <button
+                  className={styles.PayButton}
+                  onClick={() => handleConfirm(transaction.transactionId)}
+                  disabled={transaction.confirmed || isPaymentLoading} // Disable button if confirmed or loading
+                >
+                  {isPaymentLoading ? (
+                    <ColorRing height="50" width="50" color="white" />
+                  ) : transaction.confirmed ? (
+                    "Confirmed" // Display "Confirmed" if the transaction is confirmed
+                  ) : (
+                    "Confirm" // Display "Confirm" otherwise
+                  )}
+                </button>
+              </div>
             </div>
-            <div className={styles.TotalContainer}>
-              <button
-                className={styles.PayButton}
-                onClick={() => handleConfirm(transaction.transactionId)}
-                disabled={transaction.confirmed || isPaymentLoading} // Disable button if confirmed or loading
-              >
-                {isPaymentLoading ? (
-                  <ColorRing height="50" width="50" color="white" />
-                ) : transaction.confirmed ? (
-                  "Confirmed" // Display "Confirmed" if the transaction is confirmed
-                ) : (
-                  "Confirm" // Display "Confirm" otherwise
-                )}
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

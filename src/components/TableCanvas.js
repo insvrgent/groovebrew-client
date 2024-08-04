@@ -35,6 +35,7 @@ const TableCanvas = ({
 
   useEffect(() => {
     if (
+      !tables ||
       tables.length === 0 ||
       canvasSize.width === 0 ||
       canvasSize.height === 0

@@ -26,8 +26,17 @@ export const useNavigationHelpers = (shopId, tableId) => {
     navigate(url);
   };
   const goToScan = () => {
-    // Construct the base URL for the shop
-    let url = `/scan`;
+    // Construct the base URL
+    let url = "/scan";
+
+    // Append query parameters conditionally
+    const queryParams = new URLSearchParams();
+    if (shopId) queryParams.append("next", shopId);
+
+    // Set the URL with query parameters
+    if (queryParams.toString()) {
+      url += `?${queryParams.toString()}`;
+    }
 
     // Perform the navigation
     navigate(url);

@@ -365,26 +365,27 @@ const TableCanvas = ({ shopId }) => {
           }}
         >
           <ul style={{ listStyleType: "none", padding: 0, margin: 0 }}>
-            {tables.map((table) => (
-              <li
-                key={table.tableId}
-                style={{
-                  backgroundColor: "white",
-                  marginBottom: "10px",
-                  padding: "10px",
-                  borderRadius: "4px",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                }}
-                onClick={() => handleSelect(table)}
-              >
-                {
-                  table.tableNo === 0
-                    ? "Clerk" // Display "Clerk" if tableNo is 0
-                    : `Table ${table.tableNo}` // Display "Table {tableNo}" otherwise
-                }{" "}
-                - Position: ({table.xposition}, {table.yposition})
-              </li>
-            ))}
+            {tables &&
+              tables.map((table) => (
+                <li
+                  key={table.tableId}
+                  style={{
+                    backgroundColor: "white",
+                    marginBottom: "10px",
+                    padding: "10px",
+                    borderRadius: "4px",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  }}
+                  onClick={() => handleSelect(table)}
+                >
+                  {
+                    table.tableNo === 0
+                      ? "Clerk" // Display "Clerk" if tableNo is 0
+                      : `Table ${table.tableNo}` // Display "Table {tableNo}" otherwise
+                  }{" "}
+                  - Position: ({table.xposition}, {table.yposition})
+                </li>
+              ))}
           </ul>
         </div>
       </div>

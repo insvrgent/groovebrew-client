@@ -28,6 +28,12 @@ export default function Footer({
     }
   };
 
+  const handleHapusMeja = (event) => {
+    event.stopPropagation(); // Ensure click event doesn't propagate
+    goToNonTable();
+    setIsStretched(false);
+  };
+
   const handleClickOutside = (event) => {
     if (scanMejaRef.current && !scanMejaRef.current.contains(event.target)) {
       setIsStretched(false);
@@ -111,7 +117,7 @@ export default function Footer({
             />
           )}
           {tableId && isStretched && (
-            <button onClick={goToNonTable} className={styles.hapusMejaBtn}>
+            <button onClick={handleHapusMeja} className={styles.hapusMejaBtn}>
               Hapus Meja
             </button>
           )}
