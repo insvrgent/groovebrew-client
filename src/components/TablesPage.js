@@ -110,6 +110,7 @@ const TablesPage = ({ shopId }) => {
   };
 
   const handleSelect = (table) => {
+    console.log(table);
     setSelectedTable(null);
     setSelectedTable(table);
     setNewTable(null);
