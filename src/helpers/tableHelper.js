@@ -102,3 +102,26 @@ export async function getTable(shopId, tableNo) {
     console.error("Error:", error);
   }
 }
+
+export async function getTableByCode(tableCode) {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/table/get-table-by-code/${tableCode}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const table = await response.json();
+    return table;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}

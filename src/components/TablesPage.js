@@ -201,6 +201,7 @@ const TablesPage = ({ shopId }) => {
         tableNo={tableNo}
       />
       <TableList
+        shopUrl={window.location.hostname + "/" + shopId}
         tables={tables}
         onSelectTable={handleSelect}
         selectedTable={selectedTable}

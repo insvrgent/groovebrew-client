@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import QRCodeWithBackground from "./QR"; // Adjust path as needed
 
-const TableList = ({ tables, onSelectTable, selectedTable }) => {
+const TableList = ({ shopUrl, tables, onSelectTable, selectedTable }) => {
   const [initialPos, setInitialPos] = useState({ left: 50, top: 50 });
   const [initialSize, setInitialSize] = useState(20);
   const [bgImageUrl, setBgImageUrl] = useState(
@@ -10,7 +10,7 @@ const TableList = ({ tables, onSelectTable, selectedTable }) => {
 
   const generateQRCodeUrl = (tableCode) =>
     `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-      tableCode
+      shopUrl + "/" + tableCode
     )}`;
 
   const handleBackgroundUrlChange = (newUrl) => {
@@ -77,16 +77,20 @@ const TableList = ({ tables, onSelectTable, selectedTable }) => {
               {table.tableNo === 0 ? "Clerk" : `Table ${table.tableNo}`} -
               Position: ({table.xposition}, {table.yposition})
             </div>
-            {table.tableId == selectedTable?.tableId && (
-              <QRCodeWithBackground
-                setInitialPos={setInitialPos}
-                setInitialSize={setInitialSize}
-                qrCodeUrl={generateQRCodeUrl(table.tableCode)}
-                backgroundUrl={bgImageUrl}
-                initialQrPosition={initialPos}
-                initialQrSize={initialSize}
-                onBackgroundUrlChange={handleBackgroundUrlChange}
-              />
+            {table.tableNo != 0 && table.tableId == selectedTable?.tableId && (
+              <>
+                <QRCodeWithBackground
+                  tableNo={table.tableNo}
+                  setInitialPos={setInitialPos}
+                  setInitialSize={setInitialSize}
+                  qrCodeUrl={generateQRCodeUrl(table.tableCode)}
+                  backgroundUrl={bgImageUrl}
+                  initialQrPosition={initialPos}
+                  initialQrSize={initialSize}
+                  onBackgroundUrlChange={handleBackgroundUrlChange}
+                />
+                <h2>{shopUrl + "/" + table.tableCode}</h2>
+              </>
             )}
           </li>
         ))}
