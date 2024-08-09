@@ -1,3 +1,4 @@
+
 // src/CafePage.js
 import React, { useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
@@ -11,9 +12,9 @@ import { updateLocalStorage } from "../helpers/localStorageHelpers";
 
 function SearchResult({ user, shopItems, sendParam }) {
   const [searchParams] = useSearchParams();
-  const { shopId, tableId } = useParams();
+  const { shopId, tableCode } = useParams();
   const navigate = useNavigate();
-  sendParam({ shopId, tableId });
+  sendParam({ shopId, tableCode });
 
   const [searchValue, setSearchValue] = useState(
     "dwadawa vvwqd21qb13 4kfawfdwa dhawldhawr dliawbdjawndlks"
@@ -47,7 +48,7 @@ function SearchResult({ user, shopItems, sendParam }) {
         <div style={{ marginTop: "5px" }}></div>
         <SearchInput
           shopId={shopId}
-          tableId={tableId}
+          tableCode={tableCode}
           autofocus={true}
           onSearchChange={handleSearchChange}
         />

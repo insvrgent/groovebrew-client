@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import QRCodeWithBackground from "./QR"; // Adjust path as needed
 
 const TableList = ({ shopUrl, tables, onSelectTable, selectedTable }) => {
@@ -17,12 +17,17 @@ const TableList = ({ shopUrl, tables, onSelectTable, selectedTable }) => {
     setBgImageUrl(newUrl);
   };
 
+  const handleQrSave = (qrPosition, qrSize, bgImage) => {
+    setInitialPos(qrPosition);
+    setInitialSize(qrSize);
+    setBgImageUrl(bgImage);
+  };
+
   return (
     <div
       style={{
         width: "100%",
         marginTop: "20px",
-        maxHeight: "400px",
         overflowY: "auto",
       }}
     >
@@ -47,53 +52,51 @@ const TableList = ({ shopUrl, tables, onSelectTable, selectedTable }) => {
           {-1 == selectedTable?.tableId && (
             <QRCodeWithBackground
               isConfigure={true}
+              handleQrSave={handleQrSave}
               setInitialPos={setInitialPos}
               setInitialSize={setInitialSize}
               qrCodeUrl={generateQRCodeUrl("sample")}
               backgroundUrl={bgImageUrl}
               initialQrPosition={initialPos}
               initialQrSize={initialSize}
-              onBackgroundUrlChange={handleBackgroundUrlChange}
             />
           )}
         </li>
-        {tables.map((table) => (
-          <li
-            key={table.tableId}
-            style={{
-              backgroundColor:
-                table.tableId === selectedTable?.tableId
-                  ? "lightblue"
-                  : "white",
-              marginBottom: "10px",
-              padding: "10px",
-              borderRadius: "4px",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              cursor: "pointer",
-            }}
-            onClick={() => onSelectTable(table)}
-          >
-            <div style={{ marginBottom: "10px" }}>
-              {table.tableNo === 0 ? "Clerk" : `Table ${table.tableNo}`} -
-              Position: ({table.xposition}, {table.yposition})
-            </div>
-            {table.tableNo != 0 && table.tableId == selectedTable?.tableId && (
-              <>
-                <QRCodeWithBackground
-                  tableNo={table.tableNo}
-                  setInitialPos={setInitialPos}
-                  setInitialSize={setInitialSize}
-                  qrCodeUrl={generateQRCodeUrl(table.tableCode)}
-                  backgroundUrl={bgImageUrl}
-                  initialQrPosition={initialPos}
-                  initialQrSize={initialSize}
-                  onBackgroundUrlChange={handleBackgroundUrlChange}
-                />
-                <h2>{shopUrl + "/" + table.tableCode}</h2>
-              </>
-            )}
-          </li>
-        ))}
+        {tables
+          .filter((table) => table.tableNo !== 0)
+          .map((table) => (
+            <li
+              key={table.tableId}
+              style={{
+                backgroundColor:
+                  table.tableId === selectedTable?.tableId
+                    ? "lightblue"
+                    : "white",
+                marginBottom: "10px",
+                padding: "10px",
+                borderRadius: "4px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                cursor: "pointer",
+              }}
+              onClick={() => onSelectTable(table)}
+            >
+              <div style={{ marginBottom: "10px" }}>
+                Table {table.tableNo}
+              </div>
+              {table.tableId === selectedTable?.tableId && (
+                <>
+                  <QRCodeWithBackground
+                    tableNo={table.tableNo}
+                    qrCodeUrl={generateQRCodeUrl(table.tableCode)}
+                    backgroundUrl={bgImageUrl}
+                    initialQrPosition={initialPos}
+                    initialQrSize={initialSize}
+                  />
+                  <h5>{shopUrl + "/" + table.tableCode}</h5>
+                </>
+              )}
+            </li>
+          ))}
       </ul>
     </div>
   );

@@ -16,11 +16,11 @@ export default function Transaction_pending() {
     <div className={styles.Transactions}>
       <div className={containerStyle}>
         <div style={{ marginTop: "30px", textAlign: "center" }}>
-          <h2>transaction success</h2>
+          <h2>transaction failed</h2>
           <img
             className={styles.expression}
-            src="https://i.imgur.com/sgvMI02.pngs"
-            alt="Success"
+            src="https://i.imgur.com/5j3yIw6.png"
+            alt="Failed"
           />
         </div>
       </div>

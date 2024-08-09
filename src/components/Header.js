@@ -215,7 +215,7 @@ const Header = ({
   shopName,
   shopOwnerId,
   shopClerks,
-  tableId,
+  tableCode,
   showProfile,
   user,
   setModal,
@@ -225,7 +225,7 @@ const Header = ({
   removeConnectedGuestSides,
 }) => {
   const { goToLogin, goToGuestSideLogin, goToAdminCafes } =
-    useNavigationHelpers(shopId, tableId);
+    useNavigationHelpers(shopId, tableCode);
   const [showRectangle, setShowRectangle] = useState(false);
   const [animate, setAnimate] = useState("");
   const rectangleRef = useRef(null);

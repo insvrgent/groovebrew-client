@@ -20,6 +20,7 @@ import {
 } from "../helpers/localStorageHelpers";
 
 function CafePage({
+  table,
   sendParam,
   shopName,
   shopOwnerId,
@@ -34,8 +35,8 @@ function CafePage({
 }) {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
-  const { shopId, tableId } = useParams();
-  sendParam({ shopId, tableId });
+  const { shopId, tableCode } = useParams();
+  sendParam({ shopId, tableCode });
 
   const navigate = useNavigate();
 
@@ -103,14 +104,14 @@ function CafePage({
             shopName={shopName}
             shopOwnerId={shopOwnerId}
             shopClerks={shopClerks}
-            tableId={tableId}
+            tableCode={table.tableCode}
             user={user}
             guestSides={guestSides}
             guestSideOfClerk={guestSideOfClerk}
             removeConnectedGuestSides={removeConnectedGuestSides}
           />
           <div style={{ marginTop: "5px" }}></div>
-          <SearchInput shopId={shopId} tableId={tableId} />
+          <SearchInput shopId={shopId} tableCode={table.tableCode} />
           <div style={{ marginTop: "15px" }}></div>
           <ItemTypeLister
             user={user}

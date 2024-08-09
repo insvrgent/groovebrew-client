@@ -3,8 +3,9 @@ import styles from "./Footer.module.css"; // assuming you have a CSS module for 
 import { useNavigationHelpers } from "../helpers/navigationHelpers";
 
 export default function Footer({
+  showTable,
   shopId,
-  tableId,
+  table,
   cartItemsLength,
   selectedPage,
 }) {
@@ -15,13 +16,13 @@ export default function Footer({
     goToTransactions,
     goToScan,
     goToNonTable,
-  } = useNavigationHelpers(shopId, tableId);
+  } = useNavigationHelpers(shopId, table.tableCode);
 
   const [isStretched, setIsStretched] = useState(false);
   const scanMejaRef = useRef(null);
 
   const handleScanMejaClick = () => {
-    if (tableId) {
+    if (table) {
       setIsStretched(true);
     } else {
       goToTransactions();
@@ -98,25 +99,27 @@ export default function Footer({
       </div>
 
       {/* Rounded Rectangle with "Scan Meja" and QR Icon */}
-      {shopId && (
+      {showTable && shopId && (
         <div
           ref={scanMejaRef}
-          onClick={!tableId ? goToScan : handleScanMejaClick}
+          onClick={table.length == 0 ? goToScan : handleScanMejaClick}
           className={`${styles.scanMeja} ${
             isStretched ? styles.stretched : ""
           }`}
         >
           <span>
-            {tableId ? `Diantar ke meja ${tableId}` : `Scan Meja\u00A0`}
+            {table.length != 0
+              ? `Diantar ke meja ${table.tableNo}`
+              : `Scan Meja\u00A0`}
           </span>
-          {!tableId && (
+          {table.length == 0 && (
             <img
               src="https://static-00.iconduck.com/assets.00/qr-scan-icon-2048x2048-aeh36n7y.png"
               alt="QR Code"
               className={styles.qrIcon}
             />
           )}
-          {tableId && isStretched && (
+          {table.length != 0 && isStretched && (
             <button onClick={handleHapusMeja} className={styles.hapusMejaBtn}>
               Hapus Meja
             </button>

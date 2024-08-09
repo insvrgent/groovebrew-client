@@ -8,9 +8,7 @@ const QRCodeWithBackground = ({
   backgroundUrl,
   initialQrPosition,
   initialQrSize,
-  setInitialPos,
-  setInitialSize,
-  onBackgroundUrlChange,
+  handleQrSave,
 }) => {
   const [qrPosition, setQrPosition] = useState(initialQrPosition);
   const [qrSize, setQrSize] = useState(initialQrSize);
@@ -22,12 +20,12 @@ const QRCodeWithBackground = ({
     const { name, value } = e.target;
     setQrPosition((prevPosition) => ({
       ...prevPosition,
-      [name]: value,
+      [name]: parseFloat(value).toFixed(2),
     }));
   };
 
   const handleSizeChange = (e) => {
-    setQrSize(e.target.value);
+    setQrSize(parseFloat(e.target.value).toFixed(2));
   };
 
   const handleFileChange = (e) => {
@@ -35,14 +33,11 @@ const QRCodeWithBackground = ({
     if (file) {
       const newBgImage = URL.createObjectURL(file);
       setBgImage(newBgImage);
-      onBackgroundUrlChange(newBgImage);
     }
   };
 
   const handleSave = () => {
-    setInitialPos(qrPosition);
-    setInitialSize(qrSize);
-    onBackgroundUrlChange(bgImage);
+    handleQrSave(qrPosition, qrSize, bgImage);
   };
 
   const printQRCode = () => {
@@ -142,13 +137,15 @@ const QRCodeWithBackground = ({
           }}
         />
         {/* Overlay text that triggers file input */}
-        <div
-          ref={overlayTextRef}
-          style={styles.overlayText}
-          onClick={() => fileInputRef.current.click()}
-        >
-          Click To Change Image
-        </div>
+        {isConfigure && (
+          <div
+            ref={overlayTextRef}
+            style={styles.overlayText}
+            onClick={() => fileInputRef.current.click()}
+          >
+            Click To Change Image
+          </div>
+        )}
         {/* Hidden file input */}
         <input
           type="file"

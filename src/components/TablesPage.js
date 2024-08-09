@@ -184,9 +184,10 @@ const TablesPage = ({ shopId }) => {
         justifyContent: "center",
         fontSize: "calc(10px + 2vmin)",
         color: "rgba(88, 55, 50, 1)",
+        height: "100%",
       }}
     >
-      <TableCanvas
+      {/* <TableCanvas
         isAdmin={true}
         tables={tables}
         selectedTable={selectedTable}
@@ -199,7 +200,7 @@ const TablesPage = ({ shopId }) => {
         handleCancel={handleCancel}
         handleSetTableNo={handleSetTableNo}
         tableNo={tableNo}
-      />
+      /> */}
       <TableList
         shopUrl={window.location.hostname + "/" + shopId}
         tables={tables}

@@ -23,6 +23,7 @@ import Footer from "./components/Footer";
 import GuestSideLogin from "./pages/GuestSideLogin";
 import GuestSide from "./pages/GuestSide";
 import { getItemTypesWithItems } from "./helpers/itemHelper.js";
+import { getTableByCode } from "./helpers/tableHelper.js";
 
 import {
   getConnectedGuestSides,
@@ -44,7 +45,7 @@ function App() {
   const [guestSideOfClerk, setGuestSideOfClerk] = useState(null);
   const [guestSides, setGuestSides] = useState([]);
   const [shopId, setShopId] = useState("");
-  const [tableId, setTableId] = useState("");
+  const [table, setTable] = useState([]);
   const [totalItemsCount, setTotalItemsCount] = useState(0);
   const [deviceType, setDeviceType] = useState("");
   const [shop, setShop] = useState([]);
@@ -71,10 +72,13 @@ function App() {
     };
   }, [shopId]);
 
-  const handleSetParam = ({ shopId, tableId }) => {
-    console.log(shopId, tableId);
+  const handleSetParam = async ({ shopId, tableCode }) => {
     setShopId(shopId);
-    setTableId(tableId);
+
+    if (table.length == 0) {
+      const gettable = await getTableByCode(tableCode);
+      if (gettable) setTable(gettable);
+    }
   };
 
   useEffect(() => {
@@ -121,9 +125,15 @@ function App() {
       console.log("transaction notification");
       setModal("transaction_pending");
     });
+
     socket.on("transaction_success", async (data) => {
       console.log("transaction notification");
       setModal("transaction_success");
+    });
+
+    socket.on("transaction_failed", async (data) => {
+      console.log("transaction notification");
+      setModal("transaction_failed");
     });
 
     //for clerk
@@ -138,7 +148,10 @@ function App() {
         setDeviceType("guestDevice");
       } else {
         setUser(data.data.user);
-        if (data.data.user.password == "unsetunsetunset")
+        if (
+          data.data.user.password == "unsetunsetunset" &&
+          localStorage.getItem("settings")
+        )
           setModal("complete_account");
         if (data.data.user.cafeId == shopId) {
           const connectedGuestSides = await getConnectedGuestSides();
@@ -190,7 +203,7 @@ function App() {
   }, [shopId]);
 
   useEffect(() => {
-    console.log(shopId + tableId);
+    console.log(shopId + table?.tableCode);
   }, [navigate]);
 
   // Function to open the modal
@@ -247,10 +260,11 @@ function App() {
             }
           />
           <Route
-            path="/:shopId/:tableId?"
+            path="/:shopId/:tableCode?"
             element={
               <>
                 <CafePage
+                  table={table}
                   sendParam={handleSetParam}
                   shopName={shop.name}
                   shopOwnerId={shop.ownerId}
@@ -264,8 +278,9 @@ function App() {
                   setModal={setModal} // Pass the function to open modal
                 />
                 <Footer
+                  showTable={true}
                   shopId={shopId}
-                  tableId={tableId}
+                  table={table}
                   cartItemsLength={totalItemsCount}
                   selectedPage={0}
                 />
@@ -273,7 +288,7 @@ function App() {
             }
           />
           <Route
-            path="/:shopId/:tableId?/search"
+            path="/:shopId/:tableCode?/search"
             element={
               <>
                 <SearchResult
@@ -288,7 +303,7 @@ function App() {
                 />
                 <Footer
                   shopId={shopId}
-                  tableId={tableId}
+                  table={table}
                   cartItemsLength={totalItemsCount}
                   selectedPage={1}
                 />
@@ -296,17 +311,18 @@ function App() {
             }
           />
           <Route
-            path="/:shopId/:tableId?/cart"
+            path="/:shopId/:tableCode?/cart"
             element={
               <>
                 <Cart
+                  table={table}
                   sendParam={handleSetParam}
                   totalItemsCount={totalItemsCount}
                   deviceType={deviceType}
                 />
                 <Footer
                   shopId={shopId}
-                  tableId={tableId}
+                  table={table}
                   cartItemsLength={totalItemsCount}
                   selectedPage={2}
                 />
@@ -314,17 +330,18 @@ function App() {
             }
           />
           <Route
-            path="/:shopId/:tableId?/invoice"
+            path="/:shopId/:tableCode?/invoice"
             element={
               <>
                 <Invoice
+                  table={table}
                   sendParam={handleSetParam}
                   socket={socket}
                   deviceType={deviceType}
                 />
                 <Footer
                   shopId={shopId}
-                  tableId={tableId}
+                  table={table}
                   cartItemsLength={totalItemsCount}
                   selectedPage={2}
                 />
@@ -332,7 +349,7 @@ function App() {
             }
           />
           <Route
-            path="/:shopId/:tableId?/transactions"
+            path="/:shopId/:tableCode?/transactions"
             element={
               <>
                 <Transactions
@@ -341,7 +358,7 @@ function App() {
                 />
                 <Footer
                   shopId={shopId}
-                  tableId={tableId}
+                  table={table}
                   cartItemsLength={totalItemsCount}
                   selectedPage={3}
                 />

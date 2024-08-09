@@ -5,6 +5,7 @@ import TableMaps from "../components/TableMaps";
 import Transactions from "../pages/Transactions";
 import Transaction_pending from "../pages/Transaction_pending";
 import Transaction_success from "../pages/Transaction_success";
+import Transaction_failed from "../pages/Transaction_failed";
 import MaterialList from "../pages/MaterialList.js";
 import MaterialMutationsPage from "../pages/MaterialMutationsPage.js";
 
@@ -35,6 +36,7 @@ const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
         )}{" "}
         {modalContent === "transaction_pending" && <Transaction_pending />}
         {modalContent === "transaction_success" && <Transaction_success />}
+        {modalContent === "transaction_failed" && <Transaction_failed />}
         {modalContent === "add_material" && <MaterialList cafeId={shopId} />}
         {modalContent === "update_stock" && (
           <MaterialMutationsPage cafeId={shopId} />

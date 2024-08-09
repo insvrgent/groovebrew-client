@@ -5,6 +5,7 @@ import { ColorRing } from "react-loader-spinner";
 import {
   getTransactions,
   confirmTransaction,
+  declineTransaction,
 } from "../helpers/transactionHelpers";
 import { getTables } from "../helpers/tableHelper";
 import TableCanvas from "../components/TableCanvas";
@@ -13,8 +14,6 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
   const { shopId, tableId } = useParams();
   if (sendParam) sendParam({ shopId, tableId });
 
-  const [confirmed, setConfirmed] = useState(false);
-  const [message, setMessage] = useState("");
   const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -56,9 +55,37 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
     setIsPaymentLoading(true);
     try {
       const c = await confirmTransaction(transactionId);
-      if (c) setMessage("success");
-      else setMessage("not confirmed");
-      setConfirmed(true);
+      if (c) {
+        // Update the confirmed status locally
+        setTransactions((prevTransactions) =>
+          prevTransactions.map((transaction) =>
+            transaction.transactionId === transactionId
+              ? { ...transaction, confirmed: 1 } // Set to confirmed
+              : transaction
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    } finally {
+      setIsPaymentLoading(false);
+    }
+  };
+
+  const handleDecline = async (transactionId) => {
+    setIsPaymentLoading(true);
+    try {
+      const c = await declineTransaction(transactionId);
+      if (c) {
+        // Update the confirmed status locally
+        setTransactions((prevTransactions) =>
+          prevTransactions.map((transaction) =>
+            transaction.transactionId === transactionId
+              ? { ...transaction, confirmed: -1 } // Set to confirmed
+              : transaction
+          )
+        );
+      }
     } catch (error) {
       console.error("Error processing payment:", error);
     } finally {
@@ -113,17 +140,22 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 <button
                   className={styles.PayButton}
                   onClick={() => handleConfirm(transaction.transactionId)}
-                  disabled={transaction.confirmed || isPaymentLoading} // Disable button if confirmed or loading
+                  disabled={transaction.confirmed !== 0 || isPaymentLoading} // Disable button if confirmed (1) or declined (-1) or loading
                 >
                   {isPaymentLoading ? (
                     <ColorRing height="50" width="50" color="white" />
-                  ) : transaction.confirmed ? (
-                    "Confirmed" // Display "Confirmed" if the transaction is confirmed
+                  ) : transaction.confirmed === 1 ? (
+                    "Confirmed" // Display "Confirmed" if the transaction is confirmed (1)
+                  ) : transaction.confirmed === -1 ? (
+                    "Declined" // Display "Declined" if the transaction is declined (-1)
                   ) : (
-                    "Confirm" // Display "Confirm" otherwise
+                    "Confirm" // Display "Confirm" if the transaction is not confirmed (0)
                   )}
                 </button>
               </div>
+              <h5 onClick={() => handleDecline(transaction.transactionId)}>
+                decline
+              </h5>
             </div>
           ))}
       </div>

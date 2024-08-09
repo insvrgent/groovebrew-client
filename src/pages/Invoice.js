@@ -11,9 +11,9 @@ import {
   handlePaymentFromGuestDevice,
 } from "../helpers/transactionHelpers";
 
-export default function Invoice({ sendParam, deviceType, socket }) {
-  const { shopId, tableId } = useParams();
-  sendParam({ shopId, tableId });
+export default function Invoice({ table, sendParam, deviceType, socket }) {
+  const { shopId, tableCode } = useParams();
+  sendParam({ shopId, tableCode });
 
   const location = useLocation(); // Use useLocation hook instead of useSearchParams
   const searchParams = new URLSearchParams(location.search); // Pass location.search directly
@@ -76,7 +76,7 @@ export default function Invoice({ sendParam, deviceType, socket }) {
         shopId,
         isCash ? "cash" : "cashless",
         orderType,
-        tableNumber,
+        table.tableNo || tableNumber,
         socketId
       );
     }
@@ -103,7 +103,7 @@ export default function Invoice({ sendParam, deviceType, socket }) {
         <h2 className={styles["Invoice-detail"]}>
           {orderType === "pickup"
             ? "Diambil di kasir"
-            : `Diantar ke meja nomor ${tableNumber}`}
+            : `Diantar ke meja nomor ${table.tableNo || tableNumber || "-"}`}
         </h2>
         <div className={styles.TotalContainer}>
           <span>Total:</span>

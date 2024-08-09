@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
  * @param {string} shopId - The shop ID for constructing URLs.
  * @returns {Object} - Navigation functions.
  */
-export const useNavigationHelpers = (shopId, tableId) => {
+export const useNavigationHelpers = (shopId, tableCode) => {
   const navigate = useNavigate();
 
   const goToLogin = () => {
@@ -15,7 +15,7 @@ export const useNavigationHelpers = (shopId, tableId) => {
     // Append query parameters conditionally
     const queryParams = new URLSearchParams();
     if (shopId) queryParams.append("next", shopId);
-    if (tableId) queryParams.append("table", tableId);
+    if (tableCode) queryParams.append("table", tableCode);
 
     // Set the URL with query parameters
     if (queryParams.toString()) {
@@ -53,9 +53,9 @@ export const useNavigationHelpers = (shopId, tableId) => {
     // Construct the base URL for the shop
     let url = `/${shopId}`;
 
-    // Append the tableId if it's provided
-    if (tableId) {
-      url += `/${tableId}`;
+    // Append the tableCode if it's provided
+    if (tableCode) {
+      url += `/${tableCode}`;
     }
 
     // Perform the navigation
@@ -64,8 +64,8 @@ export const useNavigationHelpers = (shopId, tableId) => {
 
   const goToSearch = () => {
     let url = `/${shopId}`;
-    if (tableId) {
-      url += `/${tableId}`;
+    if (tableCode) {
+      url += `/${tableCode}`;
     }
     url += "/search";
     navigate(url);
@@ -73,8 +73,8 @@ export const useNavigationHelpers = (shopId, tableId) => {
 
   const goToCart = () => {
     let url = `/${shopId}`;
-    if (tableId) {
-      url += `/${tableId}`;
+    if (tableCode) {
+      url += `/${tableCode}`;
     }
     url += "/cart";
     navigate(url);
@@ -82,8 +82,8 @@ export const useNavigationHelpers = (shopId, tableId) => {
 
   const goToInvoice = (orderType, tableNumber, email) => {
     let url = `/${shopId}`;
-    if (tableId) {
-      url += `/${tableId}`;
+    if (tableCode) {
+      url += `/${tableCode}`;
     }
     url += `/invoice?orderType=${orderType}`;
     if (tableNumber) {
@@ -97,8 +97,8 @@ export const useNavigationHelpers = (shopId, tableId) => {
 
   const goToTransactions = () => {
     let url = `/${shopId}`;
-    if (tableId) {
-      url += `/${tableId}`;
+    if (tableCode) {
+      url += `/${tableCode}`;
     }
     url += "/transactions";
     navigate(url);
@@ -106,8 +106,8 @@ export const useNavigationHelpers = (shopId, tableId) => {
 
   const goToGuestSideLogin = () => {
     let url = `/${shopId}`;
-    if (tableId) {
-      url += `/${tableId}`;
+    if (tableCode) {
+      url += `/${tableCode}`;
     }
     url += "/guest-side-login";
     navigate(url);

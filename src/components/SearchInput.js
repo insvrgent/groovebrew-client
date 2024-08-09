@@ -44,7 +44,7 @@ const SearchIcon = styled.svg`
 
 export default function SearchInput({
   shopId,
-  tableId,
+  tableCode,
   autofocus,
   onSearchChange,
 }) {
@@ -73,15 +73,15 @@ export default function SearchInput({
       //Start the timer
       let url = "";
       if (autofocus || songName != "") {
-        url = tableId
-          ? `/${shopId}/${tableId}/search?query=${encodeURIComponent(songName)}`
+        url = tableCode
+          ? `/${shopId}/${tableCode}/search?query=${encodeURIComponent(songName)}`
           : `/${shopId}/search?query=${encodeURIComponent(songName)}`;
         navigate(url);
       }
 
       if (autofocus) {
         if (songName == "") {
-          if (tableId) navigate(`/${shopId}/${tableId}`);
+          if (tableCode) navigate(`/${shopId}/${tableCode}`);
           else navigate(`/${shopId}`);
         }
       }

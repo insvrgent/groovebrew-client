@@ -9,11 +9,16 @@ import { getCartDetails } from "../helpers/itemHelper.js";
 import { getItemsByCafeId } from "../helpers/cartHelpers"; // Import getItemsByCafeId
 import Modal from "../components/Modal"; // Import the reusable Modal component
 
-export default function Cart({ sendParam, totalItemsCount, deviceType }) {
-  const { shopId, tableId } = useParams();
-  sendParam({ shopId, tableId });
+export default function Cart({
+  table,
+  sendParam,
+  totalItemsCount,
+  deviceType,
+}) {
+  const { shopId, tableCode } = useParams();
+  sendParam({ shopId, tableCode });
 
-  const { goToShop, goToInvoice } = useNavigationHelpers(shopId, tableId);
+  const { goToShop, goToInvoice } = useNavigationHelpers(shopId, tableCode);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [orderType, setOrderType] = useState("serve");
@@ -84,12 +89,12 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
       const items = await getItemsByCafeId(shopId);
       const updatedTotalPrice = items.reduce((total, localItem) => {
         const cartItem = cartItems.find((itemType) =>
-          itemType.itemList.some((item) => item.itemId === localItem.itemId),
+          itemType.itemList.some((item) => item.itemId === localItem.itemId)
         );
 
         if (cartItem) {
           const itemDetails = cartItem.itemList.find(
-            (item) => item.itemId === localItem.itemId,
+            (item) => item.itemId === localItem.itemId
           );
           return total + localItem.qty * itemDetails.price;
         }
@@ -135,22 +140,28 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
     }
 
     if (orderType === "serve") {
-      if (tableNumber !== "" || tableId != null) {
-        const table = await getTable(shopId, tableNumber || tableId);
+      console.log("serve");
+      if (tableNumber !== "" && table.tableNo == undefined) {
+        console.log("getting with tableNumber");
+        const table = await getTable(shopId, tableNumber);
         if (!table) {
           setModalContent(
-            <div>Table not found. Please enter a valid table number.</div>,
+            <div>Table not found. Please enter a valid table number.</div>
           );
           setIsModalOpen(true);
         } else {
-          goToInvoice(orderType, tableNumber || tableId, email);
+          goToInvoice(orderType, table.tableNo, email);
         }
+      } else if (table.tableNo != undefined) {
+        console.log("getting with table code" + table.tableNo);
+        goToInvoice(orderType, null, email);
       } else {
         setModalContent(<div>Please enter a table number.</div>);
         setIsModalOpen(true);
       }
     } else {
-      goToInvoice(orderType, tableNumber || tableId, email);
+      console.log("getting with pickup");
+      goToInvoice(orderType, tableNumber, email);
     }
 
     setIsCheckoutLoading(false); // Stop loading animation
@@ -202,15 +213,15 @@ export default function Cart({ sendParam, totalItemsCount, deviceType }) {
             value={orderType}
             onChange={handleOrderTypeChange}
           >
-            {tableId != null && (
-              <option value="serve">Serve to table {tableId}</option>
+            {table != null && (
+              <option value="serve">Serve to table {table.tableNo}</option>
             )}
             <option value="pickup">Pickup</option>
-            {tableId == null && <option value="serve">Serve</option>}
+            {table == null && <option value="serve">Serve</option>}
 
             {/* tableId harus di check terlebih dahulu untuk mendapatkan tableNo */}
           </select>
-          {orderType === "serve" && tableId == null && (
+          {orderType === "serve" && table.length < 1 && (
             <input
               type="text"
               placeholder="Table Number"

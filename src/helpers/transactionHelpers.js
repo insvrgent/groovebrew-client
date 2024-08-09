@@ -25,6 +25,31 @@ export async function confirmTransaction(transactionId) {
     console.error("Error:", error);
   }
 }
+
+export async function declineTransaction(transactionId) {
+  try {
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/decline-transaction/${transactionId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 export async function getTransactions(shopId, demand) {
   try {
     const token = getLocalStorage("auth");
