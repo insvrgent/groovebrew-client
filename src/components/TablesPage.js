@@ -3,7 +3,7 @@ import { getTables, updateTable, createTable } from "../helpers/tableHelper";
 import TableCanvas from "./TableCanvas";
 import TableList from "./TableList";
 
-const TablesPage = ({ shopId }) => {
+const TablesPage = ({ shop }) => {
   const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [newTable, setNewTable] = useState(null);
@@ -13,7 +13,8 @@ const TablesPage = ({ shopId }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedTables = await getTables(shopId);
+        console.log(shop);
+        const fetchedTables = await getTables(shop.cafeId);
         setTables(fetchedTables);
         setOriginalTables(fetchedTables);
       } catch (error) {
@@ -22,7 +23,7 @@ const TablesPage = ({ shopId }) => {
     };
 
     fetchData();
-  }, [shopId]);
+  }, [shop.cafeId]);
 
   const handleAddTable = () => {
     const nextId = Math.random().toString(36).substr(2, 11);
@@ -131,7 +132,7 @@ const TablesPage = ({ shopId }) => {
   const handleSave = async () => {
     if (newTable) {
       try {
-        const createdTable = await createTable(shopId, {
+        const createdTable = await createTable(shop.cafeId, {
           ...newTable,
           tableNo,
         });
@@ -144,7 +145,7 @@ const TablesPage = ({ shopId }) => {
       }
     } else if (selectedTable) {
       try {
-        const updatedTable = await updateTable(shopId, {
+        const updatedTable = await updateTable(shop.cafeId, {
           ...selectedTable,
           tableNo,
         });
@@ -202,7 +203,7 @@ const TablesPage = ({ shopId }) => {
         tableNo={tableNo}
       /> */}
       <TableList
-        shopUrl={window.location.hostname + "/" + shopId}
+        shop={shop}
         tables={tables}
         onSelectTable={handleSelect}
         selectedTable={selectedTable}

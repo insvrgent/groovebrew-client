@@ -50,6 +50,55 @@ export async function declineTransaction(transactionId) {
   }
 }
 
+export async function handleClaimHasPaid(transactionId) {
+  try {
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/payment-claimed/${transactionId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+export async function getTransaction(transactionId) {
+  try {
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/get-transaction/${transactionId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const transaction = await response.json();
+    return transaction;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 export async function getTransactions(shopId, demand) {
   try {
     const token = getLocalStorage("auth");

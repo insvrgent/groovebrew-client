@@ -98,7 +98,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
       <div style={{ marginTop: "30px" }}></div>
       <h2 className={styles["Transactions-title"]}>Transactions</h2>
       <div style={{ marginTop: "30px" }}></div>
-      <TableCanvas tables={tables} selectedTable={selectedTable} />
+      {/* <TableCanvas tables={tables} selectedTable={selectedTable} /> */}
       <div className={styles.TransactionListContainer}>
         {transactions &&
           transactions.map((transaction) => (
@@ -153,9 +153,11 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                   )}
                 </button>
               </div>
-              <h5 onClick={() => handleDecline(transaction.transactionId)}>
-                decline
-              </h5>
+              {transaction.confirmed == 0 && (
+                <h5 onClick={() => handleDecline(transaction.transactionId)}>
+                  decline
+                </h5>
+              )}
             </div>
           ))}
       </div>

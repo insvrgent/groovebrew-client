@@ -156,19 +156,18 @@ const shrink = keyframes`
     border-radius: 50%;
   }
 `;
-
 const Rectangle = styled.div`
   position: absolute;
   top: 45px;
   right: 15px;
   width: 200px;
-  height: auto;
+  max-height: 87vh; /* or another appropriate value */
   background-color: white;
   z-index: 10;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: ${(props) => (props.animate === "grow" ? grow : shrink)} 0.5s
     forwards;
-  overflow: hidden;
+  overflow-y: auto; /* Enable vertical scrolling */
   padding: 10px;
   box-sizing: border-box;
 `;
@@ -246,6 +245,7 @@ const Header = ({
     if (rectangleRef.current && !rectangleRef.current.contains(event.target)) {
       setAnimate("shrink");
       setTimeout(() => setShowRectangle(false), 500);
+      rectangleRef.current.style.overflow = "hidden";
     }
   };
 
@@ -304,7 +304,9 @@ const Header = ({
                 <Child onClick={goToLogin}>Click to login</Child>
               )}
               {user.username !== undefined && (
-                <Child onClick={() => setModal("edit_account")}>Edit</Child>
+                <Child onClick={() => setModal("edit_account")}>
+                  Edit profile
+                </Child>
               )}
               {shopId &&
                 user.userId == shopOwnerId &&
@@ -312,59 +314,77 @@ const Header = ({
                 user.roleId === 1 && (
                   <>
                     <Child onClick={goToAdminCafes}>see your other cafes</Child>
-                    <Child onClick={() => setModal("edit_tables")}>
-                      {shopName} table maps
-                    </Child>
-                    <Child hasChildren>
-                      {shopName} clerks
-                      <Child onClick={() => setModal("craete_account_clerk")}>
-                        + Add clerk
-                      </Child>
-                      {shopClerks &&
-                        shopClerks.map((key, index) => (
-                          <Child key={index}>
-                            {shopClerks[index].username}
-                            <button
-                              onClick={() =>
-                                removeConnectedGuestSides(guestSides[index][3])
-                              }
-                            >
-                              remove
-                            </button>
-                          </Child>
-                        ))}
-                    </Child>
                     <Child onClick={() => setModal("add_material")}>
                       add material
+                    </Child>
+                    <Child onClick={() => setModal("update_stock")}>
+                      update stock
+                    </Child>
+                    <Child hasChildren>
+                      {shopName}
+                      <Child onClick={() => setModal("edit_tables")}>
+                        table maps
+                      </Child>
+                      <Child hasChildren>
+                        clerks
+                        <Child onClick={() => setModal("craete_account_clerk")}>
+                          + Add clerk
+                        </Child>
+                        {shopClerks &&
+                          shopClerks.map((key, index) => (
+                            <Child key={index}>
+                              {shopClerks[index].username}
+                              <button
+                                onClick={() =>
+                                  removeConnectedGuestSides(
+                                    guestSides[index][3]
+                                  )
+                                }
+                              >
+                                remove
+                              </button>
+                            </Child>
+                          ))}
+                      </Child>
+                      <Child onClick={() => setModal("payment_option")}>
+                        payment options
+                      </Child>
                     </Child>
                   </>
                 )}
               {user.username !== undefined &&
-                ((user.userId == shopOwnerId && user.roleId === 1) ||
-                  (user.cafeId == shopId && user.roleId === 2)) && (
-                  <Child onClick={() => setModal("update_stock")}>
-                    update stock
-                  </Child>
-                )}
-              {user.username !== undefined &&
-                user.roleId == 2 &&
-                user.cafeId == shopId && (
+                user.cafeId == shopId &&
+                user.roleId === 2 && (
                   <Child hasChildren>
-                    connected guest sides
-                    <Child onClick={goToGuestSideLogin}>+ Add guest side</Child>
-                    {guestSides &&
-                      guestSides.map((key, index) => (
-                        <Child key={index}>
-                          guest side {index + 1}
-                          <button
-                            onClick={() =>
-                              removeConnectedGuestSides(guestSides[index][3])
-                            }
-                          >
-                            remove
-                          </button>
+                    {shopName}
+                    <Child onClick={() => setModal("update_stock")}>
+                      update stock
+                    </Child>
+                    {user.username !== undefined &&
+                      user.roleId == 2 &&
+                      user.cafeId == shopId && (
+                        <Child hasChildren>
+                          connected guest sides
+                          <Child onClick={goToGuestSideLogin}>
+                            + Add guest side
+                          </Child>
+                          {guestSides &&
+                            guestSides.map((key, index) => (
+                              <Child key={index}>
+                                guest side {index + 1}
+                                <button
+                                  onClick={() =>
+                                    removeConnectedGuestSides(
+                                      guestSides[index][3]
+                                    )
+                                  }
+                                >
+                                  remove
+                                </button>
+                              </Child>
+                            ))}
                         </Child>
-                      ))}
+                      )}
                   </Child>
                 )}
               {user.username !== undefined && (

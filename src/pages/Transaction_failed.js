@@ -19,7 +19,7 @@ export default function Transaction_pending() {
           <h2>transaction failed</h2>
           <img
             className={styles.expression}
-            src="https://i.imgur.com/5j3yIw6.png"
+            src="https://i.imgur.com/B6k9exa.png"
             alt="Failed"
           />
         </div>

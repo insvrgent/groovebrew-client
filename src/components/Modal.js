@@ -1,15 +1,17 @@
 import React from "react";
 import styles from "./Modal.module.css";
 import TablesPage from "./TablesPage.js";
+import PaymentOptions from "./PaymentOptions.js";
 import TableMaps from "../components/TableMaps";
 import Transactions from "../pages/Transactions";
 import Transaction_pending from "../pages/Transaction_pending";
+import Transaction_confirmed from "../pages/Transaction_confirmed";
 import Transaction_success from "../pages/Transaction_success";
 import Transaction_failed from "../pages/Transaction_failed";
 import MaterialList from "../pages/MaterialList.js";
 import MaterialMutationsPage from "../pages/MaterialMutationsPage.js";
 
-const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
+const Modal = ({ shop, isOpen, onClose, modalContent }) => {
   if (!isOpen) return null;
 
   // Function to handle clicks on the overlay
@@ -30,16 +32,24 @@ const Modal = ({ shopId, isOpen, onClose, modalContent }) => {
         <button onClick={onClose} className={styles.closeButton}>
           &times;
         </button>
-        {modalContent === "edit_tables" && <TablesPage shopId={shopId} />}
+        {modalContent === "edit_tables" && <TablesPage shop={shop} />}
         {modalContent === "new_transaction" && (
-          <Transactions propsShopId={shopId} />
+          <Transactions propsShopId={shop.cafeId} />
         )}{" "}
         {modalContent === "transaction_pending" && <Transaction_pending />}
+        {modalContent === "transaction_confirmed" && (
+          <Transaction_confirmed paymentUrl={shop.qrPayment} />
+        )}
         {modalContent === "transaction_success" && <Transaction_success />}
         {modalContent === "transaction_failed" && <Transaction_failed />}
-        {modalContent === "add_material" && <MaterialList cafeId={shopId} />}
+        {modalContent === "payment_option" && (
+          <PaymentOptions paymentUrl={shop.qrPayment} shopId={shop.cafeId} />
+        )}
+        {modalContent === "add_material" && (
+          <MaterialList cafeId={shop.cafeId} />
+        )}
         {modalContent === "update_stock" && (
-          <MaterialMutationsPage cafeId={shopId} />
+          <MaterialMutationsPage cafeId={shop.cafeId} />
         )}
       </div>
     </div>

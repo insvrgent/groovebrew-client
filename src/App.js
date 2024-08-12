@@ -123,7 +123,13 @@ function App() {
     //for guest
     socket.on("transaction_pending", async (data) => {
       console.log("transaction notification");
+      // Call `setModal` with content and parameters
       setModal("transaction_pending");
+    });
+
+    socket.on("transaction_confirmed", async (data) => {
+      console.log("transaction notification");
+      setModal("transaction_confirmed", data);
     });
 
     socket.on("transaction_success", async (data) => {
@@ -207,11 +213,20 @@ function App() {
   }, [navigate]);
 
   // Function to open the modal
-  const setModal = (content) => {
+  const setModal = (content, params = {}) => {
     setIsModalOpen(true);
     setModalContent(content);
+
+    // Prepare query parameters
+    const queryParams = new URLSearchParams({
+      modal: content,
+      ...params, // Spread additional parameters
+    }).toString();
+    // Update URL with new parameters
+    navigate(`?${queryParams}`, { replace: true });
+
+    // Prevent scrolling when modal is open
     document.body.style.overflow = "hidden";
-    navigate(`?modal=` + content, { replace: true });
   };
 
   // Function to close the modal
@@ -373,7 +388,7 @@ function App() {
         </Routes>
       </header>
       <Modal
-        shopId={shopId}
+        shop={shop}
         isOpen={isModalOpen}
         modalContent={modalContent}
         onClose={closeModal}

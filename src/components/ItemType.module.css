@@ -41,16 +41,24 @@
   border-radius: 15px;
 }
 
-.item-type-image-input {
+.item-type-image-container {
   position: absolute;
   left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.item-type-image-input {
+  opacity: 0;
+  position: absolute;
+  top: 0;
   width: 100%;
   height: 100%;
 }
 
 .item-type-create {
   position: absolute;
-  top: 80%; /* Position below the input */
+  top: 76%; /* Position below the input */
   left: 50%;
   transform: translateX(-50%);
   margin-top: 10px; /* Space between input and button */

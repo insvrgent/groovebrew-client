@@ -58,12 +58,22 @@ export default function ItemType({
           className={styles["item-type-image"]}
         />
         {blank && (
-          <input
-            type="file"
-            accept="image/*"
-            className={styles["item-type-image-input"]}
-            onChange={handleImageChange}
-          />
+          <div className={styles["item-type-image-container"]}>
+            <input
+              type="file"
+              accept="image/*"
+              className={styles["item-type-image-input"]}
+              onChange={handleImageChange}
+              id="image-input"
+            />
+            Click to add image
+            <label
+              htmlFor="image-input"
+              className={styles["item-type-image-text"]}
+            >
+              Click to add image
+            </label>
+          </div>
         )}
       </div>
       <input

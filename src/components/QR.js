@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
 import html2canvas from "html2canvas";
+import { getImageUrl } from "../helpers/itemHelper";
+import { saveCafeDetails } from "../helpers/cafeHelpers"; // Import the helper function
 
 const QRCodeWithBackground = ({
   isConfigure,
@@ -9,11 +11,12 @@ const QRCodeWithBackground = ({
   initialQrPosition,
   initialQrSize,
   handleQrSave,
+  shopId, // Pass cafeId as a prop to identify which cafe to update
 }) => {
   const [qrPosition, setQrPosition] = useState(initialQrPosition);
   const [qrSize, setQrSize] = useState(initialQrSize);
-  const [bgImage, setBgImage] = useState(backgroundUrl);
-  const fileInputRef = useRef(null);
+  const [bgImage, setBgImage] = useState(getImageUrl(backgroundUrl)); // URL or File
+  const qrBackgroundInputRef = useRef(null);
   const overlayTextRef = useRef(null);
 
   const handlePositionChange = (e) => {
@@ -31,13 +34,30 @@ const QRCodeWithBackground = ({
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const newBgImage = URL.createObjectURL(file);
+      const newBgImage = URL.createObjectURL(file); // Create a temporary URL for display
       setBgImage(newBgImage);
     }
   };
 
   const handleSave = () => {
-    handleQrSave(qrPosition, qrSize, bgImage);
+    const qrBackgroundFile = qrBackgroundInputRef.current.files[0]; // Get the selected file for qrBackground
+
+    // Prepare the details object
+    const details = {
+      qrPosition,
+      qrSize,
+      qrBackgroundFile, // Include qrBackground file
+    };
+
+    // Call saveCafeDetails function with the updated details object
+    saveCafeDetails(shopId, details)
+      .then((response) => {
+        console.log("Cafe details saved:", response);
+        handleQrSave(qrPosition, qrSize, bgImage);
+      })
+      .catch((error) => {
+        console.error("Error saving cafe details:", error);
+      });
   };
 
   const printQRCode = () => {
@@ -118,7 +138,7 @@ const QRCodeWithBackground = ({
           position: "relative",
           width: "300px",
           height: "300px",
-          background: `url(${bgImage}) no-repeat center center`,
+          background: `center center / contain no-repeat url(${bgImage})`,
           backgroundSize: "contain",
           overflow: "hidden",
           border: "1px solid #ddd",
@@ -141,7 +161,7 @@ const QRCodeWithBackground = ({
           <div
             ref={overlayTextRef}
             style={styles.overlayText}
-            onClick={() => fileInputRef.current.click()}
+            onClick={() => qrBackgroundInputRef.current.click()}
           >
             Click To Change Image
           </div>
@@ -150,7 +170,7 @@ const QRCodeWithBackground = ({
         <input
           type="file"
           accept="image/*"
-          ref={fileInputRef}
+          ref={qrBackgroundInputRef}
           style={{ display: "none" }}
           onChange={handleFileChange}
         />
@@ -276,16 +296,15 @@ const QRCodeWithBackground = ({
               borderRadius: "4px",
               cursor: "pointer",
               transition: "background-color 0.3s",
-              marginLeft: "10px",
             }}
             onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#138496")
+              (e.currentTarget.style.backgroundColor = "#117a8b")
             }
             onMouseOut={(e) =>
               (e.currentTarget.style.backgroundColor = "#17a2b8")
             }
           >
-            Save Image
+            Save QR Code
           </button>
         </div>
       )}
@@ -293,54 +312,41 @@ const QRCodeWithBackground = ({
   );
 };
 
-// Styles for the configuration labels and inputs
 const styles = {
-  label: {
-    display: "block",
-    fontSize: "16px",
-    fontWeight: "bold",
-    marginBottom: "5px",
+  overlayText: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    color: "#fff",
+    padding: "10px",
+    borderRadius: "5px",
+    cursor: "pointer",
   },
   sliderContainer: {
     marginBottom: "20px",
   },
+  label: {
+    display: "block",
+    marginBottom: "10px",
+  },
   sliderWrapper: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
-    marginTop: "5px",
   },
   input: {
     flex: "1",
     margin: "0 10px",
   },
-  value: {
-    fontSize: "16px",
-    minWidth: "50px",
-    textAlign: "right",
-  },
   labelStart: {
-    fontSize: "14px",
+    marginRight: "10px",
   },
   labelEnd: {
-    fontSize: "14px",
-  },
-  fileInput: {
     marginLeft: "10px",
   },
-  overlayText: {
-    position: "absolute",
-    fontSize: "70px",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    top: "0",
-    bottom: "0",
-    color: "white",
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer", // Indicates it's clickable
-    zIndex: 10, // Ensure it appears above other elements
+  value: {
+    marginLeft: "10px",
   },
 };
 

@@ -33,7 +33,6 @@
 
 .TransactionListContainer {
   overflow-y: auto; /* Enables vertical scrolling */
-  max-height: 600px; /* Adjust based on your design */
 }
 
 .TotalContainer {
