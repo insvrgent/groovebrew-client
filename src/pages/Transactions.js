@@ -154,7 +154,10 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 </button>
               </div>
               {transaction.confirmed == 0 && (
-                <h5 onClick={() => handleDecline(transaction.transactionId)}>
+                <h5
+                  className={styles.DeclineButton}
+                  onClick={() => handleDecline(transaction.transactionId)}
+                >
                   decline
                 </h5>
               )}

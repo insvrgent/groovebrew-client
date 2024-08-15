@@ -274,7 +274,7 @@ export const handlePaymentFromGuestDevice = async (
       // Handle success response
       console.log("Transaction successful!");
       const data = await response.json();
-      updateLocalStorage("auth", data.auth);
+      if (data.newUser) updateLocalStorage("auth", data.auth);
       // Optionally return response data or handle further actions upon success
       return true;
     } else {

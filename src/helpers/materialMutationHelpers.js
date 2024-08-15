@@ -2,7 +2,8 @@ import API_BASE_URL from "../config.js";
 
 // Function to retrieve the authentication token from localStorage
 function getAuthToken() {
-  return localStorage.getItem("auth");
+  if (localStorage.getItem("auth")) return localStorage.getItem("auth");
+  return null;
 }
 
 // Helper function to get headers with authentication token

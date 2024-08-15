@@ -158,6 +158,7 @@ const MaterialMutationPage = ({ cafeId }) => {
       try {
         const data = await getMaterials(cafeId);
         setMaterials(data);
+        console.log(data);
       } catch (err) {
         setError(err.message);
       }

@@ -25,7 +25,7 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
     // Prevent click event from propagating to the overlay
     event.stopPropagation();
   };
-
+  console.log(shop.qrPayment)
   return (
     <div onClick={handleOverlayClick} className={styles.modalOverlay}>
       <div className={styles.modalContent} onClick={handleContentClick}>

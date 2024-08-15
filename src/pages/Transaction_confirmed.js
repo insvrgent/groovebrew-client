@@ -113,7 +113,6 @@ export default function Transaction_pending({ paymentUrl }) {
               <div ref={qrCodeRef}>
                 <QRCode value={qrData} size={256} /> {/* Generate QR code */}
               </div>
-              <p>Generated QR Code from Data</p>
               <button
                 onClick={downloadQRCode}
                 style={{
@@ -183,6 +182,7 @@ export default function Transaction_pending({ paymentUrl }) {
           <button onClick={handleClaimHasPaid} className={styles.PayButton}>
             I've already paid
           </button>
+          <div style={{ marginBottom: "20px" }}></div>
         </div>
       </div>
     </div>

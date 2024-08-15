@@ -5,16 +5,24 @@ import {
   createMaterial,
   deleteMaterial,
 } from "../helpers/materialHelpers";
+import {
+  createMaterialMutation,
+  getMaterialMutations,
+} from "../helpers/materialMutationHelpers";
 
 const MaterialList = ({ cafeId }) => {
   const [materials, setMaterials] = useState([]);
+  const [mutations, setMutations] = useState([]);
   const [newMaterialName, setNewMaterialName] = useState("");
   const [newMaterialUnit, setNewMaterialUnit] = useState("kilogram");
   const [newMaterialImage, setNewMaterialImage] = useState(null);
   const [deleting, setDeleting] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [selectedMaterialId, setSelectedMaterialId] = useState(null);
+  const [currentQuantity, setCurrentQuantity] = useState(0);
+  const [quantityChange, setQuantityChange] = useState(0);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -23,16 +31,53 @@ const MaterialList = ({ cafeId }) => {
         const data = await getMaterials(cafeId);
         setMaterials(data);
         setError(null);
+        if (data.length > 0 && !selectedMaterialId) {
+          setSelectedMaterialId(data[0].materialId);
+        }
       } catch (error) {
         console.error("Error fetching materials:", error);
         setError("Failed to fetch materials.");
+      }
+    };
+
+    const fetchMutations = async () => {
+      try {
+        const data = await getMaterialMutations(cafeId);
+        setMutations(data);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchMaterials();
+    fetchMutations();
   }, [cafeId]);
+
+  useEffect(() => {
+    if (selectedMaterialId) {
+      const materialMutations = mutations.filter(
+        (mutation) => mutation.materialId === selectedMaterialId
+      );
+      if (materialMutations.length > 0) {
+        const latestMutation = materialMutations.reduce(
+          (latest, current) =>
+            new Date(current.timestamp) > new Date(latest.timestamp)
+              ? current
+              : latest,
+          materialMutations[0]
+        );
+        setCurrentQuantity(latestMutation.newStock);
+      } else {
+        setCurrentQuantity(0); // Default value if no mutations exist
+      }
+    }
+  }, [selectedMaterialId, mutations]);
+
+  const filteredMutations = selectedMaterialId
+    ? mutations.filter((mutation) => mutation.materialId === selectedMaterialId)
+    : [];
 
   const handleCreateMaterial = async (e) => {
     e.preventDefault();
@@ -41,7 +86,6 @@ const MaterialList = ({ cafeId }) => {
     const formData = new FormData();
     formData.append("name", newMaterialName);
     formData.append("unit", newMaterialUnit);
-    console.log(newMaterialImage);
     if (newMaterialImage) {
       formData.append("image", newMaterialImage);
     }
@@ -55,6 +99,9 @@ const MaterialList = ({ cafeId }) => {
       const data = await getMaterials(cafeId);
       setMaterials(data);
       setError(null);
+      if (data.length > 0) {
+        setSelectedMaterialId(data[0].materialId);
+      }
     } catch (error) {
       console.error("Error creating material:", error);
       setError("Failed to create material.");
@@ -67,10 +114,16 @@ const MaterialList = ({ cafeId }) => {
     setDeleting(materialId);
     try {
       await deleteMaterial(materialId);
-      setMaterials(
-        materials.filter((material) => material.materialId !== materialId)
+      const updatedMaterials = materials.filter(
+        (material) => material.materialId !== materialId
       );
+      setMaterials(updatedMaterials);
       setError(null);
+      if (selectedMaterialId === materialId) {
+        setSelectedMaterialId(
+          updatedMaterials.length > 0 ? updatedMaterials[0].materialId : null
+        );
+      }
     } catch (error) {
       console.error("Error deleting material:", error);
       setError("Failed to delete material.");
@@ -79,23 +132,80 @@ const MaterialList = ({ cafeId }) => {
     }
   };
 
+  const handlePrevious = () => {
+    if (selectedMaterialId) {
+      setQuantityChange(0);
+      const currentIndex = materials.findIndex(
+        (material) => material.materialId === selectedMaterialId
+      );
+      if (currentIndex > 0) {
+        setSelectedMaterialId(materials[currentIndex - 1].materialId);
+      }
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedMaterialId) {
+      setQuantityChange(0);
+      const currentIndex = materials.findIndex(
+        (material) => material.materialId === selectedMaterialId
+      );
+      if (currentIndex < materials.length - 1) {
+        setSelectedMaterialId(materials[currentIndex + 1].materialId);
+      }
+    }
+  };
+
+  const handleQuantityChange = (change) => {
+    setQuantityChange((prev) => prev + change);
+  };
+
+  const handleUpdateStock = async () => {
+    if (selectedMaterialId) {
+      setLoading(true);
+      try {
+        const newStock = currentQuantity + quantityChange;
+        const formData = new FormData();
+        formData.append("materialId", selectedMaterialId);
+        formData.append("newStock", newStock);
+        formData.append("reason", "Stock update");
+
+        await createMaterialMutation(cafeId, formData);
+        setQuantityChange(0);
+        const updatedMutations = await getMaterialMutations(cafeId);
+        setMutations(updatedMutations);
+        setCurrentQuantity(newStock);
+        setError(null);
+      } catch (error) {
+        console.error("Error updating stock:", error);
+        setError("Failed to update stock.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const currentMaterial = materials.find(
+    (material) => material.materialId === selectedMaterialId
+  );
+
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>Materials List</h1>
 
-      {/* Display error message if any */}
       {error && <p style={styles.error}>{error}</p>}
+      {loading && <p>Loading materials and mutations...</p>}
 
-      {/* Button to toggle the form */}
-      <button
-        onClick={() => setShowForm(!showForm)}
-        style={styles.toggleButton}
-        disabled={loading}
-      >
-        {showForm ? "Hide Form" : "Add New Material"}
-      </button>
+      {!loading && (
+        <button
+          onClick={() => setShowForm(!showForm)}
+          style={styles.toggleButton}
+          disabled={loading}
+        >
+          {showForm ? "Hide Form" : "Add New Material"}
+        </button>
+      )}
 
-      {/* Create Material Form */}
       <div
         style={{
           ...styles.formContainer,
@@ -153,45 +263,117 @@ const MaterialList = ({ cafeId }) => {
         </form>
       </div>
 
-      {/* Materials List */}
-      {loading ? (
-        <p>Loading materials...</p>
-      ) : (
-        <div style={styles.materialList}>
-          {materials.map((material) => (
-            <div key={material.materialId} style={styles.materialCard}>
-              {material.image && (
-                <img
-                  src={`${API_BASE_URL}/${material.image}`}
-                  alt={material.name}
-                  style={styles.image}
-                />
-              )}
-              <div style={styles.cardContent}>
-                <h3 style={styles.cardTitle}>{material.name}</h3>
-                <p>{material.unit}</p>
+      {!loading && (
+        <div style={styles.navigationContainer}>
+          <button
+            onClick={handlePrevious}
+            disabled={
+              !selectedMaterialId ||
+              materials.findIndex(
+                (material) => material.materialId === selectedMaterialId
+              ) === 0
+            }
+            style={styles.navigationButton}
+          >
+            {"<"}
+          </button>
+          <div style={styles.materialCardContainer}>
+            {currentMaterial ? (
+              <div style={styles.materialCard}>
+                {currentMaterial.image && (
+                  <img
+                    src={`${API_BASE_URL}/${currentMaterial.image}`}
+                    alt={currentMaterial.name}
+                    style={styles.image}
+                  />
+                )}
+                <div style={styles.cardContent}>
+                  <h3 style={styles.cardTitle}>{currentMaterial.name}</h3>
+                  <p>{currentMaterial.unit}</p>
+                </div>
+                <div style={styles.buttonContainer}>
+                  <button
+                    onClick={() => handleQuantityChange(-1)}
+                    style={styles.quantityButton}
+                  >
+                    -
+                  </button>
+                  <button style={styles.quantityDisplay}>
+                    {currentQuantity + quantityChange}
+                  </button>
+                  <button
+                    onClick={() => handleQuantityChange(1)}
+                    style={styles.quantityButton}
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  onClick={handleUpdateStock}
+                  style={styles.updateMutation}
+                >
+                  Update Stock
+                </button>
+                <button
+                  onClick={() =>
+                    handleDeleteMaterial(currentMaterial.materialId)
+                  }
+                  disabled={deleting === currentMaterial.materialId || loading}
+                  style={styles.deleteButton}
+                >
+                  {deleting === currentMaterial.materialId
+                    ? "Deleting..."
+                    : "Delete"}
+                </button>
               </div>
-              <button
-                onClick={() => handleDeleteMaterial(material.materialId)}
-                disabled={deleting === material.materialId || loading}
-                style={styles.deleteButton}
-              >
-                {deleting === material.materialId ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          ))}
+            ) : (
+              <p>No materials available.</p>
+            )}
+          </div>
+          <button
+            onClick={handleNext}
+            disabled={
+              !selectedMaterialId ||
+              materials.findIndex(
+                (material) => material.materialId === selectedMaterialId
+              ) ===
+                materials.length - 1
+            }
+            style={styles.navigationButton}
+          >
+            {">"}
+          </button>
+        </div>
+      )}
+
+      {selectedMaterialId && !loading && (
+        <div style={styles.mutationContainer}>
+          {filteredMutations.length > 0 ? (
+            filteredMutations.map((mutation) => (
+              <div key={mutation.id} style={styles.mutationCard}>
+                <h4 style={styles.mutationTitle}>Mutation ID: {mutation.id}</h4>
+                <p>Details: {mutation.reason}</p>
+                <p>dari {mutation.oldStock}</p>
+                <p>ke {mutation.newStock}</p>
+              </div>
+            ))
+          ) : (
+            <p>No mutations available.</p>
+          )}
         </div>
       )}
     </div>
   );
 };
 
-// Styles
 const styles = {
   container: {
-    padding: "20px",
+    paddingLeft: "10px",
+    paddingRight: "10px",
     maxWidth: "800px",
     margin: "0 auto",
+    height: "100%", // Adjust height based on your needs
+    overflowY: "auto", // Enables vertical scrolling
   },
   heading: {
     textAlign: "center",
@@ -254,16 +436,31 @@ const styles = {
     transition: "background-color 0.3s, transform 0.3s",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   },
-  materialList: {
+  navigationContainer: {
     display: "flex",
-    flexWrap: "wrap",
-    gap: "15px",
+    alignItems: "center",
     justifyContent: "center",
-    maxHeight: "500px", // Adjust the height as needed
-    overflowY: "auto", // Makes the container scrollable vertically
+    marginTop: "20px",
+    position: "relative",
+  },
+  navigationButton: {
+    padding: "10px",
+    border: "none",
+    borderRadius: "5px",
+    backgroundColor: "#007bff",
+    color: "white",
+    fontSize: "18px",
+    cursor: "pointer",
+    margin: "0 5px",
+    transition: "background-color 0.3s ease",
+  },
+  materialCardContainer: {
+    flex: "1",
+    display: "flex",
+    justifyContent: "center",
+    transition: "opacity 0.5s ease-in-out",
   },
   materialCard: {
-    flex: "1 1 200px",
     padding: "15px",
     borderRadius: "8px",
     border: "1px solid #ddd",
@@ -283,15 +480,73 @@ const styles = {
     marginBottom: "5px",
   },
   image: {
-    width: "80px",
-    height: "80px",
-    objectFit: "cover",
+    width: "250px",
+    height: "150px",
+    objectFit: "contain",
     borderRadius: "8px",
     marginBottom: "10px",
   },
   error: {
     color: "#dc3545",
     marginBottom: "15px",
+  },
+  mutationContainer: {
+    marginTop: "20px",
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ddd",
+    backgroundColor: "#f8f9fa",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  },
+  mutationCard: {
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ddd",
+    backgroundColor: "#fff",
+    marginBottom: "10px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  },
+  mutationTitle: {
+    fontSize: "16px",
+    fontWeight: "600",
+  },
+  buttonContainer: {
+    display: "flex",
+    alignItems: "center",
+    marginTop: "10px",
+  },
+  quantityButton: {
+    padding: "8px 12px",
+    border: "none",
+    borderRadius: "5px",
+    backgroundColor: "#007bff",
+    color: "white",
+    fontSize: "16px",
+    cursor: "pointer",
+    margin: "0 5px",
+    transition: "background-color 0.3s ease",
+  },
+  quantityDisplay: {
+    padding: "8px 12px",
+    border: "1px solid #ddd",
+    borderRadius: "5px",
+    backgroundColor: "#fff",
+    color: "#000",
+    fontSize: "16px",
+    textAlign: "center",
+    margin: "0 5px",
+  },
+  updateMutation: {
+    marginTop: "10px",
+    padding: "12px 20px",
+    border: "none",
+    borderRadius: "8px",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "16px",
+    transition: "background-color 0.3s, transform 0.3s",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   },
 };
 
