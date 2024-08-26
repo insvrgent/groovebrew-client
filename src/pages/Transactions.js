@@ -125,8 +125,8 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
               </ul>
               <h2 className={styles["Transactions-detail"]}>
                 {transaction.serving_type === "pickup"
-                  ? "Diambil di kasir"
-                  : `Diantar ke meja nomor ${
+                  ? "Self pickup"
+                  : `Serve to ${
                       transaction.Table ? transaction.Table.tableNo : "N/A"
                     }`}
               </h2>
@@ -145,11 +145,11 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                   {isPaymentLoading ? (
                     <ColorRing height="50" width="50" color="white" />
                   ) : transaction.confirmed === 1 ? (
-                    "Confirmed" // Display "Confirmed" if the transaction is confirmed (1)
+                    "Confirm has paid" // Display "Confirmed" if the transaction is confirmed (1)
                   ) : transaction.confirmed === -1 ? (
                     "Declined" // Display "Declined" if the transaction is declined (-1)
                   ) : (
-                    "Confirm" // Display "Confirm" if the transaction is not confirmed (0)
+                    "Confirm availability" // Display "Confirm" if the transaction is not confirmed (0)
                   )}
                 </button>
               </div>

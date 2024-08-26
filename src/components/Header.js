@@ -314,14 +314,15 @@ const Header = ({
                 user.roleId === 1 && (
                   <>
                     <Child onClick={goToAdminCafes}>see your other cafes</Child>
-                    <Child onClick={() => setModal("add_material")}>
-                      add material
-                    </Child>
-                    <Child onClick={() => setModal("update_stock")}>
+                    
+                    {/* <Child onClick={() => setModal("update_stock")}>
                       update stock
-                    </Child>
+                    </Child> */}
                     <Child hasChildren>
                       {shopName}
+                      <Child onClick={() => setModal("add_material")}>
+                      stock
+                    </Child>
                       <Child onClick={() => setModal("edit_tables")}>
                         table maps
                       </Child>

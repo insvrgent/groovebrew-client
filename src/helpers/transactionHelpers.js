@@ -319,7 +319,7 @@ export const getFavourite = async (cafeId) => {
 
 export const getAnalytics = async (cafeId) => {
   const response = await fetch(
-    `${API_BASE_URL}/transaction/get-analytics/${cafeId}`,
+    `${API_BASE_URL}/transaction/get-income/${cafeId}`,
     getHeaders()
   );
   return response.json();
