@@ -90,8 +90,8 @@
 }
 
 .expandable-container.expanded {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
   position: relative;
   max-height: 400px;
   /* Adjust the max-height as needed */
@@ -101,12 +101,11 @@
 
 .expand-button {
   font-size: 20px;
-  padding-bottom: 10px;
   position: relative;
   left: 0;
   right: 0;
-  height: 25px;
   background-color: rgb(108, 255, 128);
+  /* background-color: rgb(218 163 99); */
   border-radius: 0 0 15px 15px;
   /* Rounded corners at the bottom */
   cursor: pointer;
@@ -116,7 +115,9 @@
 }
 
 .expand-button h5 {
+  font-weight: 500;
   margin-top: 0px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.36);
 }
 
 .expand-button:hover {

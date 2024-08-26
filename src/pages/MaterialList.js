@@ -23,6 +23,7 @@ const MaterialList = ({ cafeId }) => {
   const [selectedMaterialId, setSelectedMaterialId] = useState(null);
   const [currentQuantity, setCurrentQuantity] = useState(0);
   const [quantityChange, setQuantityChange] = useState(0);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -63,7 +64,7 @@ const MaterialList = ({ cafeId }) => {
       if (materialMutations.length > 0) {
         const latestMutation = materialMutations.reduce(
           (latest, current) =>
-            new Date(current.timestamp) > new Date(latest.timestamp)
+            new Date(current.createdAt) > new Date(latest.createdAt)
               ? current
               : latest,
           materialMutations[0]
@@ -75,9 +76,23 @@ const MaterialList = ({ cafeId }) => {
     }
   }, [selectedMaterialId, mutations]);
 
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
   const filteredMutations = selectedMaterialId
     ? mutations.filter((mutation) => mutation.materialId === selectedMaterialId)
     : [];
+
+    const sortedMutations = filteredMutations
+    .filter((mutation) => mutation.materialId === selectedMaterialId)
+    .sort((a, b) => {
+      if (sortOrder === "asc") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      } else {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+    });
 
   const handleCreateMaterial = async (e) => {
     e.preventDefault();
@@ -166,11 +181,10 @@ const MaterialList = ({ cafeId }) => {
       try {
         const newStock = currentQuantity + quantityChange;
         const formData = new FormData();
-        formData.append("materialId", selectedMaterialId);
         formData.append("newStock", newStock);
         formData.append("reason", "Stock update");
 
-        await createMaterialMutation(cafeId, formData);
+        await createMaterialMutation(selectedMaterialId, formData);
         setQuantityChange(0);
         const updatedMutations = await getMaterialMutations(cafeId);
         setMutations(updatedMutations);
@@ -188,7 +202,11 @@ const MaterialList = ({ cafeId }) => {
   const currentMaterial = materials.find(
     (material) => material.materialId === selectedMaterialId
   );
-
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  };
+  
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>Materials List</h1>
@@ -299,7 +317,7 @@ const MaterialList = ({ cafeId }) => {
                     -
                   </button>
                   <button style={styles.quantityDisplay}>
-                    {currentQuantity + quantityChange}
+                  {currentQuantity + quantityChange}
                   </button>
                   <button
                     onClick={() => handleQuantityChange(1)}
@@ -346,15 +364,27 @@ const MaterialList = ({ cafeId }) => {
         </div>
       )}
 
+      <div style={styles.sortContainer}>
+        <label htmlFor="sortOrder">Sort by : </label>
+        <select
+          id="sortOrder"
+          value={sortOrder}
+          onChange={handleSortChange}
+          style={styles.sortSelect}
+        >
+        <option value="desc">latest</option>
+          <option value="asc">oldest</option>
+        </select>
+      </div>
+
       {selectedMaterialId && !loading && (
         <div style={styles.mutationContainer}>
-          {filteredMutations.length > 0 ? (
-            filteredMutations.map((mutation) => (
+          {sortedMutations.length > 0 ? (
+            sortedMutations.map((mutation) => (
               <div key={mutation.id} style={styles.mutationCard}>
-                <h4 style={styles.mutationTitle}>Mutation ID: {mutation.id}</h4>
+                <h4 style={styles.mutationTitle}>{formatDate(mutation.createdAt)}</h4>
                 <p>Details: {mutation.reason}</p>
-                <p>dari {mutation.oldStock}</p>
-                <p>ke {mutation.newStock}</p>
+                <p>stok {mutation.newStock}</p>
               </div>
             ))
           ) : (

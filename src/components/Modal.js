@@ -10,6 +10,7 @@ import Transaction_success from "../pages/Transaction_success";
 import Transaction_failed from "../pages/Transaction_failed";
 import MaterialList from "../pages/MaterialList.js";
 import MaterialMutationsPage from "../pages/MaterialMutationsPage.js";
+import Reports from "../pages/Reports.js";
 
 const Modal = ({ shop, isOpen, onClose, modalContent }) => {
   if (!isOpen) return null;
@@ -50,6 +51,9 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
         )}
         {modalContent === "update_stock" && (
           <MaterialMutationsPage cafeId={shop.cafeId} />
+        )}
+        {modalContent === "reports" && (
+          <Reports cafeId={shop.cafeId} />
         )}
       </div>
     </div>

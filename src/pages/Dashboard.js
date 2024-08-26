@@ -113,7 +113,7 @@ const Dashboard = ({ user, setModal }) => {
               className={styles.rectangle}
               onClick={() => setIsCreating(true)}
             >
-              Create Cafe
+              +
             </div>
           )}
         </div>

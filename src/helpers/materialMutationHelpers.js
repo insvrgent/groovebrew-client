@@ -2,21 +2,16 @@ import API_BASE_URL from "../config.js";
 
 // Function to retrieve the authentication token from localStorage
 function getAuthToken() {
-  if (localStorage.getItem("auth")) return localStorage.getItem("auth");
-  return null;
+  return localStorage.getItem("auth") || null;
 }
 
 // Helper function to get headers with authentication token
-const getHeaders = (method = "GET", body = null) => {
-  const headers = {
-    Authorization: `Bearer ${getAuthToken()}`,
-    "Content-Type": "application/json",
-  };
-
+const getHeaders = () => {
   return {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : null,
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
   };
 };
 
@@ -25,7 +20,14 @@ export const createMaterialMutation = async (materialId, data) => {
   try {
     const response = await fetch(
       `${API_BASE_URL}/mutation/create/${materialId}`,
-      getHeaders("POST", data)
+      {
+        ...getHeaders(),
+        method: "POST",
+        body: JSON.stringify({
+          newStock: data.get("newStock"),
+          reason: data.get("reason"),
+        }),
+      }
     );
     if (!response.ok) throw new Error("Failed to create material mutation.");
     return await response.json();
@@ -40,7 +42,10 @@ export const getMaterialMutations = async (cafeId) => {
   try {
     const response = await fetch(
       `${API_BASE_URL}/mutation/get-material-mutations/${cafeId}`,
-      getHeaders()
+      {
+        ...getHeaders(),
+        method: "GET",
+      }
     );
     if (!response.ok) throw new Error("Failed to retrieve material mutations.");
     return await response.json();
@@ -55,7 +60,10 @@ export const getMaterialMutationById = async (mutationId) => {
   try {
     const response = await fetch(
       `${API_BASE_URL}/mutation/get-material-mutation/${mutationId}`,
-      getHeaders()
+      {
+        ...getHeaders(),
+        method: "GET",
+      }
     );
     if (!response.ok) throw new Error("Failed to retrieve material mutation.");
     return await response.json();
@@ -70,7 +78,10 @@ export const getMaterialMutationsByMaterialId = async (materialId) => {
   try {
     const response = await fetch(
       `${API_BASE_URL}/mutation/get-material-mutations-by-material/${materialId}`,
-      getHeaders()
+      {
+        ...getHeaders(),
+        method: "GET",
+      }
     );
     if (!response.ok)
       throw new Error("Failed to retrieve material mutations by material ID.");

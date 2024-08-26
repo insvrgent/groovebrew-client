@@ -288,3 +288,39 @@ export const handlePaymentFromGuestDevice = async (
     return false;
   }
 };
+
+// Function to retrieve the authentication token from localStorage
+function getAuthToken() {
+  return localStorage.getItem("auth");
+}
+// Helper function to get headers with authentication token
+const getHeaders = (method = "GET") => {
+  const headers = {
+    Authorization: `Bearer ${getAuthToken()}`,
+  };
+
+  // No content-type header needed for FormData; fetch will handle it automatically
+  if (method !== "POST" && method !== "PUT") {
+    return { method, headers };
+  }
+
+  return {
+    method,
+    headers,
+  };
+};
+export const getFavourite = async (cafeId) => {
+  const response = await fetch(
+    `${API_BASE_URL}/transaction/get-favourite/${cafeId}`,
+    getHeaders()
+  );
+  return response.json();
+};
+
+export const getAnalytics = async (cafeId) => {
+  const response = await fetch(
+    `${API_BASE_URL}/transaction/get-analytics/${cafeId}`,
+    getHeaders()
+  );
+  return response.json();
+};

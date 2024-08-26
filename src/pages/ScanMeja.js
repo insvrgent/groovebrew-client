@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { QrReader } from "react-qr-reader"; // Import QrReader as named import
 import styles from "./GuestSideLogin.module.css"; // Import module CSS file for styles
 
-import { getLocalStorage } from "../helpers/localStorageHelpers";
+import { getTableByCode } from "../helpers/tableHelper";
 
 const GuestSideLogin = ({ socket }) => {
   const navigate = useNavigate();
@@ -15,9 +15,8 @@ const GuestSideLogin = ({ socket }) => {
     navigate("/" + shopId);
   });
 
-  const setLoginGuestSide = () => {
-    const token = getLocalStorage("auth");
-    socket.emit("read_qrCode", { qrCode, token });
+  const setLoginGuestSide = async () => {
+    window.location.href =  qrCode;
   };
 
   // Function to handle QR code scan
@@ -39,7 +38,7 @@ const GuestSideLogin = ({ socket }) => {
   };
 
   useEffect(() => {
-    if (qrCode.length === 11) {
+    if (qrCode.length === 40) {
       const timer = setTimeout(() => {
         setLoginGuestSide();
       }, 1000); // Delay of 1 second (1000 milliseconds)

@@ -28,7 +28,7 @@ export async function getOwnedCafes(userId) {
   }
 }
 
-export async function createCafe(userId) {
+export async function createCafe(cafeName) {
   try {
     const response = await fetch(`${API_BASE_URL}/cafe/create-cafe`, {
       method: "POST",
@@ -36,7 +36,8 @@ export async function createCafe(userId) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getAuthToken()}`,
       },
-      body: JSON.stringify({ ownerId: userId }),
+      body: JSON.stringify({ 
+        name: cafeName }),
     });
 
     if (!response.ok) {

@@ -114,7 +114,7 @@ export default function Footer({
           </span>
           {table.length == 0 && (
             <img
-              src="https://static-00.iconduck.com/assets.00/qr-scan-icon-2048x2048-aeh36n7y.png"
+              src="https://i.ibb.co.com/Pt2s8N8/qr-scan-icon-2048x2048-aeh36n7y.png"
               alt="QR Code"
               className={styles.qrIcon}
             />

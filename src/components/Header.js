@@ -284,7 +284,7 @@ const Header = ({
       <Title>{HeaderText}</Title>
       <div style={{ visibility: showProfile ? "visible" : "hidden" }}>
         <ProfileImage
-          src="https://static-00.iconduck.com/assets.00/profile-major-icon-1024x1024-9rtgyx30.png"
+          src="https://i.ibb.co.com/fpg1v8J/profile-major-icon-1024x1024-9rtgyx30.png"
           alt="Profile"
           onClick={handleImageClick}
           animate={showRectangle && animate}
@@ -349,6 +349,8 @@ const Header = ({
                       <Child onClick={() => setModal("payment_option")}>
                         payment options
                       </Child>
+
+                      <Child onClick={() => setModal("reports")}>reports</Child>
                     </Child>
                   </>
                 )}
@@ -385,6 +387,8 @@ const Header = ({
                             ))}
                         </Child>
                       )}
+
+                    <Child onClick={() => setModal("reports")}>reports</Child>
                   </Child>
                 )}
               {user.username !== undefined && (
