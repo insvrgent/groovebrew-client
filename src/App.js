@@ -75,10 +75,11 @@ function App() {
   const handleSetParam = async ({ shopId, tableCode }) => {
     setShopId(shopId);
 
-    if (table.length == 0) {
-      const gettable = await getTableByCode(tableCode);
-      if (gettable) setTable(gettable);
-    }
+    if (tableCode)
+      if (table.length == 0) {
+        const gettable = await getTableByCode(tableCode);
+        if (gettable) setTable(gettable);
+      }
   };
 
   useEffect(() => {
@@ -124,7 +125,7 @@ function App() {
     socket.on("transaction_pending", async (data) => {
       console.log("transaction notification");
       // Call `setModal` with content and parameters
-      setModal("transaction_pending");
+      setModal("transaction_pending", data);
     });
 
     socket.on("transaction_confirmed", async (data) => {
@@ -134,18 +135,23 @@ function App() {
 
     socket.on("transaction_success", async (data) => {
       console.log("transaction notification");
-      setModal("transaction_success");
+      setModal("transaction_success", data);
+    });
+
+    socket.on("payment_claimed", async (data) => {
+      console.log(data);
+      setModal("payment_claimed", data);
     });
 
     socket.on("transaction_failed", async (data) => {
       console.log("transaction notification");
-      setModal("transaction_failed");
+      setModal("transaction_failed", data);
     });
 
     //for clerk
     socket.on("transaction_created", async (data) => {
       console.log("transaction notification");
-      setModal("new_transaction");
+      setModal("new_transaction", data);
     });
 
     socket.on("checkUserTokenRes", async (data) => {
@@ -214,9 +220,6 @@ function App() {
 
   // Function to open the modal
   const setModal = (content, params = {}) => {
-    setIsModalOpen(true);
-    setModalContent(content);
-
     // Prepare query parameters
     const queryParams = new URLSearchParams({
       modal: content,
@@ -227,6 +230,9 @@ function App() {
 
     // Prevent scrolling when modal is open
     document.body.style.overflow = "hidden";
+
+    setIsModalOpen(true);
+    setModalContent(content);
   };
 
   // Function to close the modal

@@ -179,7 +179,10 @@ export default function Transaction_pending({ paymentUrl }) {
             </div>
           )}
 
-          <button onClick={handleClaimHasPaid} className={styles.PayButton}>
+          <button
+            onClick={() => handleClaimHasPaid(transaction.transactionId)}
+            className={styles.PayButton}
+          >
             I've already paid
           </button>
           <div style={{ marginBottom: "20px" }}></div>

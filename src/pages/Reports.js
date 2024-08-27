@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
-import { getFavourite, getAnalytics } from "../helpers/transactionHelpers.js";
+import {
+  getFavourite,
+  getAnalytics,
+  getIncome,
+} from "../helpers/transactionHelpers.js";
 import CircularDiagram from "./CircularDiagram";
 import styles from "./Transactions.module.css";
 
@@ -104,6 +108,7 @@ const App = ({ cafeId }) => {
         setLoading(true);
         const items = await getFavourite(cafeId);
         const analyticsData = await getAnalytics(cafeId);
+        const incomeData = await getIncome(cafeId);
         if (items) setFavouriteItems(items);
         if (analyticsData) setAnalytics(analyticsData);
         console.log(analyticsData);
@@ -250,10 +255,10 @@ const App = ({ cafeId }) => {
             />
           )}
           <RoundedRectangle
-            bgColor={viewStock ?  "#979797" : "#E5ECF6"}
+            bgColor={viewStock ? "#979797" : "#E5ECF6"}
             title="Stok"
-            value={viewStock ? '‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˅' : '‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˄'}  // Corrected ternary operator syntax
-            onClick={() => setViewStock(!viewStock)}  // onClick should be a function
+            value={viewStock ? "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˅" : "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˄"} // Corrected ternary operator syntax
+            onClick={() => setViewStock(!viewStock)} // onClick should be a function
           />
           <RoundedRectangle
             bgColor="#E3F5FF"

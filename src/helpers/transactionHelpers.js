@@ -52,9 +52,35 @@ export async function declineTransaction(transactionId) {
 
 export async function handleClaimHasPaid(transactionId) {
   try {
+    console.log(transactionId);
     const token = getLocalStorage("auth");
     const response = await fetch(
-      `${API_BASE_URL}/transaction/payment-claimed/${transactionId}`,
+      `${API_BASE_URL}/transaction/claim-transaction/${transactionId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+export async function handleConfirmHasPaid(transactionId) {
+  try {
+    console.log(transactionId);
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/confirm-paid/${transactionId}`,
       {
         method: "POST",
         headers: {
@@ -318,6 +344,14 @@ export const getFavourite = async (cafeId) => {
 };
 
 export const getAnalytics = async (cafeId) => {
+  const response = await fetch(
+    `${API_BASE_URL}/transaction/get-analytics/${cafeId}`,
+    getHeaders()
+  );
+  return response.json();
+};
+
+export const getIncome = async (cafeId) => {
   const response = await fetch(
     `${API_BASE_URL}/transaction/get-income/${cafeId}`,
     getHeaders()
