@@ -177,7 +177,7 @@ const App = ({ cafeId }) => {
   return (
     <div className={styles.Transactions} style={{ backgroundColor: "#cfcfcf" }}>
       <h2 className={styles["Transactions-title"]}>Reports</h2>
-      <div style={{ marginTop: "30px", textAlign: "center" }}>
+      <div style={{ textAlign: "center" }}>
         <div>
           <label>
             <input
@@ -225,7 +225,6 @@ const App = ({ cafeId }) => {
             display: "flex",
             flexWrap: "wrap",
             justifyContent: "center",
-            marginTop: "20px",
             padding: "20px",
           }}
         >
