@@ -85,7 +85,7 @@ const RoundedRectangle = ({
           {percentage != undefined && "%"}
           {percentage != undefined && (
             <span style={arrowStyle}>
-              {percentage > 0 ? "↗" : percentage == 0 ? "-" : "↘"}
+              {percentage > 0 ? "↗" : percentage === 0 ? "-" : "↘"}
             </span>
           )}
         </div>
@@ -102,25 +102,23 @@ const App = ({ cafeId }) => {
   const [colors, setColors] = useState([]);
   const [viewStock, setViewStock] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const items = await getFavourite(cafeId);
-        const analyticsData = await getAnalytics(cafeId);
-        const incomeData = await getIncome(cafeId);
-        if (items) setFavouriteItems(items);
-        if (analyticsData) setAnalytics(analyticsData);
-        console.log(analyticsData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async (filter) => {
+    try {
+      setLoading(true);
+      // Fetch the analytics data with the selected filter
+      const analyticsData = await getAnalytics(cafeId, filter);
+      console.log(analyticsData);
+      if (analyticsData) setAnalytics(analyticsData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [cafeId]);
+  useEffect(() => {
+    fetchData(filter); // Fetch data when filter changes
+  }, [filter]);
 
   useEffect(() => {
     const getRandomColor = () => {
@@ -239,7 +237,7 @@ const App = ({ cafeId }) => {
             value={sold}
             percentage={percentage}
           />
-          {filteredItems[0]?.Item != undefined && (
+          {filteredItems[0]?.Item !== undefined && (
             <RoundedRectangle
               bgColor="#E5ECF6"
               title={filteredItems[0]?.Item.name}
@@ -247,7 +245,7 @@ const App = ({ cafeId }) => {
               percentage={filteredItems[0]?.percentageByPreviousPeriod}
             />
           )}
-          {filteredItems[0]?.Item == undefined && (
+          {filteredItems[0]?.Item === undefined && (
             <RoundedRectangle
               bgColor="#8989897a"
               title={"No fav item"}
@@ -257,8 +255,8 @@ const App = ({ cafeId }) => {
           <RoundedRectangle
             bgColor={viewStock ? "#979797" : "#E5ECF6"}
             title="Stok"
-            value={viewStock ? "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˅" : "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˄"} // Corrected ternary operator syntax
-            onClick={() => setViewStock(!viewStock)} // onClick should be a function
+            value={viewStock ? "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˅" : "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˄"}
+            onClick={() => setViewStock(!viewStock)}
           />
           <RoundedRectangle
             bgColor="#E3F5FF"

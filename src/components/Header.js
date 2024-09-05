@@ -314,15 +314,15 @@ const Header = ({
                 user.roleId === 1 && (
                   <>
                     <Child onClick={goToAdminCafes}>see your other cafes</Child>
-                    
+
                     {/* <Child onClick={() => setModal("update_stock")}>
                       update stock
                     </Child> */}
                     <Child hasChildren>
                       {shopName}
                       <Child onClick={() => setModal("add_material")}>
-                      stock
-                    </Child>
+                        stock
+                      </Child>
                       <Child onClick={() => setModal("edit_tables")}>
                         table maps
                       </Child>
@@ -360,8 +360,8 @@ const Header = ({
                 user.roleId === 2 && (
                   <Child hasChildren>
                     {shopName}
-                    <Child onClick={() => setModal("update_stock")}>
-                      update stock
+                    <Child onClick={() => setModal("add_material")}>
+                      stock
                     </Child>
                     {user.username !== undefined &&
                       user.roleId == 2 &&

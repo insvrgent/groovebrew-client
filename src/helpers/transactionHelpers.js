@@ -343,10 +343,15 @@ export const getFavourite = async (cafeId) => {
   return response.json();
 };
 
-export const getAnalytics = async (cafeId) => {
+export const getAnalytics = async (cafeId, filter) => {
   const response = await fetch(
-    `${API_BASE_URL}/transaction/get-analytics/${cafeId}`,
-    getHeaders()
+    API_BASE_URL + "/transaction/get-analytics/" + cafeId + "?type=" + filter,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   );
   return response.json();
 };

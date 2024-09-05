@@ -177,7 +177,7 @@ function App() {
           // shopClerks is can only be obtained by the shop owner
           // so every user that is admin will try to getting shopClerks, even not yet proven that this is their shop
           const shopClerks = await getClerks(shopId);
-          setShopClerks(shopClerks);
+          if (shopClerks != null) setShopClerks(shopClerks);
         }
       }
     });
