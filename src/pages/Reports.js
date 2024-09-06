@@ -7,6 +7,9 @@ import {
 } from "../helpers/transactionHelpers.js";
 import CircularDiagram from "./CircularDiagram";
 import styles from "./Transactions.module.css";
+import "./Switch.css";
+
+import MultiSwitch from "react-multi-switch-toggle";
 
 const RoundedRectangle = ({
   onClick,
@@ -14,7 +17,8 @@ const RoundedRectangle = ({
   title,
   value,
   percentage,
-  fontSize = "20px",
+  fontSize = "15px",
+  loading = false,
 }) => {
   const containerStyle = {
     display: "flex",
@@ -30,12 +34,15 @@ const RoundedRectangle = ({
     textAlign: "left",
     fontFamily: "Arial, sans-serif",
     boxSizing: "border-box",
+    backgroundColor: loading ? "rgb(127 127 127)" : bgColor,
   };
 
   const titleStyle = {
     fontWeight: "bold",
     marginBottom: "10px",
     width: "100%",
+    backgroundColor: loading ? "rgb(85 85 85)" : "inherit",
+    color: loading ? "transparent" : "inherit",
   };
 
   const valueAndPercentageContainerStyle = {
@@ -47,10 +54,15 @@ const RoundedRectangle = ({
   };
 
   const valueStyle = {
-    fontSize: fontSize,
+    fontSize: loading ? "15px" : fontSize,
     fontWeight: "bold",
     flex: "1",
     textAlign: "left",
+    color: loading ? "transparent" : "inherit",
+    backgroundColor: loading ? "rgb(85 85 85)" : "transparent",
+    overflow: "hidden",
+    textOverflow: "ellipsis", // Add ellipsis for overflow text
+    whiteSpace: "nowrap", // Prevent text from wrapping
   };
 
   const percentageStyle = {
@@ -58,6 +70,7 @@ const RoundedRectangle = ({
     display: "flex",
     alignItems: "center",
     textAlign: "right",
+    color: loading ? "black" : percentage > 0 ? "#007bff" : "red",
   };
 
   const arrowStyle = {
@@ -65,25 +78,18 @@ const RoundedRectangle = ({
   };
 
   return (
-    <div
-      style={{
-        ...containerStyle,
-        backgroundColor: bgColor,
-      }}
-      onClick={onClick}
-    >
+    <div style={containerStyle} onClick={onClick}>
       <div style={titleStyle}>{title}</div>
       <div style={valueAndPercentageContainerStyle}>
-        <div style={valueStyle}>{value}</div>
+        <div style={valueStyle}>{loading ? "Loading..." : value}</div>
         <div
           style={{
             ...percentageStyle,
-            color: percentage > 0 ? "#007bff" : "red",
           }}
         >
-          {percentage}
-          {percentage != undefined && "%"}
-          {percentage != undefined && (
+          {loading ? "" : percentage}
+          {percentage != undefined && !loading && "%"}
+          {percentage != undefined && !loading && (
             <span style={arrowStyle}>
               {percentage > 0 ? "↗" : percentage === 0 ? "-" : "↘"}
             </span>
@@ -98,7 +104,7 @@ const App = ({ cafeId }) => {
   const [favouriteItems, setFavouriteItems] = useState([]);
   const [analytics, setAnalytics] = useState({});
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("monthly"); // Default filter is 'monthly'
+  const [filter, setFilter] = useState("daily"); // Default filter is 'monthly'
   const [colors, setColors] = useState([]);
   const [viewStock, setViewStock] = useState(false);
 
@@ -139,15 +145,6 @@ const App = ({ cafeId }) => {
     setColors(colors);
   }, [favouriteItems, filter]);
 
-  if (loading)
-    return (
-      <div className="Loader">
-        <div className="LoaderChild">
-          <ThreeDots />
-        </div>
-      </div>
-    );
-
   const [sold, percentage] = analytics[filter] || [0, 0];
   const filteredItems = favouriteItems[filter] || [];
 
@@ -173,56 +170,42 @@ const App = ({ cafeId }) => {
       return thousands.toFixed(1).replace(/\.0$/, "") + "k"; // One decimal place, remove trailing '.0'
     } else {
       // Less than a thousand
-      return amount.toString();
+      if (amount != null) return amount.toString();
     }
   };
+
+  function roundToInteger(num) {
+    return Math.round(num);
+  }
+
+  function onToggle(selectedItem) {
+    const filterMap = ["daily", "weekly", "monthly", "yearly"];
+    setFilter(filterMap[selectedItem]);
+  }
+
+  const filterTexts = ["1 day", "7 days", "30 days", "365 days"];
+  const comparisonText =
+    filterTexts[["daily", "weekly", "monthly", "yearly"].indexOf(filter)];
 
   return (
     <div className={styles.Transactions} style={{ backgroundColor: "#cfcfcf" }}>
       <h2 className={styles["Transactions-title"]}>Reports</h2>
       <div style={{ textAlign: "center" }}>
-        <div>
-          <label>
-            <input
-              type="radio"
-              name="filter"
-              value="daily"
-              checked={filter === "daily"}
-              onChange={() => setFilter("daily")}
-            />
-            Daily
-          </label>
-          <label style={{ marginLeft: "10px" }}>
-            <input
-              type="radio"
-              name="filter"
-              value="weekly"
-              checked={filter === "weekly"}
-              onChange={() => setFilter("weekly")}
-            />
-            Weekly
-          </label>
-          <label style={{ marginLeft: "10px" }}>
-            <input
-              type="radio"
-              name="filter"
-              value="monthly"
-              checked={filter === "monthly"}
-              onChange={() => setFilter("monthly")}
-            />
-            Monthly
-          </label>
-          <label style={{ marginLeft: "10px" }}>
-            <input
-              type="radio"
-              name="filter"
-              value="yearly"
-              checked={filter === "yearly"}
-              onChange={() => setFilter("yearly")}
-            />
-            Yearly
-          </label>
-        </div>
+        <MultiSwitch
+          texts={["Yesterday", "Last 7", "Last 30", "Last 365"]}
+          selectedSwitch={["daily", "weekly", "monthly", "yearly"].indexOf(
+            filter
+          )}
+          borderWidth={0}
+          bgColor={"rgb(229, 236, 246)"}
+          onToggleCallback={onToggle}
+          fontColor={"rgba(88, 55, 50, 1)"}
+          selectedFontColor={"#1e311b"}
+          selectedSwitchColor={"rgb(227, 245, 255)"}
+          eachSwitchWidth={70}
+          height={"25px"}
+          fontSize={"12px"}
+        />
         <div
           style={{
             display: "flex",
@@ -234,37 +217,55 @@ const App = ({ cafeId }) => {
           <RoundedRectangle
             bgColor="#E3F5FF"
             title="Transactions"
-            value={sold}
-            percentage={percentage}
-          />
-          {filteredItems[0]?.Item !== undefined && (
-            <RoundedRectangle
-              bgColor="#E5ECF6"
-              title={filteredItems[0]?.Item.name}
-              value={filteredItems[0]?.sold}
-              percentage={filteredItems[0]?.percentageByPreviousPeriod}
-            />
-          )}
-          {filteredItems[0]?.Item === undefined && (
-            <RoundedRectangle
-              bgColor="#8989897a"
-              title={"No fav item"}
-              value={"-"}
-            />
-          )}
-          <RoundedRectangle
-            bgColor={viewStock ? "#979797" : "#E5ECF6"}
-            title="Stok"
-            value={viewStock ? "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˅" : "‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ˄"}
-            onClick={() => setViewStock(!viewStock)}
+            value={analytics.transactionCount}
+            percentage={roundToInteger(analytics.transactionGrowth)}
+            loading={loading}
           />
           <RoundedRectangle
-            bgColor="#E3F5FF"
+            bgColor="#E5ECF6"
             title="Income"
             fontSize="12px"
-            value={"Rp" + formatIncome(512520000)}
-            percentage={percentage}
+            value={!loading && "Rp" + formatIncome(analytics?.totalIncome)}
+            percentage={roundToInteger(analytics.incomeGrowth)}
+            loading={loading}
           />
+
+          {analytics?.currentFavoriteItem !== null && (
+            <RoundedRectangle
+              bgColor="#E5ECF6"
+              title={"Fav item"}
+              value={analytics?.currentFavoriteItem?.name}
+              loading={loading}
+            />
+          )}
+          {analytics?.currentFavoriteItem === null && (
+            <RoundedRectangle
+              bgColor="#E5ECF6"
+              title={"No fav item"}
+              value={"-"}
+              loading={loading}
+            />
+          )}
+          {analytics?.previousFavoriteItem !== null && (
+            <RoundedRectangle
+              bgColor="#E3F5FF"
+              title={"Fav before"}
+              value={analytics?.previousFavoriteItem?.name}
+              loading={loading}
+            />
+          )}
+          {analytics?.previousFavoriteItem === null && (
+            <RoundedRectangle
+              bgColor="#E3F5FF"
+              title={"No fav item"}
+              value={"-"}
+              loading={loading}
+            />
+          )}
+
+          <h5 style={{ margin: "10px" }}>
+            ⓘ compared to the previous {comparisonText}
+          </h5>
         </div>
         <div
           style={{
@@ -279,16 +280,14 @@ const App = ({ cafeId }) => {
           </div>
           <div style={{ flex: 1, marginLeft: "20px" }}>
             {filteredItems.map((item, index) => (
-              <h6
-                key={item.itemId}
-                style={{
-                  textAlign: "left",
-                  color: colors[index],
-                  margin: "10px 0",
-                }}
-              >
-                {item.Item.name}: {item.sold}
-              </h6>
+              <RoundedRectangle
+                key={index}
+                bgColor={colors[index] || "#cccccc"}
+                title={item.name}
+                value={item.sold}
+                percentage={Math.round((item.sold / totalSold) * 100) + "%"}
+                loading={loading}
+              />
             ))}
           </div>
         </div>

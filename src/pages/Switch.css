@@ -1,0 +1,39 @@
+.filter-switch {
+  display: flex;
+  align-items: center;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+
+.filter-item {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+  border-radius: 5px;
+  margin-right: 10px;
+  position: relative;
+}
+
+.filter-item.active {
+  color: #fff;
+  background: #007bff;
+  transform: scale(1.1);
+}
+
+.filter-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 123, 255, 0.2);
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.filter-item.active::before {
+  opacity: 1;
+}
