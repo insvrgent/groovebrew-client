@@ -263,9 +263,15 @@ const App = ({ cafeId }) => {
             />
           )}
 
-          <h5 style={{ margin: "10px" }}>
-            ⓘ compared to the previous {comparisonText}
-          </h5>
+          <div
+            style={{ display: "flex", alignItems: "center", margin: "10px" }}
+          >
+            <div style={{ marginRight: "5px", fontSize: "1.2em" }}>ⓘ</div>
+            <h6 style={{ margin: 0, textAlign: "left" }}>
+              Growth percentages are based on comparing the last{" "}
+              {comparisonText} with the preceding {comparisonText}
+            </h6>
+          </div>
         </div>
         <div
           style={{
