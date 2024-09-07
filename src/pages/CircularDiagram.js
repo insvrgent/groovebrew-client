@@ -5,9 +5,6 @@ const CircularDiagram = ({ segments }) => {
   const strokeWidth = 30; // Width of each portion
   const circumference = 2 * Math.PI * (radius - strokeWidth / 2);
 
-  // Calculate total value to be displayed
-  const totalSold = segments.reduce((sum, segment) => sum + segment.value, 0);
-
   let startOffset = 0; // Initial offset for each segment
 
   const svgStyles = {
@@ -31,8 +28,8 @@ const CircularDiagram = ({ segments }) => {
         fill="none"
       />
       {segments.map((segment, index) => {
-        const { value, color } = segment;
-        const segmentLength = (circumference * value) / totalSold;
+        const { percentage, color } = segment;
+        const segmentLength = (circumference * percentage) / 100;
         const strokeDashoffset = circumference - startOffset;
 
         startOffset += segmentLength;

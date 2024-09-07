@@ -104,8 +104,7 @@ const App = ({ cafeId }) => {
   const [favouriteItems, setFavouriteItems] = useState([]);
   const [analytics, setAnalytics] = useState({});
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("daily"); // Default filter is 'monthly'
-  const [colors, setColors] = useState([]);
+  const [filter, setFilter] = useState("daily");
   const [viewStock, setViewStock] = useState(false);
 
   const fetchData = async (filter) => {
@@ -126,32 +125,35 @@ const App = ({ cafeId }) => {
     fetchData(filter); // Fetch data when filter changes
   }, [filter]);
 
-  useEffect(() => {
-    const getRandomColor = () => {
-      const letters = "0123456789ABCDEF";
-      let color = "#";
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-
-      const r = parseInt(color.substring(1, 3), 16);
-      const g = parseInt(color.substring(3, 5), 16);
-      const b = parseInt(color.substring(5, 7), 16);
-
-      return `rgba(${r}, ${g}, ${b}, 1)`;
-    };
-
-    const colors = favouriteItems[filter]?.map(() => getRandomColor()) || [];
-    setColors(colors);
-  }, [favouriteItems, filter]);
-
   const [sold, percentage] = analytics[filter] || [0, 0];
-  const filteredItems = favouriteItems[filter] || [];
+  const filteredItems = analytics.currentFavoriteItems || [];
 
-  const totalSold = filteredItems.reduce((sum, item) => sum + item.sold, 0);
+  const totalSold = filteredItems.reduce((sum, item) => sum + item.count, 0);
+  const colors = [
+    "#FF0000", // Red
+    "#FF6F00", // Dark Orange
+    "#FFD700", // Gold
+    "#32CD32", // Lime Green
+    "#00CED1", // Dark Turquoise
+    "#1E90FF", // Dodger Blue
+    "#8A2BE2", // BlueViolet
+    "#FF00FF", // Magenta
+    "#FF1493", // Deep Pink
+    "#FF4500", // OrangeRed
+    "#FFDAB9", // Peach Puff
+    "#4B0082", // Indigo
+    "#00FF7F", // Spring Green
+    "#C71585", // Medium Violet Red
+    "#F0E68C", // Khaki
+    "#FF6347", // Tomato
+    "#006400", // Dark Green
+    "#8B4513", // SaddleBrown
+    "#00BFFF", // Deep Sky Blue
+    "#FF69B4", // Hot Pink
+  ];
 
   const segments = filteredItems.map((item, index) => ({
-    value: item.sold,
+    percentage: item.percentage,
     color: colors[index] || "#cccccc",
   }));
 
@@ -230,15 +232,17 @@ const App = ({ cafeId }) => {
             loading={loading}
           />
 
-          {analytics?.currentFavoriteItem !== null && (
-            <RoundedRectangle
-              bgColor="#E5ECF6"
-              title={"Fav item"}
-              value={analytics?.currentFavoriteItem?.name}
-              loading={loading}
-            />
-          )}
-          {analytics?.currentFavoriteItem === null && (
+          {analytics?.currentFavoriteItems &&
+            analytics?.currentFavoriteItems.length > 0 && (
+              <RoundedRectangle
+                bgColor="#E5ECF6"
+                title={"Fav item"}
+                value={analytics?.currentFavoriteItems[0]?.name}
+                loading={loading}
+              />
+            )}
+          {(!analytics?.currentFavoriteItems ||
+            analytics?.currentFavoriteItems.length === 0) && (
             <RoundedRectangle
               bgColor="#E5ECF6"
               title={"No fav item"}
@@ -269,7 +273,7 @@ const App = ({ cafeId }) => {
             <div style={{ marginRight: "5px", fontSize: "1.2em" }}>ⓘ</div>
             <h6 style={{ margin: 0, textAlign: "left" }}>
               Growth percentages are based on comparing the last{" "}
-              {comparisonText} with the preceding {comparisonText}
+              {comparisonText} with the preceding {comparisonText}.
             </h6>
           </div>
         </div>
@@ -286,14 +290,15 @@ const App = ({ cafeId }) => {
           </div>
           <div style={{ flex: 1, marginLeft: "20px" }}>
             {filteredItems.map((item, index) => (
-              <RoundedRectangle
-                key={index}
-                bgColor={colors[index] || "#cccccc"}
-                title={item.name}
-                value={item.sold}
-                percentage={Math.round((item.sold / totalSold) * 100) + "%"}
-                loading={loading}
-              />
+              
+          <div
+          style={{ display: "flex", alignItems: "center", margin: "10px" }}
+        >
+          <div style={{ marginRight: "5px", fontSize: "1.2em", color: colors[index] }}>★</div>
+          <h5 style={{ margin: 0, textAlign: "left" }}>
+          {item.name}
+          </h5>
+        </div>
             ))}
           </div>
         </div>
