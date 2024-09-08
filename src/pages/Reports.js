@@ -19,14 +19,15 @@ const RoundedRectangle = ({
   percentage,
   fontSize = "15px",
   loading = false,
+  children, // Assuming this is a React component or JSX
+  isChildren,
 }) => {
   const containerStyle = {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "center",
-    width: "calc(100% / 2 - 10px)",
-    maxWidth: "250px",
+    width: !children && !isChildren && "calc(100% / 2 - 10px)",
     height: "auto",
     borderRadius: "15px",
     padding: "20px",
@@ -41,7 +42,9 @@ const RoundedRectangle = ({
     fontWeight: "bold",
     marginBottom: "10px",
     width: "100%",
-    backgroundColor: loading ? "rgb(85 85 85)" : "inherit",
+    backgroundColor: loading
+      ? "rgb(85 85 85)"
+      : !isChildren && !children && "inherit",
     color: loading ? "transparent" : "inherit",
   };
 
@@ -61,8 +64,8 @@ const RoundedRectangle = ({
     color: loading ? "transparent" : "inherit",
     backgroundColor: loading ? "rgb(85 85 85)" : "transparent",
     overflow: "hidden",
-    textOverflow: "ellipsis", // Add ellipsis for overflow text
-    whiteSpace: "nowrap", // Prevent text from wrapping
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   };
 
   const percentageStyle = {
@@ -80,22 +83,21 @@ const RoundedRectangle = ({
   return (
     <div style={containerStyle} onClick={onClick}>
       <div style={titleStyle}>{title}</div>
-      <div style={valueAndPercentageContainerStyle}>
-        <div style={valueStyle}>{loading ? "Loading..." : value}</div>
-        <div
-          style={{
-            ...percentageStyle,
-          }}
-        >
-          {loading ? "" : percentage}
-          {percentage != undefined && !loading && "%"}
-          {percentage != undefined && !loading && (
-            <span style={arrowStyle}>
-              {percentage > 0 ? "↗" : percentage === 0 ? "-" : "↘"}
-            </span>
-          )}
+      {!children && (
+        <div style={valueAndPercentageContainerStyle}>
+          <div style={valueStyle}>{loading ? "Loading..." : value}</div>
+          <div style={percentageStyle}>
+            {loading ? "" : percentage}
+            {percentage != undefined && !loading && "%"}
+            {percentage != undefined && !loading && (
+              <span style={arrowStyle}>
+                {percentage > 0 ? "↗" : percentage === 0 ? "-" : "↘"}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+      {children && <div>{children}</div>} {/* Properly render children */}
     </div>
   );
 };
@@ -188,6 +190,15 @@ const App = ({ cafeId }) => {
   const filterTexts = ["1 day", "7 days", "30 days", "365 days"];
   const comparisonText =
     filterTexts[["daily", "weekly", "monthly", "yearly"].indexOf(filter)];
+  const formatDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+    });
+  };
 
   return (
     <div className={styles.Transactions} style={{ backgroundColor: "#cfcfcf" }}>
@@ -290,18 +301,58 @@ const App = ({ cafeId }) => {
           </div>
           <div style={{ flex: 1, marginLeft: "20px" }}>
             {filteredItems.map((item, index) => (
-              
-          <div
-          style={{ display: "flex", alignItems: "center", margin: "10px" }}
-        >
-          <div style={{ marginRight: "5px", fontSize: "1.2em", color: colors[index] }}>★</div>
-          <h5 style={{ margin: 0, textAlign: "left" }}>
-          {item.name}
-          </h5>
-        </div>
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  margin: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    marginRight: "5px",
+                    fontSize: "1.2em",
+                    color: colors[index],
+                  }}
+                >
+                  ★
+                </div>
+                <h5 style={{ margin: 0, textAlign: "left" }}>{item.name}</h5>
+              </div>
             ))}
           </div>
         </div>
+
+        <h3 className={styles["Transactions-title"]}>Stock changes</h3>
+
+        {analytics.materialMutations?.length > 0 &&
+          analytics?.materialMutations.map((item, index) => (
+            <RoundedRectangle
+              key={index}
+              bgColor="rgb(59 59 59 / 41%)"
+              title={item.name}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "left",
+                  padding: "20px",
+                }}
+              >
+                {item.mutations.map((mutation, mutationIndex) => (
+                  <RoundedRectangle
+                    bgColor="rgb(59 59 59 / 41%)"
+                    key={mutationIndex}
+                    isChildren={true}
+                    title={`from ${mutation.oldStock} to ${mutation.newStock}`}
+                    value={formatDate(mutation.changeDate)}
+                  />
+                ))}
+              </div>
+            </RoundedRectangle>
+          ))}
       </div>
     </div>
   );
