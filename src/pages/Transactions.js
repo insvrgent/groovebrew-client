@@ -145,11 +145,15 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                   {isPaymentLoading ? (
                     <ColorRing height="50" width="50" color="white" />
                   ) : transaction.confirmed === 1 ? (
-                    "Confirm has paid" // Display "Confirmed" if the transaction is confirmed (1)
+                    "Confirm has paid" // Display "Confirm has paid" if the transaction is confirmed (1)
                   ) : transaction.confirmed === -1 ? (
                     "Declined" // Display "Declined" if the transaction is declined (-1)
+                  ) : transaction.confirmed === 2 ? (
+                    "Confirm item has ready" // Display "Item ready" if the transaction is ready (2)
+                  ) : transaction.confirmed === 3 ? (
+                    "Transaction success" // Display "Item ready" if the transaction is ready (2)
                   ) : (
-                    "Confirm availability" // Display "Confirm" if the transaction is not confirmed (0)
+                    "Confirm availability" // Display "Confirm availability" if the transaction is not confirmed (0)
                   )}
                 </button>
               </div>

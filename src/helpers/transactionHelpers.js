@@ -15,12 +15,12 @@ export async function confirmTransaction(transactionId) {
         },
       }
     );
-
     if (!response.ok) {
       return false;
     }
 
-    return true;
+    const res = await response.json();
+    return res;
   } catch (error) {
     console.error("Error:", error);
   }

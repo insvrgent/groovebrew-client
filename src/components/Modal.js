@@ -7,6 +7,7 @@ import Transaction from "../pages/Transaction";
 import Transaction_pending from "../pages/Transaction_pending";
 import Transaction_confirmed from "../pages/Transaction_confirmed";
 import Transaction_success from "../pages/Transaction_success";
+import Transaction_end from "../pages/Transaction_end";
 import Transaction_failed from "../pages/Transaction_failed";
 import Payment_claimed from "../pages/Payment_claimed";
 import MaterialList from "../pages/MaterialList.js";
@@ -46,6 +47,7 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
           <Payment_claimed paymentUrl={shop.qrPayment} />
         )}
         {modalContent === "transaction_success" && <Transaction_success />}
+        {modalContent === "transaction_end" && <Transaction_end />}
         {modalContent === "transaction_failed" && <Transaction_failed />}
         {modalContent === "payment_option" && (
           <PaymentOptions paymentUrl={shop.qrPayment} shopId={shop.cafeId} />

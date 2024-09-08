@@ -138,6 +138,11 @@ function App() {
       setModal("transaction_success", data);
     });
 
+    socket.on("transaction_end", async (data) => {
+      console.log("transaction notification");
+      setModal("transaction_end", data);
+    });
+
     socket.on("payment_claimed", async (data) => {
       console.log(data);
       setModal("payment_claimed", data);
