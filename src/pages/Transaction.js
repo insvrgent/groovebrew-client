@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import styles from "./Transactions.module.css";
 import { useParams } from "react-router-dom";
 import { ColorRing } from "react-loader-spinner";
@@ -20,6 +20,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const [transaction, setTransaction] = useState(null);
+  const noteRef = useRef(null);
 
   useEffect(() => {
     const transactionId = searchParams.get("transactionId") || "";
@@ -92,11 +93,23 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
     }
   };
 
+  const autoResizeTextArea = (textarea) => {
+    if (textarea) {
+      textarea.style.height = "auto"; // Reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set new height
+    }
+  };
+
+  useEffect(() => {
+    if (noteRef.current) {
+      autoResizeTextArea(noteRef.current);
+    }
+  }, [transaction?.notes]);
+
   return (
     <div className={styles.Transactions}>
       <div style={{ marginTop: "30px" }}></div>
       <h2 className={styles["Transactions-title"]}>Transactions</h2>
-      <div style={{ marginTop: "30px" }}></div>
       {/* <TableCanvas tables={tables} selectedTable={selectedTable} /> */}
       <div className={styles.TransactionListContainer}>
         {transaction && (
@@ -128,6 +141,23 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                     transaction.Table ? transaction.Table.tableNo : "N/A"
                   }`}
             </h2>
+            {transaction.notes != "" && (
+              <>
+                <div className={styles.NoteContainer}>
+                  <span>Note :</span>
+                  <span></span>
+                </div>
+
+                <div className={styles.NoteContainer}>
+                  <textarea
+                    className={styles.NoteInput}
+                    value={transaction.notes}
+                    ref={noteRef}
+                    disabled
+                  />
+                </div>
+              </>
+            )}
             <div className={styles.TotalContainer}>
               <span>Total:</span>
               <span>

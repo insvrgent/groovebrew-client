@@ -1,16 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
-import { ColorRing } from "react-loader-spinner";
-import jsQR from "jsqr";
-import QRCode from "qrcode.react";
+import React, { useEffect, useState } from "react";
 import styles from "./Transactions.module.css";
-import { getImageUrl } from "../helpers/itemHelper";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { ColorRing } from "react-loader-spinner";
 import {
   getTransaction,
-  handleConfirmHasPaid,
+  confirmTransaction,
+  declineTransaction,
 } from "../helpers/transactionHelpers";
+import { getTables } from "../helpers/tableHelper";
+import TableCanvas from "../components/TableCanvas";
+import { useSearchParams } from "react-router-dom";
 
-export default function Transaction_pending() {
+export default function Transactions({ propsShopId, sendParam, deviceType }) {
+  const { shopId, tableId } = useParams();
+  if (sendParam) sendParam({ shopId, tableId });
+
+  const [tables, setTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const [transaction, setTransaction] = useState(null);
 
@@ -29,31 +36,75 @@ export default function Transaction_pending() {
     fetchData();
   }, [searchParams]);
 
-  const calculateTotalPrice = (detailedTransactions) => {
-    if (!Array.isArray(detailedTransactions)) return 0;
-
-    return detailedTransactions.reduce((total, dt) => {
-      if (
-        dt.Item &&
-        typeof dt.Item.price === "number" &&
-        typeof dt.qty === "number"
-      ) {
-        return total + dt.Item.price * dt.qty;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedTables = await getTables(shopId || propsShopId);
+        setTables(fetchedTables);
+      } catch (error) {
+        console.error("Error fetching tables:", error);
       }
-      return total;
+    };
+
+    fetchData();
+  }, [shopId || propsShopId]);
+
+  const calculateTotalPrice = (detailedTransactions) => {
+    return detailedTransactions.reduce((total, dt) => {
+      return total + dt.qty * dt.Item.price;
     }, 0);
+  };
+
+  const handleConfirm = async (transactionId) => {
+    if (isPaymentLoading) return;
+    setIsPaymentLoading(true);
+    try {
+      const c = await confirmTransaction(transactionId);
+      if (c) {
+        setTransaction({ ...transaction, confirmed: c.confirmed });
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    } finally {
+      setIsPaymentLoading(false);
+    }
+  };
+
+  const handleDecline = async (transactionId) => {
+    if (isPaymentLoading) return;
+    setIsPaymentLoading(true);
+    try {
+      const c = await declineTransaction(transactionId);
+      // if (c) {
+      //   // Update the confirmed status locally
+      //   setTransactions((prevTransactions) =>
+      //     prevTransactions.map((transaction) =>
+      //       transaction.transactionId === transactionId
+      //         ? { ...transaction, confirmed: -1 } // Set to confirmed
+      //         : transaction
+      //     )
+      //   );
+      // }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    } finally {
+      setIsPaymentLoading(false);
+    }
   };
 
   return (
     <div className={styles.Transactions}>
       <div style={{ marginTop: "30px" }}></div>
-      <h2 className={styles["Transactions-title"]}>Payment Claimed</h2>
-      <div style={{ marginTop: "30px" }}></div>
+      <h2 className={styles["Transactions-title"]}>Transactions</h2>
+      {/* <TableCanvas tables={tables} selectedTable={selectedTable} /> */}
       <div className={styles.TransactionListContainer}>
         {transaction && (
           <div
             key={transaction.transactionId}
             className={styles.RoundedRectangle}
+            onClick={() =>
+              setSelectedTable(transaction.Table || { tableId: 0 })
+            }
           >
             <h2 className={styles["Transactions-detail"]}>
               Transaction ID: {transaction.transactionId}
@@ -76,6 +127,22 @@ export default function Transaction_pending() {
                     transaction.Table ? transaction.Table.tableNo : "N/A"
                   }`}
             </h2>
+            {transaction.notes != null && (
+              <>
+                <div className={styles.NoteContainer}>
+                  <span>Note :</span>
+                  <span></span>
+                </div>
+
+                <div className={styles.NoteContainer}>
+                  <textarea
+                    className={styles.NoteInput}
+                    value={transaction.notes}
+                    disabled
+                  />
+                </div>
+              </>
+            )}
             <div className={styles.TotalContainer}>
               <span>Total:</span>
               <span>
@@ -85,11 +152,31 @@ export default function Transaction_pending() {
             <div className={styles.TotalContainer}>
               <button
                 className={styles.PayButton}
-                onClick={() => handleConfirmHasPaid(transaction.transactionId)}
-              ></button>
+                onClick={() => handleConfirm(transaction.transactionId)}
+                disabled={isPaymentLoading} // Disable button if confirmed (1) or declined (-1) or loading
+              >
+                {isPaymentLoading ? (
+                  <ColorRing height="50" width="50" color="white" />
+                ) : transaction.confirmed === 1 ? (
+                  "Confirm has paid" // Display "Confirm has paid" if the transaction is confirmed (1)
+                ) : transaction.confirmed === -1 ? (
+                  "Declined" // Display "Declined" if the transaction is declined (-1)
+                ) : transaction.confirmed === 2 ? (
+                  "Confirm item has ready" // Display "Item ready" if the transaction is ready (2)
+                ) : transaction.confirmed === 3 ? (
+                  "Transaction success" // Display "Item ready" if the transaction is ready (2)
+                ) : (
+                  "Confirm availability" // Display "Confirm availability" if the transaction is not confirmed (0)
+                )}
+              </button>
             </div>
             {transaction.confirmed == 0 && (
-              <h5 className={styles.DeclineButton}>decline</h5>
+              <h5
+                className={styles.DeclineButton}
+                onClick={() => handleDecline(transaction.transactionId)}
+              >
+                decline
+              </h5>
             )}
           </div>
         )}

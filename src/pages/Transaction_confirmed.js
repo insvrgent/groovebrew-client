@@ -1,21 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
-import { ColorRing } from "react-loader-spinner";
-import jsQR from "jsqr";
-import QRCode from "qrcode.react";
+import React, { useRef, useEffect, useState } from "react";
 import styles from "./Transactions.module.css";
-import { getImageUrl } from "../helpers/itemHelper";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { ColorRing } from "react-loader-spinner";
 import {
-  handleClaimHasPaid,
   getTransaction,
+  confirmTransaction,
+  declineTransaction,
+  cancelTransaction,
 } from "../helpers/transactionHelpers";
-import html2canvas from "html2canvas";
+import { getTables } from "../helpers/tableHelper";
+import TableCanvas from "../components/TableCanvas";
+import { useSearchParams } from "react-router-dom";
 
-export default function Transaction_pending({ paymentUrl }) {
+export default function Transactions({ propsShopId, sendParam, deviceType }) {
+  const { shopId, tableId } = useParams();
+  if (sendParam) sendParam({ shopId, tableId });
+
+  const [tables, setTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [searchParams] = useSearchParams();
-  const [qrData, setQrData] = useState(null);
   const [transaction, setTransaction] = useState(null);
-  const qrCodeRef = useRef(null);
+  const noteRef = useRef(null);
 
   useEffect(() => {
     const transactionId = searchParams.get("transactionId") || "";
@@ -24,7 +30,7 @@ export default function Transaction_pending({ paymentUrl }) {
       try {
         const fetchedTransaction = await getTransaction(transactionId);
         setTransaction(fetchedTransaction);
-        console.log(fetchedTransaction);
+        console.log(transaction);
       } catch (error) {
         console.error("Error fetching transaction:", error);
       }
@@ -33,160 +39,151 @@ export default function Transaction_pending({ paymentUrl }) {
   }, [searchParams]);
 
   useEffect(() => {
-    const detectQRCode = async () => {
-      if (paymentUrl) {
-        const img = new Image();
-        img.crossOrigin = "Anonymous"; // Handle CORS if needed
-        img.src = getImageUrl(paymentUrl);
-
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-          canvas.width = img.width;
-          canvas.height = img.height;
-
-          // Draw image on canvas
-          context.drawImage(img, 0, 0, img.width, img.height);
-
-          // Get image data
-          const imageData = context.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-          const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
-
-          if (qrCode) {
-            setQrData(qrCode.data); // Set the QR data
-            console.log(qrCode.data);
-          } else {
-            console.log("No QR Code detected");
-          }
-        };
+    const fetchData = async () => {
+      try {
+        const fetchedTables = await getTables(shopId || propsShopId);
+        setTables(fetchedTables);
+      } catch (error) {
+        console.error("Error fetching tables:", error);
       }
     };
 
-    detectQRCode();
-  }, [paymentUrl]);
+    fetchData();
+  }, [shopId || propsShopId]);
 
   const calculateTotalPrice = (detailedTransactions) => {
-    if (!Array.isArray(detailedTransactions)) return 0;
-
     return detailedTransactions.reduce((total, dt) => {
-      if (
-        dt.Item &&
-        typeof dt.Item.price === "number" &&
-        typeof dt.qty === "number"
-      ) {
-        return total + dt.Item.price * dt.qty;
-      }
-      return total;
+      return total + dt.qty * dt.Item.price;
     }, 0);
   };
 
-  const downloadQRCode = async () => {
-    if (qrCodeRef.current) {
-      try {
-        const canvas = await html2canvas(qrCodeRef.current);
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = "qr-code.png";
-        link.click();
-      } catch (error) {
-        console.error("Error downloading QR Code:", error);
+  const handleConfirm = async (transactionId) => {
+    if (isPaymentLoading) return;
+    setIsPaymentLoading(true);
+    try {
+      const c = await confirmTransaction(transactionId);
+      if (c) {
+        setTransaction({ ...transaction, confirmed: c.confirmed });
       }
-    } else {
-      console.log("QR Code element not found.");
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    } finally {
+      setIsPaymentLoading(false);
     }
   };
+
+  const handleDecline = async (transactionId) => {
+    if (isPaymentLoading) return;
+    setIsPaymentLoading(true);
+    try {
+      const c = await cancelTransaction(transactionId);
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    } finally {
+      setIsPaymentLoading(false);
+    }
+  };
+
+  const autoResizeTextArea = (textarea) => {
+    if (textarea) {
+      textarea.style.height = "auto"; // Reset height
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set new height
+    }
+  };
+
+  useEffect(() => {
+    if (noteRef.current) {
+      autoResizeTextArea(noteRef.current);
+    }
+  }, [transaction?.notes]);
 
   return (
     <div className={styles.Transactions}>
       <div style={{ marginTop: "30px" }}></div>
-      <h2 className={styles["Transactions-title"]}>Transaction Confirmed</h2>
-      <div style={{ marginTop: "30px" }}></div>
+      <h2 className={styles["Transactions-title"]}>Transactions</h2>
+      {/* <TableCanvas tables={tables} selectedTable={selectedTable} /> */}
       <div className={styles.TransactionListContainer}>
-        <div style={{ marginTop: "30px", textAlign: "center" }}>
-          {qrData ? (
-            <div style={{ marginTop: "20px" }}>
-              <div ref={qrCodeRef}>
-                <QRCode value={qrData} size={256} /> {/* Generate QR code */}
-              </div>
-              <button
-                onClick={downloadQRCode}
-                style={{
-                  marginTop: "20px",
-                  padding: "10px 20px",
-                  fontSize: "16px",
-                  backgroundColor: "#007bff",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  transition: "background-color 0.3s",
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#0056b3")
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#007bff")
-                }
-              >
-                Download QR Code
-              </button>
-            </div>
-          ) : (
-            <div style={{ marginTop: "20px" }}>
-              <ColorRing
-                visible={true}
-                height="80"
-                width="80"
-                ariaLabel="blocks-loading"
-                wrapperStyle={{}}
-                wrapperClass="blocks-wrapper"
-                colors={["#4fa94d", "#f7c34c", "#ffa53c", "#e34f53", "#d23a8d"]}
-              />
-              <p>Loading QR Code Data...</p>
-            </div>
-          )}
+        {transaction && (
+          <div
+            key={transaction.transactionId}
+            className={styles.RoundedRectangle}
+            onClick={() =>
+              setSelectedTable(transaction.Table || { tableId: 0 })
+            }
+          >
+            <h2 className={styles["Transactions-detail"]}>
+              Transaction ID: {transaction.transactionId}
+            </h2>
+            <h2 className={styles["Transactions-detail"]}>
+              Payment Type: {transaction.payment_type}
+            </h2>
+            <ul>
+              {transaction.DetailedTransactions.map((detail) => (
+                <li key={detail.detailedTransactionId}>
+                  <span>{detail.Item.name}</span> - {detail.qty} x Rp{" "}
+                  {detail.Item.price}
+                </li>
+              ))}
+            </ul>
+            <h2 className={styles["Transactions-detail"]}>
+              {transaction.serving_type === "pickup"
+                ? "Self pickup"
+                : `Serve to ${
+                    transaction.Table ? transaction.Table.tableNo : "N/A"
+                  }`}
+            </h2>
+            {transaction.notes != "" && (
+              <>
+                <div className={styles.NoteContainer}>
+                  <span>Note :</span>
+                  <span></span>
+                </div>
 
-          {transaction && transaction.DetailedTransactions ? (
-            <div
-              className={styles.TotalContainer}
-              style={{ marginBottom: "20px" }}
-            >
+                <div className={styles.NoteContainer}>
+                  <textarea
+                    className={styles.NoteInput}
+                    value={transaction.notes}
+                    ref={noteRef}
+                    disabled
+                  />
+                </div>
+              </>
+            )}
+            <div className={styles.TotalContainer}>
               <span>Total:</span>
               <span>
-                Rp{" "}
-                {calculateTotalPrice(
-                  transaction.DetailedTransactions
-                ).toLocaleString()}
+                Rp {calculateTotalPrice(transaction.DetailedTransactions)}
               </span>
             </div>
-          ) : (
-            <div style={{ marginTop: "20px" }}>
-              <ColorRing
-                visible={true}
-                height="80"
-                width="80"
-                ariaLabel="blocks-loading"
-                wrapperStyle={{}}
-                wrapperClass="blocks-wrapper"
-                colors={["#4fa94d", "#f7c34c", "#ffa53c", "#e34f53", "#d23a8d"]}
-              />
-              <p>Loading Transaction Data...</p>
+            <div className={styles.TotalContainer}>
+              <button
+                className={styles.PayButton}
+                onClick={() => handleConfirm(transaction.transactionId)}
+                disabled={isPaymentLoading} // Disable button if confirmed (1) or declined (-1) or loading
+              >
+                {isPaymentLoading ? (
+                  <ColorRing height="50" width="50" color="white" />
+                ) : transaction.confirmed === 1 ? (
+                  "Show payment" // Display "Confirm has paid" if the transaction is confirmed (1)
+                ) : transaction.confirmed === -1 ? (
+                  "Declined" // Display "Declined" if the transaction is declined (-1)
+                ) : transaction.confirmed === 2 ? (
+                  "Confirm item has ready" // Display "Item ready" if the transaction is ready (2)
+                ) : transaction.confirmed === 3 ? (
+                  "Transaction success" // Display "Item ready" if the transaction is ready (2)
+                ) : (
+                  "Confirm availability" // Display "Confirm availability" if the transaction is not confirmed (0)
+                )}
+              </button>
             </div>
-          )}
-
-          <button
-            onClick={() => handleClaimHasPaid(transaction.transactionId)}
-            className={styles.PayButton}
-          >
-            I've already paid
-          </button>
-          <div style={{ marginBottom: "20px" }}></div>
-        </div>
+            <h5
+              className={styles.DeclineButton}
+              onClick={() => handleDecline(transaction.transactionId)}
+            >
+              cancel
+            </h5>
+          </div>
+        )}
       </div>
     </div>
   );

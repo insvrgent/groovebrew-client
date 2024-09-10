@@ -50,6 +50,30 @@ export async function declineTransaction(transactionId) {
   }
 }
 
+export async function cancelTransaction(transactionId) {
+  try {
+    console.log(transactionId);
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/claim-transaction/${transactionId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 export async function handleClaimHasPaid(transactionId) {
   try {
     console.log(transactionId);
@@ -264,6 +288,7 @@ export const handlePaymentFromGuestDevice = async (
   payment_type,
   serving_type,
   tableNo,
+  notes,
   socketId
 ) => {
   try {
@@ -291,6 +316,7 @@ export const handlePaymentFromGuestDevice = async (
           serving_type,
           tableNo,
           transactions: structuredItems,
+          notes: notes,
           socketId,
         }),
       }

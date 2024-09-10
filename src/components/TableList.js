@@ -9,10 +9,17 @@ const TableList = ({ shop, tables, onSelectTable, selectedTable }) => {
   const [bgImageUrl, setBgImageUrl] = useState(shop.qrBackground);
   const shopUrl = window.location.hostname + "/" + shop.cafeId;
 
-  const generateQRCodeUrl = (tableCode) =>
-    `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-      shopUrl + "/" + tableCode
-    )}`;
+  const generateQRCodeUrl = (tableCode) => {
+    if (tableCode != null) {
+      return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+        shopUrl + "/" + tableCode
+      )}`;
+    } else {
+      return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+        shopUrl
+      )}`;
+    }
+  };
 
   const handleBackgroundUrlChange = (newUrl) => {
     setBgImageUrl(newUrl);
@@ -57,7 +64,7 @@ const TableList = ({ shop, tables, onSelectTable, selectedTable }) => {
               handleQrSave={handleQrSave}
               setInitialPos={setInitialPos}
               setInitialSize={setInitialSize}
-              qrCodeUrl={generateQRCodeUrl("sample")}
+              qrCodeUrl={generateQRCodeUrl("")}
               backgroundUrl={bgImageUrl}
               initialQrPosition={initialPos}
               initialQrSize={initialSize}

@@ -118,3 +118,54 @@
   margin: 26px;
   background-color: #f9f9f9;
 }
+
+.EmailContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-size: 1em;
+  padding: 10px 0;
+  margin-bottom: 7px;
+}
+.OrderTypeContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-size: 1em;
+  padding: 10px 0;
+  margin-bottom: 7px;
+}
+
+.Note {
+  text-align: left;
+  color: rgba(88, 55, 50, 1);
+  font-size: 1em;
+  margin-bottom: 13px;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+.NoteContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-size: 1em;
+  padding: 10px 0;
+  margin-bottom: 7px;
+}
+
+.NoteInput {
+  width: 78vw;
+  height: 12vw;
+  border-radius: 20px;
+  margin: 0 auto;
+  padding: 10px;
+  font-size: 1.2em;
+  border: 1px solid rgba(88, 55, 50, 0.5);
+  margin-bottom: 27px;
+  resize: none; /* Prevent resizing */
+  overflow-wrap: break-word; /* Ensure text wraps */
+}

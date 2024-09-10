@@ -343,6 +343,7 @@ function App() {
                 <Cart
                   table={table}
                   sendParam={handleSetParam}
+                  socket={socket}
                   totalItemsCount={totalItemsCount}
                   deviceType={deviceType}
                 />
