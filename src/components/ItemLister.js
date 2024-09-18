@@ -182,8 +182,8 @@ const ItemLister = ({
                 <div className={styles["itemWrapper"]}>
                   {isEditMode && (
                     <div className={styles["editModeLayout"]}>
-                      <Switch />
-                      <h3>out of stock</h3>
+                      <Switch checked={true} />
+                      <h3>available</h3>
                     </div>
                   )}
                   <Item
