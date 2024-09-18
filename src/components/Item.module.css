@@ -1,205 +1,206 @@
 .itemContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  /* gap: 10px; */
 }
 
 .item {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    padding-left: 5px;
-    margin-bottom: 10px;
-    color: rgba(88, 55, 50, 1);
-    font-size: 32px;
-    box-sizing: border-box; /* Include padding and border in the element's total width */
-    width: 100%; /* Ensure the item does not exceed the parent's width */
-    overflow: hidden; /* Prevent internal overflow */
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  padding-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: rgba(88, 55, 50, 1);
+  font-size: 32px;
+  box-sizing: border-box; /* Include padding and border in the element's total width */
+  width: 100%; /* Ensure the item does not exceed the parent's width */
+  overflow: hidden; /* Prevent internal overflow */
 }
 
-
 .itemInvoice {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    font-size: 18px;
-    margin-bottom: 45px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  font-size: 18px;
+  margin-bottom: 45px;
 }
 
 .itemInvoice:last-child {
-    margin-bottom: 0; /* Remove margin-bottom for the last child */
+  margin-bottom: 0; /* Remove margin-bottom for the last child */
 }
 
 .itemImage {
-    width: 139px;
-    height: 149px;
-    border-radius: 20px;
-    margin-right: 10px;
-    object-fit: cover;
-    position: relative;
+  width: 139px;
+  height: 149px;
+  border-radius: 20px;
+  margin-right: 10px;
+  object-fit: cover;
+  position: relative;
 }
 
 .imageContainer {
-    position: relative;
-    width: 139px;
-    height: 149px;
+  position: relative;
+  width: 139px;
+  height: 149px;
 }
 
 .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .overlay:hover {
-    background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .fileInput {
-    display: none;
+  display: none;
 }
 
 .itemDetails {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-left: 10px;
-    flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 10px;
+  flex-grow: 1;
 }
 
 .itemInvoiceDetails {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-left: 10px;
-    margin-top: -15px;
-    flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 10px;
+  margin-top: -15px;
+  flex-grow: 1;
 }
 
 .itemName {
-    font-family: "Poppins", sans-serif;
-    font-style: normal;
-    width: calc(100% - 15px); /* Adjust the width to prevent overflow */
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-top: 0;
-    margin: 0 5px;
-    color: rgba(88, 55, 50, 1);
-    background-color: transparent;
-    text-transform: capitalize;
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  width: calc(100% - 15px); /* Adjust the width to prevent overflow */
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 0;
+  margin: 0 5px;
+  color: rgba(88, 55, 50, 1);
+  background-color: transparent;
+  text-transform: capitalize;
 }
 
 .itemInvoiceName {
-    width: calc(260% - 15px);
-    background-color: transparent;
-    font-size: 1.5rem;
-    font-weight: 500;
+  width: calc(260% - 15px);
+  background-color: transparent;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 .multiplySymbol {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .qtyInvoice {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .itemPrice {
-    font-family: "Poppins", sans-serif;
-    font-style: normal;
-    font-weight: 600;
-    width: calc(100% - 15px); /* Adjust the width to prevent overflow */
-    font-size: 0.9rem;
-    margin-bottom: 35px;
-    margin-left: 5px;
-    color: #D9C61C;
-    background-color: transparent;
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  width: calc(100% - 15px); /* Adjust the width to prevent overflow */
+  font-size: 0.9rem;
+  margin-bottom: 35px;
+  margin-left: 5px;
+  color: #d9c61c;
+  background-color: transparent;
 }
 
 .itemPriceInvoice {
-    font-family: "Poppins", sans-serif;
-    font-style: normal;
-    font-weight: 600;
-    width: calc(100% - 15px); /* Adjust the width to prevent overflow */
-    font-size: 0.9rem;
-    margin-left: 5px;
-    color: #D9C61C;
-    text-align: right;
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  width: calc(100% - 15px); /* Adjust the width to prevent overflow */
+  font-size: 0.9rem;
+  margin-left: 5px;
+  color: #d9c61c;
+  text-align: right;
 }
 
 .itemQty {
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-    margin-left: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-left: 5px;
 }
 
 .itemQtyValue {
-    font-family: "Poppins", sans-serif;
-    font-style: normal;
-    font-weight: 600;
-    margin-top: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-    width: 25px;
-    text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 25px;
+  text-align: center;
 }
 
 .itemQtyInput {
-    font-family: "Poppins", sans-serif;
-    font-style: normal;
-    font-weight: 600;
-    width: 30px; /* Adjust the width to prevent overflow */
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-    text-align: center;
-    background-color: transparent;
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  width: 30px; /* Adjust the width to prevent overflow */
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  text-align: center;
+  background-color: transparent;
 }
 
-
 .plusNegative {
-    width: 35px;
-    height: 35px;
-    margin-top: -10px;
+  width: 35px;
+  height: 35px;
+  margin-top: -10px;
 }
 
 .remove {
-    width: 25px;
-    height: 25px;
-    margin-top: -10px;
-    margin-right: 10px;
+  width: 25px;
+  height: 25px;
+  margin-top: -10px;
+  margin-right: 10px;
 }
 
 .itemInvoice .itemDetails {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.itemInvoice .itemName, .itemInvoice .itemPrice, .itemInvoice .itemQty .qtyInvoice .multiplySymbol {
-    font-size: 0.9rem;
+.itemInvoice .itemName,
+.itemInvoice .itemPrice,
+.itemInvoice .itemQty .qtyInvoice .multiplySymbol {
+  font-size: 0.9rem;
 }
 
 .blank {
-    border: 1px solid #000000;
+  border: 1px solid #000000;
 }
 
 .notblank {
-    border: 1px solid #ffffff00;
+  border: 1px solid #ffffff00;
 }
 
 .createItem {
-    position: absolute;
-    left: 15px;
-    right: 15px;
+  position: absolute;
+  left: 15px;
+  right: 15px;
 }

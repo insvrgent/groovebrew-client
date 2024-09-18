@@ -46,6 +46,8 @@ function CafePage({
   const [isSpotifyNeedLogin, setNeedSpotifyLogin] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isEditMode, setIsEditMode] = useState(false);
+
   useEffect(() => {
     if (user.cafeId != null && user.cafeId != shopId) {
       navigate("/" + user.cafeId);
@@ -109,6 +111,7 @@ function CafePage({
             guestSides={guestSides}
             guestSideOfClerk={guestSideOfClerk}
             removeConnectedGuestSides={removeConnectedGuestSides}
+            setIsEditMode={(e) => setIsEditMode(e)}
           />
           <div style={{ marginTop: "5px" }}></div>
           <SearchInput shopId={shopId} tableCode={table.tableCode} />
@@ -137,6 +140,7 @@ function CafePage({
               itemTypeId={itemType.itemTypeId}
               typeName={itemType.name}
               itemList={itemType.itemList}
+              isEditMode={isEditMode}
             />
           ))}
         </body>

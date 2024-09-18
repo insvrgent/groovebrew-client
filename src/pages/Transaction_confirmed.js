@@ -5,6 +5,7 @@ import { ColorRing } from "react-loader-spinner";
 import {
   getTransaction,
   confirmTransaction,
+  handleClaimHasPaid,
   declineTransaction,
   cancelTransaction,
 } from "../helpers/transactionHelpers";

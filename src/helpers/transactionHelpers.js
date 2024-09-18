@@ -55,7 +55,7 @@ export async function cancelTransaction(transactionId) {
     console.log(transactionId);
     const token = getLocalStorage("auth");
     const response = await fetch(
-      `${API_BASE_URL}/transaction/claim-transaction/${transactionId}`,
+      `${API_BASE_URL}/transaction/cancel-transaction/${transactionId}`,
       {
         method: "POST",
         headers: {

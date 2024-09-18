@@ -54,7 +54,7 @@
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-style: normal;
-  font-size: 24px; /* Adjusted for better readability */
+  font-size: 70%; /* Adjusted for better readability */
   padding: 12px 24px; /* Added padding for a better look */
   border-radius: 50px;
   background-color: rgba(88, 55, 50, 1);
@@ -81,6 +81,7 @@
   margin-bottom: 23px; /* Space at the bottom to match the PayButton */
 }
 .RoundedRectangle {
+  position: relative;
   border-radius: 20px;
   padding: 15px; /* Adjusted for better spacing */
   margin: 26px;
@@ -115,4 +116,29 @@
   border: 1px solid rgba(88, 55, 50, 0.5);
   resize: none; /* Prevent resizing */
   overflow-wrap: break-word; /* Ensure text wraps */
+}
+
+.RibbonBanner {
+  position: absolute;
+  top: 0;
+  width: 200px;
+  height: 200px;
+  left: -18px;
+}
+
+.RibbonBanner img {
+  object-fit: contain;
+  width: 100%;
+  height: auto;
+}
+
+.RibbonBanner h1 {
+  margin: 0; /* Remove default margin */
+  font-size: 20px; /* Adjust font size as needed */
+  transform: rotate(-44.7deg); /* Rotate the text */
+  transform-origin: center; /* Rotate around its center */
+  white-space: nowrap; /* Prevent text wrapping */
+  position: absolute;
+  top: 60px;
+  left: -15px;
 }

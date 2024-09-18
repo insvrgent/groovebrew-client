@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import styles from "./ItemLister.module.css";
 import Item from "./Item";
+import Switch from "react-switch";
 import {
   getItemQtyFromCart,
   updateItemQtyInCart,
@@ -23,6 +24,7 @@ const ItemLister = ({
   itemList,
   forCart,
   forInvoice,
+  isEditMode,
 }) => {
   const [items, setItems] = useState(
     itemList.map((item) => ({
@@ -177,18 +179,27 @@ const ItemLister = ({
               )}
             {items.map((item) => {
               return !forCart || (forCart && item.qty > 0) ? (
-                <Item
-                  key={item.itemId}
-                  forCart={forCart}
-                  forInvoice={forInvoice}
-                  name={item.name}
-                  price={item.price}
-                  qty={item.qty}
-                  imageUrl={getImageUrl(item.image)}
-                  onPlusClick={() => handlePlusClick(item.itemId)}
-                  onNegativeClick={() => handleNegativeClick(item.itemId)}
-                  onRemoveClick={() => handleRemoveClick(item.itemId)}
-                />
+                <div className={styles["itemWrapper"]}>
+                  {isEditMode && (
+                    <div className={styles["editModeLayout"]}>
+                      <Switch />
+                      <h3>out of stock</h3>
+                    </div>
+                  )}
+                  <Item
+                    key={item.itemId}
+                    forCart={forCart}
+                    forInvoice={forInvoice}
+                    name={item.name}
+                    price={item.price}
+                    qty={item.qty}
+                    imageUrl={getImageUrl(item.image)}
+                    onPlusClick={() => handlePlusClick(item.itemId)}
+                    onNegativeClick={() => handleNegativeClick(item.itemId)}
+                    onRemoveClick={() => handleRemoveClick(item.itemId)}
+                    isEditMode={isEditMode}
+                  />
+                </div>
               ) : null;
             })}
 

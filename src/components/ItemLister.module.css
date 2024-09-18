@@ -6,6 +6,9 @@
   box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
+.item-lister:last-child {
+  margin-bottom: 50px;
+}
 .title-container {
   display: flex;
   align-items: center;
@@ -58,4 +61,18 @@
 
 .noborder {
   border: 1px solid #ffffff00;
+}
+.itemWrapper {
+  position: relative;
+}
+.editModeLayout {
+  position: absolute;
+  z-index: 100;
+  background-color: #0000008c;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

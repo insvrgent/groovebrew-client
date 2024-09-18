@@ -120,6 +120,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
               setSelectedTable(transaction.Table || { tableId: 0 })
             }
           >
+            <div className={styles.RibbonBanner}></div>
             <h2 className={styles["Transactions-detail"]}>
               Transaction ID: {transaction.transactionId}
             </h2>
@@ -176,6 +177,8 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                   "Confirm has paid" // Display "Confirm has paid" if the transaction is confirmed (1)
                 ) : transaction.confirmed === -1 ? (
                   "Declined" // Display "Declined" if the transaction is declined (-1)
+                ) : transaction.confirmed === -2 ? (
+                  "Canceled" // Display "Declined" if the transaction is declined (-1)
                 ) : transaction.confirmed === 2 ? (
                   "Confirm item has ready" // Display "Item ready" if the transaction is ready (2)
                 ) : transaction.confirmed === 3 ? (

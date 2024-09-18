@@ -1,19 +1,19 @@
 .item-type-lister {
-    width: 100vw;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding: 3px 0px;
+  width: 100vw;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 3px 0px;
 }
 
 .item-type-list {
-    display: inline-flex;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-    overflow-y: hidden;
+  display: inline-flex;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow-y: hidden;
 }
 
 .item-type {
-    display: inline-block;
-    margin-right: 20px;
-    /* Space between items */
+  display: inline-block;
+  margin-right: 20px;
+  /* Space between items */
 }

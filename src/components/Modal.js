@@ -38,7 +38,10 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
         {modalContent === "edit_tables" && <TablesPage shop={shop} />}
         {modalContent === "new_transaction" && (
           <Transaction propsShopId={shop.cafeId} />
-        )}{" "}
+        )}
+        {modalContent === "transaction_canceled" && (
+          <Transaction propsShopId={shop.cafeId} />
+        )}
         {modalContent === "transaction_pending" && <Transaction_pending />}
         {modalContent === "transaction_confirmed" && (
           <Transaction_confirmed paymentUrl={shop.qrPayment} />

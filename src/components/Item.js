@@ -111,7 +111,9 @@ const Item = ({
       )}
       <div className={styles.itemDetails}>
         <input
-          className={`${forInvoice ? styles.itemInvoiceName : styles.itemName} ${blank ? styles.blank : styles.notblank}`}
+          className={`${
+            forInvoice ? styles.itemInvoiceName : styles.itemName
+          } ${blank ? styles.blank : styles.notblank}`}
           value={itemName}
           onChange={handleNameChange}
           disabled={!blank}
@@ -125,7 +127,9 @@ const Item = ({
         )}
         {!forInvoice && (
           <input
-            className={`${styles.itemPrice} ${blank ? styles.blank : styles.notblank}`}
+            className={`${styles.itemPrice} ${
+              blank ? styles.blank : styles.notblank
+            }`}
             value={itemPrice}
             onChange={handlePriceChange}
             disabled={!blank}

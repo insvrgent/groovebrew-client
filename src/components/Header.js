@@ -222,6 +222,7 @@ const Header = ({
   guestSides,
   guestSideOfClerk,
   removeConnectedGuestSides,
+  setIsEditMode,
 }) => {
   const { goToLogin, goToGuestSideLogin, goToAdminCafes } =
     useNavigationHelpers(shopId, tableCode);
@@ -320,6 +321,17 @@ const Header = ({
                     </Child> */}
                     <Child hasChildren>
                       {shopName}
+                      <div class="toggle-switch">
+                        <input
+                          type="checkbox"
+                          className="toggle-switch-checkbox"
+                          // checked={isChecked}
+                          onChange={(e) => setIsEditMode(e.target.checked)}
+                        />
+                        <label class="toggle-switch-label" for="toggleSwitch">
+                          Edit Mode
+                        </label>
+                      </div>
                       <Child onClick={() => setModal("add_material")}>
                         stock
                       </Child>
@@ -360,6 +372,17 @@ const Header = ({
                 user.roleId === 2 && (
                   <Child hasChildren>
                     {shopName}
+                    <div class="toggle-switch">
+                      <input
+                        type="checkbox"
+                        className="toggle-switch-checkbox"
+                        // checked={isChecked}
+                        onChange={(e) => setIsEditMode(e.target.checked)}
+                      />
+                      <label class="toggle-switch-label" for="toggleSwitch">
+                        Edit Mode
+                      </label>
+                    </div>
                     <Child onClick={() => setModal("add_material")}>
                       stock
                     </Child>

@@ -1,5 +1,4 @@
 .footerContainer {
-  margin-top: 40px;
 }
 .footer-rect {
   height: 75px;
@@ -22,8 +21,6 @@
   width: calc(100vw);
   /* Adjust size as needed, subtracting margin */
   height: 75px;
-  /* Adjust size as needed */
-  margin-top: 10px;
 }
 
 .footer-icon {
