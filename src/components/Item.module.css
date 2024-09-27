@@ -166,6 +166,26 @@
   background-color: transparent;
 }
 
+.addButton {
+  background-color: #04aa6d;
+  border: none;
+  color: white;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  width: 95px;
+  height: 35px;
+  margin-left: 5px;
+  margin-top: 5px;
+  border-radius: 20px;
+}
+.grayscale {
+  filter: grayscale(100%);
+}
+
+.disabled {
+  color: gray;
+}
 .plusNegative {
   width: 35px;
   height: 35px;

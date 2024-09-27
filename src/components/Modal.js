@@ -13,6 +13,7 @@ import Payment_claimed from "../pages/Payment_claimed";
 import MaterialList from "../pages/MaterialList.js";
 import MaterialMutationsPage from "../pages/MaterialMutationsPage.js";
 import Reports from "../pages/Reports.js";
+import NotificationBlocked from "../pages/NotificationBlocked.js";
 
 const Modal = ({ shop, isOpen, onClose, modalContent }) => {
   if (!isOpen) return null;
@@ -35,6 +36,7 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
         <button onClick={onClose} className={styles.closeButton}>
           &times;
         </button>
+        {modalContent === "req_notification" && <NotificationBlocked />}
         {modalContent === "edit_tables" && <TablesPage shop={shop} />}
         {modalContent === "new_transaction" && (
           <Transaction propsShopId={shop.cafeId} />
@@ -53,7 +55,7 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
         {modalContent === "transaction_end" && <Transaction_end />}
         {modalContent === "transaction_failed" && <Transaction_failed />}
         {modalContent === "payment_option" && (
-          <PaymentOptions paymentUrl={shop.qrPayment} shopId={shop.cafeId} />
+          <PaymentOptions shopId={shop.cafeId} />
         )}
         {modalContent === "add_material" && (
           <MaterialList cafeId={shop.cafeId} />

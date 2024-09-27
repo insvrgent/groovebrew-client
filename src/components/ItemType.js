@@ -8,6 +8,7 @@ export default function ItemType({
   blank,
   name: initialName = "",
   imageUrl,
+  selected,
 }) {
   const inputRef = useRef(null);
   const [name, setName] = useState(initialName);
@@ -51,7 +52,11 @@ export default function ItemType({
 
   return (
     <div className={styles["item-type"]}>
-      <div onClick={onClick} className={styles["item-type-rect"]}>
+      <div
+        onClick={onClick}
+        className={styles["item-type-rect"]}
+        style={{ top: selected ? "-10px" : "initial" }}
+      >
         <img
           src={previewUrl}
           alt={name}
@@ -84,6 +89,7 @@ export default function ItemType({
         value={name}
         onChange={handleNameChange}
         disabled={!blank}
+        style={{ top: selected ? "-5px" : "initial" }}
       />
       {blank && (
         <button className={styles["item-type-create"]} onClick={handleCreate}>

@@ -1,27 +1,43 @@
 import React, { useState, useRef, useEffect } from "react";
 import jsQR from "jsqr"; // Import jsQR library
 import { getImageUrl } from "../helpers/itemHelper";
-import { saveCafeDetails } from "../helpers/cafeHelpers"; // Import the helper function
+import {
+  getCafe,
+  saveCafeDetails,
+  setConfirmationStatus,
+} from "../helpers/cafeHelpers"; // Import the helper function
+import Switch from "react-switch";
 
-const SetPaymentQr = ({
-  isConfigure,
-  tableNo,
-  qrCodeUrl,
-  paymentUrl,
-  initialQrPosition,
-  initialQrSize,
-  handleQrSave,
-  shopId, // Pass cafeId as a prop to identify which cafe to update
-}) => {
-  const [qrPosition, setQrPosition] = useState(initialQrPosition);
-  const [qrSize, setQrSize] = useState(initialQrSize);
-  const [qrPayment, setQrPayment] = useState(getImageUrl(paymentUrl));
+const SetPaymentQr = ({ shopId }) => {
+  const [qrPosition, setQrPosition] = useState([50, 50]);
+  const [qrSize, setQrSize] = useState(50);
+  const [qrPayment, setQrPayment] = useState();
   const [qrCodeDetected, setQrCodeDetected] = useState(false);
   const qrPaymentInputRef = useRef(null);
   const overlayTextRef = useRef(null);
   const qrCodeContainerRef = useRef(null);
+  const [isNeedConfirmation, setIsNeedConfirmation] = useState(false);
+  const [cafe, setCafe] = useState([]);
 
   // Use useEffect to detect QR code after qrPayment updates
+  useEffect(() => {
+    const fetchCafe = async () => {
+      try {
+        const response = await getCafe(shopId);
+        setCafe(response);
+        setQrPayment(getImageUrl(response.qrPayment));
+        setIsNeedConfirmation(response.needsConfirmation);
+        setQrPosition([response.xposition, response.yposition]);
+        setQrSize(response.scale);
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching cafe:", error);
+      }
+    };
+
+    fetchCafe();
+  }, [shopId]);
+
   useEffect(() => {
     if (qrPayment) {
       detectQRCodeFromContainer();
@@ -77,7 +93,7 @@ const SetPaymentQr = ({
     };
 
     // Call saveCafeDetails function with the updated details object
-    saveCafeDetails(shopId, details)
+    saveCafeDetails(cafe.cafeId, details)
       .then((response) => {
         console.log("Cafe details saved:", response);
         // handleQrSave(qrPosition, qrSize, qrPayment);
@@ -85,6 +101,24 @@ const SetPaymentQr = ({
       .catch((error) => {
         console.error("Error saving cafe details:", error);
       });
+  };
+
+  const handleChange = async () => {
+    console.log(isNeedConfirmation);
+    setIsNeedConfirmation(!isNeedConfirmation);
+    console.log(!isNeedConfirmation);
+    try {
+      // Wait for the updateItemAvailability response
+      const response = await setConfirmationStatus(
+        cafe.cafeId,
+        !isNeedConfirmation
+      );
+
+      setIsNeedConfirmation(response.needsConfirmation);
+    } catch (error) {
+      console.log(error);
+      setIsNeedConfirmation(cafe.needsConfirmation);
+    }
   };
 
   return (
@@ -143,6 +177,8 @@ const SetPaymentQr = ({
           </button>
         </div>
       </div>
+
+      <Switch onChange={() => handleChange()} checked={isNeedConfirmation} />
     </div>
   );
 };

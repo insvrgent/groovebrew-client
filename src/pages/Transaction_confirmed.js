@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import styles from "./Transactions.module.css";
 import { useParams } from "react-router-dom";
 import { ColorRing } from "react-loader-spinner";
+import ButtonWithReplica from "../components/ButtonWithReplica";
 import {
   getTransaction,
   confirmTransaction,
@@ -156,11 +157,10 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 Rp {calculateTotalPrice(transaction.DetailedTransactions)}
               </span>
             </div>
-            <div className={styles.TotalContainer}>
-              <button
-                className={styles.PayButton}
+            <div className={styles.PaymentContainer}>
+              <ButtonWithReplica
+                disabled={isPaymentLoading}
                 onClick={() => handleConfirm(transaction.transactionId)}
-                disabled={isPaymentLoading} // Disable button if confirmed (1) or declined (-1) or loading
               >
                 {isPaymentLoading ? (
                   <ColorRing height="50" width="50" color="white" />
@@ -175,7 +175,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 ) : (
                   "Confirm availability" // Display "Confirm availability" if the transaction is not confirmed (0)
                 )}
-              </button>
+              </ButtonWithReplica>
             </div>
             <h5
               className={styles.DeclineButton}

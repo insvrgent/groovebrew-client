@@ -1,0 +1,49 @@
+.container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  position: relative;
+  z-index: 99; /* Make sure the button is above the replica */
+
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 70%; /* Adjusted for better readability */
+  padding: 12px 24px; /* Added padding for a better look */
+  border-radius: 50px;
+  background-color: rgba(88, 55, 50, 1);
+  color: white;
+  border: none;
+  margin: 0 auto;
+  cursor: pointer;
+  display: block; /* Centering the button */
+  text-align: center;
+}
+
+.replica {
+  height: 40px;
+  width: 140px;
+  border-radius: 30px;
+  position: absolute;
+  background-color: rgb(146, 146, 146); /* Semi-transparent blue */
+  border: none;
+  transition: all 0.5s ease-in-out;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 98; /* Behind the button */
+}
+
+.replica.active {
+  width: 200vw; /* Full screen */
+  height: 200vh; /* Full screen */
+  position: absolute;
+  overflow-y: hidden;
+  top: 30%;
+  z-index: 200;
+  border-radius: 0px;
+}

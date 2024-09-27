@@ -47,6 +47,7 @@ function CafePage({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isEditMode, setIsEditMode] = useState(false);
+  const [filterId, setFilterId] = useState(0);
 
   useEffect(() => {
     if (user.cafeId != null && user.cafeId != shopId) {
@@ -112,6 +113,7 @@ function CafePage({
             guestSideOfClerk={guestSideOfClerk}
             removeConnectedGuestSides={removeConnectedGuestSides}
             setIsEditMode={(e) => setIsEditMode(e)}
+            isEditMode={isEditMode}
           />
           <div style={{ marginTop: "5px" }}></div>
           <SearchInput shopId={shopId} tableCode={table.tableCode} />
@@ -121,28 +123,43 @@ function CafePage({
             shopOwnerId={shopOwnerId}
             shopId={shopId}
             itemTypes={shopItems}
+            isEditMode={isEditMode}
+            onFilterChange={(e) => setFilterId(e)}
+            filterId={filterId}
           />
           <div style={{ marginTop: "-13px" }}></div>
-          <h2 className="title">Music Req.</h2>
-          <MusicPlayer
-            socket={socket}
-            shopId={shopId}
-            user={user}
-            isSpotifyNeedLogin={isSpotifyNeedLogin}
-          />
+          {filterId === 0 ? (
+            <>
+              <h2 className="title">Music Req.</h2>
+              <MusicPlayer
+                socket={socket}
+                shopId={shopId}
+                user={user}
+                isSpotifyNeedLogin={isSpotifyNeedLogin}
+              />
+            </>
+          ) : (
+            <div style={{ marginTop: "35px" }}></div>
+          )}
+
           <div style={{ marginTop: "-15px" }}></div>
-          {shopItems.map((itemType) => (
-            <ItemLister
-              shopId={shopId}
-              shopOwnerId={shopOwnerId}
-              user={user}
-              key={itemType.itemTypeId}
-              itemTypeId={itemType.itemTypeId}
-              typeName={itemType.name}
-              itemList={itemType.itemList}
-              isEditMode={isEditMode}
-            />
-          ))}
+          {shopItems
+            .filter(
+              (itemType) => filterId == 0 || itemType.itemTypeId === filterId
+            )
+            .map((itemType) => (
+              <ItemLister
+                shopId={shopId}
+                shopOwnerId={shopOwnerId}
+                user={user}
+                key={itemType.itemTypeId}
+                itemTypeId={itemType.itemTypeId}
+                typeName={itemType.name}
+                itemList={itemType.itemList}
+                isEditMode={isEditMode}
+                raw={isEditMode || filterId == 0 ? false : true}
+              />
+            ))}
         </body>
         {user.username && (
           <AccountUpdateModal

@@ -89,7 +89,7 @@ export default function Footer({
           <div onClick={goToTransactions} className={styles["footer-icon"]}>
             <svg viewBox="0 0 512 512">
               <g
-                transform="translate(0 512) scale(0.1 -0.1)"
+                transform="translate(0 460) scale(0.09 -0.09)"
                 style={{ fill: selectedPage === 3 ? "black" : "#8F8787" }}
                 stroke="none"
               >

@@ -74,15 +74,17 @@ export default function SearchInput({
       let url = "";
       if (autofocus || songName != "") {
         url = tableCode
-          ? `/${shopId}/${tableCode}/search?query=${encodeURIComponent(songName)}`
+          ? `/${shopId}/${tableCode}/search?query=${encodeURIComponent(
+              songName
+            )}`
           : `/${shopId}/search?query=${encodeURIComponent(songName)}`;
         navigate(url);
       }
 
       if (autofocus) {
         if (songName == "") {
-          if (tableCode) navigate(`/${shopId}/${tableCode}`);
-          else navigate(`/${shopId}`);
+          if (tableCode) navigate(`/${shopId}/${tableCode}?find=true`);
+          else navigate(`/${shopId}?find=true`);
         }
       }
       if (onSearchChange) onSearchChange(songName);
@@ -100,8 +102,17 @@ export default function SearchInput({
 
   // Focus input when component mounts
   useEffect(() => {
-    if (autofocus) if (inputRef.current) inputRef.current.focus();
+    const isFinding = searchParams.get("find") || false;
+    if (autofocus || isFinding) if (inputRef.current) inputRef.current.focus();
   }, []);
+
+  const handleBlur = () => {
+    const isFinding = searchParams.get("find") || false;
+    if (isFinding) {
+      if (tableCode) navigate(`/${shopId}/${tableCode}`);
+      else navigate(`/${shopId}`);
+    }
+  };
 
   return (
     <SearchBox>
@@ -112,6 +123,7 @@ export default function SearchInput({
           placeholder="Search..."
           value={songName}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         <SearchIcon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path d="M20.8333 18.3333H19.5167L19.05 17.8833C20.6833 15.9833 21.6667 13.5167 21.6667 10.8333C21.6667 4.85 16.8167 0 10.8333 0C4.85 0 0 4.85 0 10.8333C0 16.8167 4.85 21.6667 10.8333 21.6667C13.5167 21.6667 15.9833 20.6833 17.8833 19.05L18.3333 19.5167V20.8333L26.6667 29.15L29.15 26.6667L20.8333 18.3333ZM10.8333 18.3333C6.68333 18.3333 3.33333 14.9833 3.33333 10.8333C3.33333 6.68333 6.68333 3.33333 10.8333 3.33333C14.9833 3.33333 18.3333 6.68333 18.3333 10.8333C18.3333 14.9833 14.9833 18.3333 10.8333 18.3333Z" />

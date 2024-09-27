@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { useLocation } from "react-router-dom";
 import { useNavigationHelpers } from "../helpers/navigationHelpers";
+import Switch from "react-switch";
 
 const HeaderBar = styled.div`
   margin-top: 25px;
@@ -11,6 +12,7 @@ const HeaderBar = styled.div`
   padding: 20px 15px;
   color: black;
   background-color: white;
+  z-index: 200;
 `;
 
 const Title = styled.h2`
@@ -170,6 +172,7 @@ const Rectangle = styled.div`
   overflow-y: auto; /* Enable vertical scrolling */
   padding: 10px;
   box-sizing: border-box;
+  overflow-x: hidden;
 `;
 
 const ChildContainer = styled.div`
@@ -223,6 +226,7 @@ const Header = ({
   guestSideOfClerk,
   removeConnectedGuestSides,
   setIsEditMode,
+  isEditMode,
 }) => {
   const { goToLogin, goToGuestSideLogin, goToAdminCafes } =
     useNavigationHelpers(shopId, tableCode);
@@ -280,9 +284,27 @@ const Header = ({
     console.log(guestSideOfClerk);
   }, [guestSideOfClerk]);
 
+  const generateMenuHeader = (cafeName) => {
+    // Check if the name already ends with "'s"
+    if (cafeName.endsWith("'s")) {
+      return `${cafeName} menu`; // Return as-is for already possessive names
+    }
+    if (cafeName.endsWith("s")) {
+      return `${cafeName} menu`; // Return as-is for already possessive names
+    }
+
+    // Otherwise, use the possessive function
+    return `${cafeName}'s menu`;
+  };
   return (
     <HeaderBar>
-      <Title>{HeaderText}</Title>
+      <Title>
+        {shopName == null
+          ? HeaderText == null
+            ? "Groovebrew"
+            : HeaderText
+          : generateMenuHeader(shopName)}
+      </Title>
       <div style={{ visibility: showProfile ? "visible" : "hidden" }}>
         <ProfileImage
           src="https://i.ibb.co.com/fpg1v8J/profile-major-icon-1024x1024-9rtgyx30.png"
@@ -321,16 +343,15 @@ const Header = ({
                     </Child> */}
                     <Child hasChildren>
                       {shopName}
+
                       <div class="toggle-switch">
-                        <input
-                          type="checkbox"
-                          className="toggle-switch-checkbox"
-                          // checked={isChecked}
-                          onChange={(e) => setIsEditMode(e.target.checked)}
-                        />
                         <label class="toggle-switch-label" for="toggleSwitch">
                           Edit Mode
                         </label>
+                        <Switch
+                          checked={isEditMode}
+                          onChange={() => setIsEditMode(!isEditMode)}
+                        />
                       </div>
                       <Child onClick={() => setModal("add_material")}>
                         stock
@@ -372,16 +393,15 @@ const Header = ({
                 user.roleId === 2 && (
                   <Child hasChildren>
                     {shopName}
+
                     <div class="toggle-switch">
-                      <input
-                        type="checkbox"
-                        className="toggle-switch-checkbox"
-                        // checked={isChecked}
-                        onChange={(e) => setIsEditMode(e.target.checked)}
-                      />
                       <label class="toggle-switch-label" for="toggleSwitch">
                         Edit Mode
                       </label>
+                      <Switch
+                        checked={isEditMode}
+                        onChange={() => setIsEditMode(!isEditMode)}
+                      />
                     </div>
                     <Child onClick={() => setModal("add_material")}>
                       stock

@@ -163,7 +163,7 @@ const QRCodeWithBackground = ({
             style={styles.overlayText}
             onClick={() => qrBackgroundInputRef.current.click()}
           >
-            Click To Change Image
+            Click To Change Background
           </div>
         )}
         {/* Hidden file input */}
@@ -191,7 +191,6 @@ const QRCodeWithBackground = ({
                   onChange={handleSizeChange}
                   style={styles.input}
                 />
-                <span style={styles.labelEnd}>100%</span>
                 <span style={styles.value}>{qrSize}%</span>
               </div>
             </label>
@@ -211,7 +210,6 @@ const QRCodeWithBackground = ({
                   onChange={handlePositionChange}
                   style={styles.input}
                 />
-                <span style={styles.labelEnd}>100%</span>
                 <span style={styles.value}>{qrPosition.left}%</span>
               </div>
             </label>
@@ -231,7 +229,6 @@ const QRCodeWithBackground = ({
                   onChange={handlePositionChange}
                   style={styles.input}
                 />
-                <span style={styles.labelEnd}>100%</span>
                 <span style={styles.value}>{qrPosition.top}%</span>
               </div>
             </label>

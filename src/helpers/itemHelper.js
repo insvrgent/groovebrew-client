@@ -4,7 +4,7 @@ import { getItemsByCafeId } from "./cartHelpers.js";
 export async function getItemTypesWithItems(shopId) {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/item/get-cafe-items/` + shopId,
+      `${API_BASE_URL}/item/get-cafe-items/` + shopId
     );
 
     const data = await response.json();
@@ -37,7 +37,7 @@ export async function getCartDetails(shopId) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(getItemsByCafeId(shopId)),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -66,7 +66,7 @@ export async function createItem(
   price,
   qty,
   selectedImage,
-  itemTypeId,
+  itemTypeId
 ) {
   try {
     console.log(selectedImage);
@@ -94,6 +94,33 @@ export async function createItem(
     return data;
   } catch (error) {
     console.error("Failed to create item type:", error);
+    throw error;
+  }
+}
+
+export async function updateItemAvalilability(itemId, isAvailable) {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/item/set-availability/` + itemId,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+        body: JSON.stringify({ isAvailable: isAvailable }),
+      }
+    );
+
+    if (!response.ok) {
+      // throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Failed to update item type:", error);
     throw error;
   }
 }
@@ -136,7 +163,7 @@ export async function updateItemType(shopId, itemTypeId, newName) {
           Authorization: `Bearer ${getAuthToken()}`,
         },
         body: JSON.stringify({ newName }),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -160,7 +187,7 @@ export async function deleteItemType(shopId, itemTypeId) {
         headers: {
           Authorization: `Bearer ${getAuthToken()}`,
         },
-      },
+      }
     );
 
     if (!response.ok) {

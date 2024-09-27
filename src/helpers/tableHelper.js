@@ -103,10 +103,10 @@ export async function getTable(shopId, tableNo) {
   }
 }
 
-export async function getTableByCode(tableCode) {
+export async function getTableByCode(shopId, tableCode) {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/table/get-table-by-code/${tableCode}`,
+      `${API_BASE_URL}/table/get-table-by-code/${shopId}/${tableCode}`,
       {
         method: "GET",
         headers: {

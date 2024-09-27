@@ -4,6 +4,26 @@ function getAuthToken() {
   return localStorage.getItem("auth");
 }
 
+export async function getCafe(cafeId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/cafe/get-cafe/` + cafeId, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch cafes");
+    }
+
+    const cafe = await response.json();
+    return cafe;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 export async function getOwnedCafes(userId) {
   try {
     const response = await fetch(
@@ -36,8 +56,9 @@ export async function createCafe(cafeName) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getAuthToken()}`,
       },
-      body: JSON.stringify({ 
-        name: cafeName }),
+      body: JSON.stringify({
+        name: cafeName,
+      }),
     });
 
     if (!response.ok) {
@@ -70,6 +91,33 @@ export async function updateCafe(cafeId, cafeDetails) {
     return updatedCafe;
   } catch (error) {
     console.error("Error:", error);
+  }
+}
+
+export async function setConfirmationStatus(cafeId, isNeedConfirmation) {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/cafe/confirmation-status/` + cafeId,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+        body: JSON.stringify({ isNeedConfirmation: isNeedConfirmation }),
+      }
+    );
+
+    if (!response.ok) {
+      // throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Failed to update item type:", error);
+    throw error;
   }
 }
 

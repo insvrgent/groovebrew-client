@@ -9,6 +9,8 @@ import {
   useLocation,
 } from "react-router-dom";
 import socket from "./services/socketService";
+import { SubscriptionService } from "./services/subscriptionService";
+import { NotificationService } from "./services/notificationService";
 
 import Dashboard from "./pages/Dashboard";
 import ScanMeja from "./pages/ScanMeja";
@@ -77,19 +79,48 @@ function App() {
 
     if (tableCode)
       if (table.length == 0) {
-        const gettable = await getTableByCode(tableCode);
+        const gettable = await getTableByCode(shopId, tableCode);
         if (gettable) setTable(gettable);
       }
   };
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       console.log("gettingItems");
       try {
         const { response, cafe, data } = await getItemTypesWithItems(shopId);
         if (response.status === 200) {
           setShop(cafe);
           setShopItems(data);
+
+          // Filter out unavailable items
+          const filteredData = data
+            .map((itemType) => ({
+              ...itemType,
+              itemList: itemType.itemList.filter((item) => item.availability),
+            }))
+            .filter((itemType) => itemType.itemList.length > 0); // Remove empty itemTypes
+
+          // Update local storage by removing unavailable items
+          const updatedLocalStorage =
+            JSON.parse(localStorage.getItem("cart")) || [];
+          const newLocalStorage = updatedLocalStorage.map((cafe) => {
+            if (cafe.cafeId === shopId) {
+              return {
+                ...cafe,
+                items: cafe.items.filter((item) =>
+                  filteredData.some((filtered) =>
+                    filtered.itemList.some(
+                      (i) => i.itemId === item.itemId && i.availability
+                    )
+                  )
+                ),
+              };
+            }
+            return cafe;
+          });
+          localStorage.setItem("cart", JSON.stringify(newLocalStorage));
+
           socket.on("transaction_created", () => {
             console.log("transaction created");
           });
@@ -97,7 +128,7 @@ function App() {
       } catch (error) {
         console.error("Error fetching shop items:", error);
       }
-    }
+    };
 
     if (shopId !== "") fetchData();
   }, [shopId]);
@@ -107,6 +138,20 @@ function App() {
     setGuestSides(sessionLeft.guestSideList);
   };
 
+  const checkNotifications = async (userId) => {
+    try {
+      const permissionGranted =
+        await NotificationService.requestNotificationPermission(setModal);
+      if (permissionGranted) {
+        await SubscriptionService.subscribeUserToNotifications(userId);
+      } else {
+        setModal("blocked_notification");
+        console.log("req notif");
+      }
+    } catch (error) {
+      console.error("Error handling notifications:", error);
+    }
+  };
   useEffect(() => {
     if (socket == null) return;
 
@@ -129,7 +174,7 @@ function App() {
     });
 
     socket.on("transaction_confirmed", async (data) => {
-      console.log("transaction notification");
+      console.log("transaction notification" + data);
       setModal("transaction_confirmed", data);
     });
 
@@ -151,6 +196,11 @@ function App() {
     socket.on("transaction_failed", async (data) => {
       console.log("transaction notification");
       setModal("transaction_failed", data);
+    });
+
+    socket.on("transaction_canceled", async (data) => {
+      console.log("transaction notification");
+      setModal("transaction_canceled", data);
     });
 
     //for clerk
@@ -175,6 +225,8 @@ function App() {
           setGuestSides(connectedGuestSides.sessionDatas);
           console.log("getting guest side");
           setDeviceType("clerk");
+
+          checkNotifications(data.data.user.userId);
         } else {
           setDeviceType("guestDevice");
         }

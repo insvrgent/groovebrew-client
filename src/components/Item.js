@@ -14,6 +14,7 @@ const Item = ({
   onNegativeClick,
   handleCreateItem,
   onRemoveClick,
+  isAvailable,
 }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(imageUrl);
@@ -92,6 +93,9 @@ const Item = ({
                 "https://png.pngtree.com/png-vector/20221125/ourmid/pngtree-no-image-available-icon-flatvector-illustration-pic-design-profile-vector-png-image_40966566.jpg";
             }}
             alt={itemName}
+            style={{
+              filter: !isAvailable ? "grayscale(100%)" : "none",
+            }}
             className={styles.itemImage}
           />
           {blank && (
@@ -113,8 +117,11 @@ const Item = ({
         <input
           className={`${
             forInvoice ? styles.itemInvoiceName : styles.itemName
-          } ${blank ? styles.blank : styles.notblank}`}
+          } ${blank ? styles.blank : styles.notblank} ${
+            !isAvailable ? styles.disabled : ""
+          }`}
           value={itemName}
+          placeholder="name"
           onChange={handleNameChange}
           disabled={!blank}
         />
@@ -129,56 +136,83 @@ const Item = ({
           <input
             className={`${styles.itemPrice} ${
               blank ? styles.blank : styles.notblank
-            }`}
+            } ${!isAvailable ? styles.disabled : ""}`}
             value={itemPrice}
+            placeholder="price"
             onChange={handlePriceChange}
             disabled={!blank}
           />
         )}
 
-        {!forInvoice && (
-          <div className={styles.itemQty}>
-            <svg
-              className={styles.plusNegative}
-              onClick={handleNegativeClick}
-              clipRule="evenodd"
-              fillRule="evenodd"
-              strokeLinejoin="round"
-              strokeMiterlimit="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m12.002 2.005c5.518 0 9.998 4.48 9.998 9.997 0 5.518-4.48 9.998-9.998 9.998-5.517 0-9.997-4.48-9.997-9.998 0-5.517 4.48-9.997 9.997-9.997zm0 1.5c-4.69 0-8.497 3.807-8.497 8.497s3.807 8.498 8.497 8.498 8.498-3.808 8.498-8.498-3.808-8.497-8.498-8.497zm4.253 7.75h-8.5c-.414 0-.75.336-.75.75s.336.75.75.75h8.5c.414 0 .75-.336.75-.75s-.336-.75-.75-.75z"
-                fillRule="nonzero"
-              />
-            </svg>
-            {!blank && <p className={styles.itemQtyValue}>{itemQty}</p>}
-            {blank && (
-              <input
-                className={styles.itemQtyInput}
-                value={itemQty}
-                onChange={handleQtyChange}
-                disabled={!blank}
-              />
-            )}
-            <svg
-              className={styles.plusNegative}
-              onClick={handlePlusClick}
-              clipRule="evenodd"
-              fillRule="evenodd"
-              strokeLinejoin="round"
-              strokeMiterlimit="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m12.002 2c5.518 0 9.998 4.48 9.998 9.998 0 5.517-4.48 9.997-9.998 9.997-5.517 0-9.997-4.48-9.997-9.997 0-5.518 4.48-9.998 9.997-9.998zm0 1.5c-4.69 0-8.497 3.808-8.497 8.498s3.807 8.497 8.497 8.497 8.498-3.807 8.498-8.497-3.808-8.498-8.498-8.498zm-.747 7.75h-3.5c-.414 0-.75.336-.75.75s.336.75.75.75h3.5v3.5c0 .414.336.75.75.75s.75-.336.75-.75v-3.5h3.5c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-3.5v-3.5c0-.414-.336-.75-.75-.75s-.75.336-.75.75z"
-                fillRule="nonzero"
-              />
-            </svg>
-          </div>
-        )}
+        {!forInvoice &&
+          (itemQty != 0 ? (
+            <div className={styles.itemQty}>
+              <svg
+                className={styles.plusNegative}
+                onClick={handleNegativeClick}
+                clipRule="evenodd"
+                fillRule="evenodd"
+                strokeLinejoin="round"
+                strokeMiterlimit="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m12.002 2.005c5.518 0 9.998 4.48 9.998 9.997 0 5.518-4.48 9.998-9.998 9.998-5.517 0-9.997-4.48-9.997-9.998 0-5.517 4.48-9.997 9.997-9.997zm0 1.5c-4.69 0-8.497 3.807-8.497 8.497s3.807 8.498 8.497 8.498 8.498-3.808 8.498-8.498-3.808-8.497-8.498-8.497zm4.253 7.75h-8.5c-.414 0-.75.336-.75.75s.336.75.75.75h8.5c.414 0 .75-.336.75-.75s-.336-.75-.75-.75z"
+                  fillRule="nonzero"
+                />
+              </svg>
+              {!blank ? (
+                <p className={styles.itemQtyValue}>{itemQty}</p>
+              ) : (
+                <input
+                  className={styles.itemQtyInput}
+                  value={itemQty}
+                  onChange={handleQtyChange}
+                  disabled={!blank}
+                />
+              )}
+              <svg
+                className={styles.plusNegative}
+                onClick={handlePlusClick}
+                clipRule="evenodd"
+                fillRule="evenodd"
+                strokeLinejoin="round"
+                strokeMiterlimit="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m12.002 2c5.518 0 9.998 4.48 9.998 9.998 0 5.517-4.48 9.997-9.998 9.997-5.517 0-9.997-4.48-9.997-9.997 0-5.518 4.48-9.998 9.997-9.998zm0 1.5c-4.69 0-8.497 3.808-8.497 8.498s3.807 8.497 8.497 8.497 8.498-3.807 8.498-8.497-3.808-8.498-8.498-8.498zm-.747 7.75h-3.5c-.414 0-.75.336-.75.75s.336.75.75.75h3.5v3.5c0 .414.336.75.75.75s.75-.336.75-.75v-3.5h3.5c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-3.5v-3.5c0-.414-.336-.75-.75-.75s-.75.336-.75.75z"
+                  fillRule="nonzero"
+                />
+              </svg>
+            </div>
+          ) : !blank ? (
+            <div className={styles.itemQty}>
+              <button
+                className={styles.addButton}
+                style={{ backgroundColor: !isAvailable ? "gray" : "#4da94d" }}
+                onClick={handlePlusClick}
+                disabled={!isAvailable} // Optionally disable the button if not available
+              >
+                Tambah
+              </button>
+            </div>
+          ) : (
+            <div className={styles.itemQty}>
+              <button
+                className={styles.addButton}
+                style={{
+                  backgroundColor: "#4da94d",
+                  width: "150px",
+                }}
+                onClick={handleCreate}
+              >
+                +
+              </button>
+            </div>
+          ))}
 
         {forInvoice && (
           <p className={styles.itemPriceInvoice}>Rp {itemQty * itemPrice}</p>
@@ -189,11 +223,11 @@ const Item = ({
           ⓧ
         </div>
       )}
-      {blank && (
+      {/* {blank && (
         <button className={styles.createItem} onClick={handleCreate}>
           Create Item
         </button>
-      )}
+      )} */}
     </div>
   );
 };

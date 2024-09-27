@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "./Invoice.module.css";
-import { useParams, useLocation } from "react-router-dom"; // Changed from useSearchParams to useLocation
+import { useParams } from "react-router-dom"; // Changed from useSearchParams to useLocation
 import { ThreeDots, ColorRing } from "react-loader-spinner";
 
 import ItemLister from "../components/ItemLister";
@@ -15,19 +15,12 @@ export default function Invoice({ table, sendParam, deviceType, socket }) {
   const { shopId, tableCode } = useParams();
   sendParam({ shopId, tableCode });
 
-  const location = useLocation(); // Use useLocation hook instead of useSearchParams
-  const searchParams = new URLSearchParams(location.search); // Pass location.search directly
-
-  // const email = searchParams.get("email");
-  // const orderType = searchParams.get("orderType");
-  // const tableNumber = searchParams.get("tableNumber");
-
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false); // State for payment button loading animation
 
   const textareaRef = useRef(null);
-  const [orderType, setOrderType] = useState("serve");
+  const [orderType, setOrderType] = useState("pickup");
   const [tableNumber, setTableNumber] = useState("");
   const [email, setEmail] = useState("");
 
@@ -35,10 +28,41 @@ export default function Invoice({ table, sendParam, deviceType, socket }) {
     const fetchCartItems = async () => {
       try {
         const items = await getCartDetails(shopId);
-        setCartItems(items);
+        console.log(items);
 
-        // Calculate total price based on fetched cart items
-        const totalPrice = items.reduce((total, itemType) => {
+        // Filter out unavailable items
+        const filteredItems = items
+          .map((itemType) => ({
+            ...itemType,
+            itemList: itemType.itemList.filter((item) => item.availability),
+          }))
+          .filter((itemType) => itemType.itemList.length > 0); // Remove empty itemTypes
+
+        setCartItems(filteredItems);
+
+        // Update local storage by removing unavailable items
+        const updatedLocalStorage =
+          JSON.parse(localStorage.getItem("cart")) || [];
+        const newLocalStorage = updatedLocalStorage.map((cafe) => {
+          if (cafe.cafeId === shopId) {
+            return {
+              ...cafe,
+              items: cafe.items.filter((item) =>
+                filteredItems.some((filtered) =>
+                  filtered.itemList.some(
+                    (i) => i.itemId === item.itemId && i.availability
+                  )
+                )
+              ),
+            };
+          }
+          return cafe;
+        });
+        localStorage.setItem("cart", JSON.stringify(newLocalStorage));
+
+        window.dispatchEvent(new Event("localStorageUpdated"));
+        // Calculate total price based on filtered cart items
+        const totalPrice = filteredItems.reduce((total, itemType) => {
           return (
             total +
             itemType.itemList.reduce((subtotal, item) => {
@@ -106,6 +130,11 @@ export default function Invoice({ table, sendParam, deviceType, socket }) {
       return () => textarea.removeEventListener("input", handleResize);
     }
   }, [textareaRef.current]);
+
+  useEffect(() => {
+    if (table?.tableId != undefined) setOrderType("serve");
+    console.log(table);
+  }, [table]);
 
   const handleOrderTypeChange = (event) => {
     setOrderType(event.target.value);

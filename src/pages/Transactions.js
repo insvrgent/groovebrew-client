@@ -9,6 +9,7 @@ import {
 } from "../helpers/transactionHelpers";
 import { getTables } from "../helpers/tableHelper";
 import TableCanvas from "../components/TableCanvas";
+import ButtonWithReplica from "../components/ButtonWithReplica";
 
 export default function Transactions({ propsShopId, sendParam, deviceType }) {
   const { shopId, tableId } = useParams();
@@ -143,6 +144,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 </span>
               </div>
               <div className={styles.TotalContainer}>
+                <ButtonWithReplica />
                 <button
                   className={styles.PayButton}
                   onClick={() => handleConfirm(transaction.transactionId)}

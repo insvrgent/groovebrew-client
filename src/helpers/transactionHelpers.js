@@ -52,7 +52,6 @@ export async function declineTransaction(transactionId) {
 
 export async function cancelTransaction(transactionId) {
   try {
-    console.log(transactionId);
     const token = getLocalStorage("auth");
     const response = await fetch(
       `${API_BASE_URL}/transaction/cancel-transaction/${transactionId}`,
@@ -65,6 +64,7 @@ export async function cancelTransaction(transactionId) {
       }
     );
 
+    console.log(response);
     if (!response.ok) {
       return false;
     }

@@ -1,4 +1,3 @@
-
 // src/CafePage.js
 import React, { useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
@@ -17,7 +16,7 @@ function SearchResult({ user, shopItems, sendParam }) {
   sendParam({ shopId, tableCode });
 
   const [searchValue, setSearchValue] = useState(
-    "dwadawa vvwqd21qb13 4kfawfdwa dhawldhawr dliawbdjawndlks"
+    "dwakbdawkjhbdaw wadhbakdbaw wadh abkd wba aww wadhbd kablawdloq w"
   );
 
   // Function to handle search input change

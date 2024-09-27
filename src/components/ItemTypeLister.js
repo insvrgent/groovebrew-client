@@ -3,7 +3,15 @@ import "./ItemTypeLister.css";
 import ItemType from "./ItemType";
 import { createItemType } from "../helpers/itemHelper.js";
 
-const ItemTypeLister = ({ shopId, shopOwnerId, user, itemTypes }) => {
+const ItemTypeLister = ({
+  shopId,
+  shopOwnerId,
+  user,
+  itemTypes,
+  onFilterChange,
+  filterId,
+  isEditMode,
+}) => {
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
 
   const toggleAddNewItem = () => {
@@ -19,7 +27,11 @@ const ItemTypeLister = ({ shopId, shopOwnerId, user, itemTypes }) => {
     <div className="item-type-lister">
       <div className="item-type-list">
         {itemTypes && itemTypes.length > 1 && (
-          <ItemType name={"All"} imageUrl={"uploads/1718732420960.png"} />
+          <ItemType
+            name={"All"}
+            onClick={() => onFilterChange(0)}
+            imageUrl={"uploads/1718732420960.png"}
+          />
         )}
         {itemTypes &&
           itemTypes.map(
@@ -30,6 +42,8 @@ const ItemTypeLister = ({ shopId, shopOwnerId, user, itemTypes }) => {
                   key={itemType.itemTypeId}
                   name={itemType.name}
                   imageUrl={itemType.image}
+                  onClick={() => onFilterChange(itemType.itemTypeId)}
+                  selected={filterId == itemType.itemTypeId}
                 />
               )
           )}
@@ -39,16 +53,15 @@ const ItemTypeLister = ({ shopId, shopOwnerId, user, itemTypes }) => {
           isAddingNewItem && (
             <ItemType blank={true} name={"blank"} onCreate={handleCreate} />
           )}
-        {!isAddingNewItem &&
+        {isEditMode &&
+          !isAddingNewItem &&
           user &&
           user.roleId == 1 &&
           user.userId == shopOwnerId && (
             <ItemType
               onClick={toggleAddNewItem}
               name={"create"}
-              imageUrl={
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnd07OYAm1f7T6JzziFU7U8X1_IL3bADiVrg&usqp=CAU"
-              }
+              imageUrl={"uploads/addnew.png"}
             />
           )}
       </div>

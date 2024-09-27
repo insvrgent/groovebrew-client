@@ -12,13 +12,11 @@
 }
 
 .modalContent {
-  background: white;
-  border-radius: 5px;
   width: 90%;
   height: 80%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
-  overflow: hidden; /* Add this line to enable scrolling */
+  overflow: visible; /* Add this line to enable scrolling */
 }
 
 .closeButton {
