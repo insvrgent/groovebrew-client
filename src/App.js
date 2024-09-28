@@ -37,6 +37,10 @@ import {
   removeLocalStorage,
 } from "./helpers/localStorageHelpers";
 import { calculateTotals } from "./helpers/cartHelpers";
+import {
+  subscribeUser,
+  resetNotificationSubscription,
+} from "./helpers/subscribeHelpers.js";
 import Modal from "./components/Modal"; // Import your modal component
 
 function App() {
@@ -153,58 +157,28 @@ function App() {
   //   }
   // };
   useEffect(() => {
-    const getVapidKey = async () => {
-        const response = await fetch(`${API_BASE_URL}/vapid-key`);
-        const { publicVapidKey } = await response.json();
-        return publicVapidKey;
-    };
-
     const askNotificationPermission = async () => {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            console.log('Notification permission granted.');
-            const publicVapidKey = await getVapidKey();
-            await subscribeUser(publicVapidKey);
-        } else {
-            console.error('Notification permission denied.');
-        }
+      let permission = Notification.permission;
+      if (permission === "default") {
+        setModal("req_notification");
+      }
+      if (permission === "granted") await resetNotificationSubscription();
+
+      permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        await subscribeUser();
+      } else if (permission === "denied") {
+        setModal("blocked_notification");
+        console.error("Notification permission denied.");
+      }
     };
 
-// Utility function to convert base64 to Uint8Array
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
-}
-    const subscribeUser = async (publicVapidKey) => {
-        try {
-            const registration = await navigator.serviceWorker.register('/service-worker.js');
-            console.log('Service Worker registered with scope:', registration.scope);
-
-            const subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
-            });
-
-            await fetch(`${API_BASE_URL}/subscribe`, {
-                method: 'POST',
-                body: JSON.stringify(subscription),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-        } catch (error) {
-            console.error('Subscription failed:', error);
-        }
-    };
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', async () => {
-            await askNotificationPermission();
-        });
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        await askNotificationPermission();
+      });
     }
-}, []);
+  }, []);
 
   useEffect(() => {
     if (socket == null) return;
@@ -333,23 +307,22 @@ function urlBase64ToUint8Array(base64String) {
   const setModal = (content, params = {}) => {
     // Prepare query parameters
     const queryParams = new URLSearchParams(location.search);
-    
+
     // Update the modal and any additional params
     queryParams.set("modal", content);
     Object.entries(params).forEach(([key, value]) => {
       queryParams.set(key, value);
     });
-  
+
     // Update URL with new parameters
     navigate(`?${queryParams.toString()}`, { replace: true });
-  
+
     // Prevent scrolling when modal is open
     document.body.style.overflow = "hidden";
-  
+
     setIsModalOpen(true);
     setModalContent(content);
   };
-  
 
   // Function to close the modal
   const closeModal = () => {

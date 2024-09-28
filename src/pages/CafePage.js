@@ -1,7 +1,12 @@
 // src/CafePage.js
 
 import React, { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import {
+  useParams,
+  useSearchParams,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 import "../App.css";
 import SearchInput from "../components/SearchInput";
@@ -18,6 +23,7 @@ import {
   getLocalStorage,
   updateLocalStorage,
 } from "../helpers/localStorageHelpers";
+import { unsubscribeUser } from "../helpers/subscribeHelpers.js";
 
 function CafePage({
   table,
@@ -54,12 +60,11 @@ function CafePage({
     if (user.cafeId != null && user.cafeId !== shopId) {
       // Preserve existing query parameters
       const currentParams = new URLSearchParams(location.search).toString();
-      
+
       // Navigate to the new cafeId while keeping existing params
       navigate(`/${user.cafeId}?${currentParams}`, { replace: true });
     }
   }, [user, shopId]);
-  
 
   useEffect(() => {
     if (token) {
@@ -73,6 +78,7 @@ function CafePage({
 
   const handleLogout = () => {
     updateLocalStorage("auth", "");
+    unsubscribeUser();
     navigate(0);
   };
 

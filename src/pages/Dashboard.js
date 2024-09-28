@@ -8,6 +8,7 @@ import { getAllCafeOwner, createCafeOwner } from "../helpers/userHelpers";
 import { getOwnedCafes, createCafe, updateCafe } from "../helpers/cafeHelpers";
 
 import { ThreeDots } from "react-loader-spinner";
+import { unsubscribeUser } from "../helpers/subscribeHelpers.js";
 
 const Dashboard = ({ user, setModal }) => {
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ const Dashboard = ({ user, setModal }) => {
 
   const handleLogout = () => {
     updateLocalStorage("auth", "");
+    unsubscribeUser();
     navigate(0);
   };
 
