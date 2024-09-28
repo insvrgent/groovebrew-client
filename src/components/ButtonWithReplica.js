@@ -7,8 +7,8 @@ const ButtonWithReplica = ({ children }) => {
   const handleClick = () => {
     setIsActive(true);
     setTimeout(() => {
-      setIsActive(false);
-    }, 1000); // Duration of the animation
+      // setIsActive(false);
+    }, 10000); // Duration of the animation
   };
 
   return (

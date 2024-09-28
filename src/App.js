@@ -235,6 +235,13 @@ function App() {
     socket.on("transaction_created", async (data) => {
       console.log("transaction notification");
       setModal("new_transaction", data);
+
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification("New Transaction", {
+          body: `A new transaction was created: ${data.transactionDetails}`, // Customize as needed
+          icon: "icon.png", // Optional icon
+        });
+      });
     });
 
     socket.on("checkUserTokenRes", async (data) => {
