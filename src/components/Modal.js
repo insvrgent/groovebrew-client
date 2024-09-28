@@ -37,6 +37,7 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
           &times;
         </button>
         {modalContent === "req_notification" && <NotificationBlocked />}
+        {modalContent === "blocked_notification" && <NotificationBlocked />}
         {modalContent === "edit_tables" && <TablesPage shop={shop} />}
         {modalContent === "new_transaction" && (
           <Transaction propsShopId={shop.cafeId} />

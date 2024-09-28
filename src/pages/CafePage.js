@@ -1,7 +1,7 @@
 // src/CafePage.js
 
 import React, { useState, useEffect } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 
 import "../App.css";
 import SearchInput from "../components/SearchInput";
@@ -33,6 +33,7 @@ function CafePage({
   removeConnectedGuestSides,
   setModal,
 }) {
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const { shopId, tableCode } = useParams();
@@ -50,10 +51,15 @@ function CafePage({
   const [filterId, setFilterId] = useState(0);
 
   useEffect(() => {
-    if (user.cafeId != null && user.cafeId != shopId) {
-      navigate("/" + user.cafeId);
+    if (user.cafeId != null && user.cafeId !== shopId) {
+      // Preserve existing query parameters
+      const currentParams = new URLSearchParams(location.search).toString();
+      
+      // Navigate to the new cafeId while keeping existing params
+      navigate(`/${user.cafeId}?${currentParams}`, { replace: true });
     }
-  }, [user]);
+  }, [user, shopId]);
+  
 
   useEffect(() => {
     if (token) {

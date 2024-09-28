@@ -1,16 +1,15 @@
-// NotificationBlocked.js
 import React from "react";
 
 const NotificationBlocked = () => {
   return (
     <div style={styles.container}>
-      <h2 style={styles.header}>Notifications Blocked</h2>
+      <h2 style={styles.header}>Heads Up! Notifications Are Off</h2>
       <p style={styles.message}>
-        It looks like notifications are currently blocked in your browser.
-        Enabling notifications will help you receive important updates, such as
-        new orders or alerts, directly on your device.
+        It looks like you’ve got notifications turned off. Turning them on will
+        make sure you get important updates, like new orders or alerts, right on
+        your device.
       </p>
-      <h3 style={styles.instructionsHeader}>To enable notifications:</h3>
+      <h3 style={styles.instructionsHeader}>Here’s how to turn them on:</h3>
       <ol style={styles.instructions}>
         <li>Open Chrome and go to our café's website.</li>
         <li>Tap the menu (three dots) in the top-right corner.</li>
@@ -19,13 +18,12 @@ const NotificationBlocked = () => {
           &gt; <strong>Notifications</strong>.
         </li>
         <li>
-          Find our café's site in the list and change the setting to{" "}
-          <strong>Allow</strong>.
+          Find our café in the list and set it to <strong>Allow</strong>.
         </li>
       </ol>
       <p style={styles.footer}>
-        Once you enable notifications, you'll start receiving updates right
-        away! If you need help, feel free to ask!
+        Once you’ve turned on notifications, you’ll start getting updates
+        instantly. Need a hand? Just ask!
       </p>
     </div>
   );

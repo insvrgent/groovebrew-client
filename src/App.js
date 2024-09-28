@@ -9,8 +9,8 @@ import {
   useLocation,
 } from "react-router-dom";
 import socket from "./services/socketService";
-import { SubscriptionService } from "./services/subscriptionService";
-import { NotificationService } from "./services/notificationService";
+
+import API_BASE_URL from "./config.js";
 
 import Dashboard from "./pages/Dashboard";
 import ScanMeja from "./pages/ScanMeja";
@@ -138,20 +138,74 @@ function App() {
     setGuestSides(sessionLeft.guestSideList);
   };
 
-  const checkNotifications = async (userId) => {
-    try {
-      const permissionGranted =
-        await NotificationService.requestNotificationPermission(setModal);
-      if (permissionGranted) {
-        await SubscriptionService.subscribeUserToNotifications(userId);
-      } else {
-        setModal("blocked_notification");
-        console.log("req notif");
-      }
-    } catch (error) {
-      console.error("Error handling notifications:", error);
+  // const checkNotifications = async (userId) => {
+  //   try {
+  //     const permissionGranted =
+  //       await NotificationService.requestNotificationPermission(setModal);
+  //     if (permissionGranted) {
+  //       await SubscriptionService.subscribeUserToNotifications(userId);
+  //     } else {
+  //       setModal("blocked_notification");
+  //       console.log("req notif");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error handling notifications:", error);
+  //   }
+  // };
+  useEffect(() => {
+    const getVapidKey = async () => {
+        const response = await fetch(`${API_BASE_URL}/vapid-key`);
+        const { publicVapidKey } = await response.json();
+        return publicVapidKey;
+    };
+
+    const askNotificationPermission = async () => {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            console.log('Notification permission granted.');
+            const publicVapidKey = await getVapidKey();
+            await subscribeUser(publicVapidKey);
+        } else {
+            console.error('Notification permission denied.');
+        }
+    };
+
+// Utility function to convert base64 to Uint8Array
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)));
+}
+    const subscribeUser = async (publicVapidKey) => {
+        try {
+            const registration = await navigator.serviceWorker.register('/service-worker.js');
+            console.log('Service Worker registered with scope:', registration.scope);
+
+            const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+            });
+
+            await fetch(`${API_BASE_URL}/subscribe`, {
+                method: 'POST',
+                body: JSON.stringify(subscription),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        } catch (error) {
+            console.error('Subscription failed:', error);
+        }
+    };
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+            await askNotificationPermission();
+        });
     }
-  };
+}, []);
+
   useEffect(() => {
     if (socket == null) return;
 
@@ -226,7 +280,7 @@ function App() {
           console.log("getting guest side");
           setDeviceType("clerk");
 
-          checkNotifications(data.data.user.userId);
+          // checkNotifications(data.data.user.userId);
         } else {
           setDeviceType("guestDevice");
         }
@@ -278,19 +332,24 @@ function App() {
   // Function to open the modal
   const setModal = (content, params = {}) => {
     // Prepare query parameters
-    const queryParams = new URLSearchParams({
-      modal: content,
-      ...params, // Spread additional parameters
-    }).toString();
+    const queryParams = new URLSearchParams(location.search);
+    
+    // Update the modal and any additional params
+    queryParams.set("modal", content);
+    Object.entries(params).forEach(([key, value]) => {
+      queryParams.set(key, value);
+    });
+  
     // Update URL with new parameters
-    navigate(`?${queryParams}`, { replace: true });
-
+    navigate(`?${queryParams.toString()}`, { replace: true });
+  
     // Prevent scrolling when modal is open
     document.body.style.overflow = "hidden";
-
+  
     setIsModalOpen(true);
     setModalContent(content);
   };
+  
 
   // Function to close the modal
   const closeModal = () => {
