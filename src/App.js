@@ -115,9 +115,9 @@ function App() {
                 items: cafe.items.filter((item) =>
                   filteredData.some((filtered) =>
                     filtered.itemList.some(
-                      (i) => i.itemId === item.itemId && i.availability
-                    )
-                  )
+                      (i) => i.itemId === item.itemId && i.availability,
+                    ),
+                  ),
                 ),
               };
             }
@@ -156,30 +156,6 @@ function App() {
   //     console.error("Error handling notifications:", error);
   //   }
   // };
-  useEffect(() => {
-    const askNotificationPermission = async () => {
-      let permission = Notification.permission;
-      if (permission === "default") {
-        setModal("req_notification");
-      }
-      if (permission === "granted") await resetNotificationSubscription();
-
-      permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        await subscribeUser();
-      } else if (permission === "denied") {
-        setModal("blocked_notification");
-        console.error("Notification permission denied.");
-      }
-    };
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", async () => {
-        await askNotificationPermission();
-      });
-    }
-  }, []);
-
   useEffect(() => {
     if (socket == null) return;
 
@@ -245,11 +221,13 @@ function App() {
     });
 
     socket.on("checkUserTokenRes", async (data) => {
+      console.log(data)
       if (data.status !== 200) {
         removeLocalStorage("auth");
         setDeviceType("guestDevice");
       } else {
         setUser(data.data.user);
+        console.log('setting user')
         if (
           data.data.user.password == "unsetunsetunset" &&
           localStorage.getItem("settings")
@@ -332,18 +310,78 @@ function App() {
   };
 
   // Function to close the modal
-  const closeModal = () => {
-    setIsModalOpen(false);
-    document.body.style.overflow = "auto";
+  const closeModal = (closeTheseContent = []) => {
+    if (
+      closeTheseContent.length === 0 ||
+      closeTheseContent.includes(modalContent)
+    ) {
+      setIsModalOpen(false);
+      document.body.style.overflow = "auto";
 
-    const queryParams = new URLSearchParams(location.search);
+      const queryParams = new URLSearchParams(location.search);
 
-    // Remove the 'modal' parameter
-    queryParams.delete("modal");
+      // Remove the 'modal' parameter
+      queryParams.delete("modal");
 
-    // Update the URL without the 'modal' parameter
-    navigate({ search: queryParams.toString() }, { replace: true });
+      // Update the URL without the 'modal' parameter
+      navigate({ search: queryParams.toString() }, { replace: true });
+    }
   };
+
+  useEffect(() => {
+    const askNotificationPermission = async () => {
+      let permission = Notification.permission;
+
+      // Check current permission
+      if (permission === "default") {
+        setModal("req_notification");
+
+        // Request permission and wait for the result
+        permission = await Notification.requestPermission();
+      }
+
+      // If permission is already granted, reset subscriptions
+      if (permission === "granted") {
+        await resetNotificationSubscription();
+        closeModal(["req_notification", "denied_notification"]);
+      } else if (permission === "denied") {
+        setModal("blocked_notification");
+        console.error("Notification permission denied.");
+      }
+
+      // Continuously check until permission is granted
+      while (permission !== "granted") {
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
+        const permissionn = Notification.permission;
+
+        if (permissionn === "granted") {
+          closeModal(["req_notification", "denied_notification"]);
+          await resetNotificationSubscription();
+          break;
+        } else if (permissionn === "denied") {
+          setModal("blocked_notification");
+          console.error("Notification permission denied.");
+          break;
+        }
+      }
+    };
+    const handleLoad = async () => {
+      while (modalContent !== "transaction_pending" || modalContent !== "transaction_confirmed") {
+      if (user != null && (user.roleId < 3 || user.roleId > 2)) {
+        await askNotificationPermission();
+      }
+    }
+    };
+    handleLoad();
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", handleLoad);
+
+      // Cleanup the event listener on component unmount
+      return () => {
+        window.removeEventListener("load", handleLoad);
+      };
+    }
+  }, [user]);
 
   return (
     <div className="App">
