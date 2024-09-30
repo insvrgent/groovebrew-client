@@ -24,7 +24,7 @@
   /* Center the background image */
   filter: blur(1.5px);
   -webkit-filter: blur(1.5px);
-  border-radius: 15px 15px 0 0;
+  border-radius: 23px 23px 0 0;
   background-color: rgb(95 121 89);
   /* Rounded corners at the top */
   text-align: right;
@@ -106,7 +106,7 @@
   right: 0;
   background-color: rgb(108, 255, 128);
   /* background-color: rgb(218 163 99); */
-  border-radius: 0 0 15px 15px;
+  border-radius: 0 0 23px 23px;
   /* Rounded corners at the bottom */
   cursor: pointer;
   text-align: center;

@@ -14,7 +14,12 @@ import { getTables } from "../helpers/tableHelper";
 import TableCanvas from "../components/TableCanvas";
 import { useSearchParams } from "react-router-dom";
 
-export default function Transactions({ propsShopId, sendParam, deviceType }) {
+export default function Transactions({
+  propsShopId,
+  sendParam,
+  deviceType,
+  paymentUrl,
+}) {
   const { shopId, tableId } = useParams();
   if (sendParam) sendParam({ shopId, tableId });
 
@@ -24,6 +29,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
   const [searchParams] = useSearchParams();
   const [transaction, setTransaction] = useState(null);
   const noteRef = useRef(null);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   useEffect(() => {
     const transactionId = searchParams.get("transactionId") || "";
@@ -63,9 +69,14 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
     if (isPaymentLoading) return;
     setIsPaymentLoading(true);
     try {
-      const c = await confirmTransaction(transactionId);
+      const c = await handleClaimHasPaid(transactionId);
       if (c) {
-        setTransaction({ ...transaction, confirmed: c.confirmed });
+        setTransaction({
+          ...transaction,
+          confirmed: c.confirmed,
+          paymentClaimed: true,
+        });
+        console.log(transaction);
       }
     } catch (error) {
       console.error("Error processing payment:", error);
@@ -112,7 +123,14 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
             onClick={() =>
               setSelectedTable(transaction.Table || { tableId: 0 })
             }
+            style={{ overflow: isPaymentOpen ? "hidden" : "" }}
           >
+            {transaction.paymentClaimed && transaction.confirmed < 2 && (
+              <div className={styles.RibbonBanner}>
+                <img src={"https://i.imgur.com/yt6osgL.png"}></img>
+                <h1>payment claimed</h1>
+              </div>
+            )}
             <h2 className={styles["Transactions-detail"]}>
               Transaction ID: {transaction.transactionId}
             </h2>
@@ -134,14 +152,24 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                     transaction.Table ? transaction.Table.tableNo : "N/A"
                   }`}
             </h2>
-            {transaction.notes != "" && (
+            {(transaction.notes !== "" || isPaymentOpen) && (
               <>
-                <div className={styles.NoteContainer}>
+                <div
+                  className={styles.NoteContainer}
+                  style={{
+                    visibility: transaction.notes == "" ? "hidden" : "visible",
+                  }}
+                >
                   <span>Note :</span>
                   <span></span>
                 </div>
 
-                <div className={styles.NoteContainer}>
+                <div
+                  className={styles.NoteContainer}
+                  style={{
+                    visibility: transaction.notes == "" ? "hidden" : "visible",
+                  }}
+                >
                   <textarea
                     className={styles.NoteInput}
                     value={transaction.notes}
@@ -159,29 +187,36 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
             </div>
             <div className={styles.PaymentContainer}>
               <ButtonWithReplica
+                paymentUrl={paymentUrl}
+                price={
+                  "Rp" + calculateTotalPrice(transaction.DetailedTransactions)
+                }
                 disabled={isPaymentLoading}
-                onClick={() => handleConfirm(transaction.transactionId)}
+                isPaymentLoading={isPaymentLoading}
+                handleClick={() => handleConfirm(transaction.transactionId)}
+                Open={() => setIsPaymentOpen(true)}
+                isPaymentOpen={isPaymentOpen}
               >
                 {isPaymentLoading ? (
                   <ColorRing height="50" width="50" color="white" />
-                ) : transaction.confirmed === 1 ? (
-                  "Show payment" // Display "Confirm has paid" if the transaction is confirmed (1)
-                ) : transaction.confirmed === -1 ? (
-                  "Declined" // Display "Declined" if the transaction is declined (-1)
-                ) : transaction.confirmed === 2 ? (
-                  "Confirm item has ready" // Display "Item ready" if the transaction is ready (2)
-                ) : transaction.confirmed === 3 ? (
-                  "Transaction success" // Display "Item ready" if the transaction is ready (2)
+                ) : isPaymentOpen ? (
+                  "Claim has paid" // Display "Confirm has paid" if the transaction is confirmed (1)
                 ) : (
-                  "Confirm availability" // Display "Confirm availability" if the transaction is not confirmed (0)
+                  "Show payment" // Display "Confirm availability" if the transaction is not confirmed (0)
                 )}
               </ButtonWithReplica>
             </div>
             <h5
-              className={styles.DeclineButton}
-              onClick={() => handleDecline(transaction.transactionId)}
+              className={`${styles.DeclineButton} ${
+                isPaymentOpen ? styles.active : ""
+              }`}
+              onClick={() =>
+                isPaymentOpen
+                  ? setIsPaymentOpen(false)
+                  : handleDecline(transaction.transactionId)
+              }
             >
-              cancel
+              {isPaymentOpen ? "back" : "cancel"}
             </h5>
           </div>
         )}

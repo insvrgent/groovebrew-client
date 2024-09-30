@@ -7,7 +7,7 @@
 
 .button {
   position: relative;
-  z-index: 99; /* Make sure the button is above the replica */
+  z-index: 201; /* Make sure the button is above the replica */
 
   font-family: "Poppins", sans-serif;
   font-weight: 500;
@@ -47,4 +47,91 @@
   z-index: 200;
   border-radius: 0px;
   background-color: white;
+  pointer-events: none; /* Allow interactions */
+}
+.bussinessName {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: rgba(0, 0, 0, 0);
+  transform: translate(-50%, -50%);
+  z-index: 98; /* Behind the button */
+  transition: all 0.5s ease-in-out;
+  font-size: 3vw;
+  text-align: center;
+}
+
+.bussinessName.active {
+  top: -700%;
+  position: absolute;
+  color: rgb(0, 0, 0);
+  width: 60vw;
+  right: 50%;
+  z-index: 201; /* Behind the button */
+  font-size: 3vw;
+  text-align: center;
+}
+
+.bussinessQR {
+  position: absolute;
+  height: 25vh;
+  width: 25vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 98; /* Behind the button */
+  transition: all 0.5s ease-in-out;
+}
+
+.bussinessQR.active {
+  position: absolute;
+  top: -250%;
+  transform: translate(-50%, -80%);
+
+  transition: all 0.5s ease-in-out;
+  z-index: 201; /* Behind the button */
+}
+
+.price {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: rgba(0, 0, 0, 0);
+  transform: translate(-50%, -50%);
+  z-index: 98; /* Behind the button */
+  transition: all 0.5s ease-in-out;
+  font-size: 3vw;
+  text-align: center;
+}
+
+.price.active {
+  position: absolute;
+  color: rgb(0, 0, 0);
+  transform: translate(-50%, -150%);
+  z-index: 201; /* Behind the button */
+  font-size: 3vw;
+  text-align: center;
+}
+
+.ClaimButton {
+  visibility: hidden;
+  position: absolute;
+}
+
+.ClaimButton.active {
+  visibility: visible;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 70%; /* Adjusted for better readability */
+  padding: 12px 24px; /* Added padding for a better look */
+  border-radius: 50px;
+  background-color: rgba(88, 55, 50, 1);
+  color: white;
+  border: none;
+  margin: 0 auto;
+  cursor: pointer;
+  display: block; /* Centering the button */
+  text-align: center;
+  z-index: 201;
 }

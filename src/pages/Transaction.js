@@ -169,7 +169,11 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
               <button
                 className={styles.PayButton}
                 onClick={() => handleConfirm(transaction.transactionId)}
-                disabled={isPaymentLoading} // Disable button if confirmed (1) or declined (-1) or loading
+                disabled={
+                  transaction.confirmed === -1 ||
+                  transaction.confirmed === 3 ||
+                  isPaymentLoading
+                } // Disable button if confirmed (1) or declined (-1) or
               >
                 {isPaymentLoading ? (
                   <ColorRing height="50" width="50" color="white" />

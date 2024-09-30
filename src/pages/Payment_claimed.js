@@ -106,6 +106,12 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
               setSelectedTable(transaction.Table || { tableId: 0 })
             }
           >
+            {transaction.paymentClaimed && transaction.confirmed < 2 && (
+              <div className={styles.RibbonBanner}>
+                <img src={"https://i.imgur.com/yt6osgL.png"}></img>
+                <h1>payment claimed</h1>
+              </div>
+            )}
             <h2 className={styles["Transactions-detail"]}>
               Transaction ID: {transaction.transactionId}
             </h2>
@@ -127,7 +133,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                     transaction.Table ? transaction.Table.tableNo : "N/A"
                   }`}
             </h2>
-            {transaction.notes != null && (
+            {transaction.notes != "" && (
               <>
                 <div className={styles.NoteContainer}>
                   <span>Note :</span>

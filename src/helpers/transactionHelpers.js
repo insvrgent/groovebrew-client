@@ -13,7 +13,7 @@ export async function confirmTransaction(transactionId) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
     if (!response.ok) {
       return false;
@@ -37,7 +37,7 @@ export async function declineTransaction(transactionId) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
     if (!response.ok) {
@@ -61,7 +61,7 @@ export async function cancelTransaction(transactionId) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
     console.log(response);
@@ -86,14 +86,14 @@ export async function handleClaimHasPaid(transactionId) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
     if (!response.ok) {
       return false;
     }
 
-    return true;
+    return await response.json();
   } catch (error) {
     console.error("Error:", error);
   }
@@ -111,7 +111,7 @@ export async function handleConfirmHasPaid(transactionId) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
     if (!response.ok) {
@@ -135,7 +135,7 @@ export async function getTransaction(transactionId) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
     if (!response.ok) {
@@ -160,7 +160,7 @@ export async function getTransactions(shopId, demand) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     );
 
     if (!response.ok) {
@@ -179,7 +179,7 @@ export const handlePaymentFromClerk = async (
   user_email,
   payment_type,
   serving_type,
-  tableNo,
+  tableNo
 ) => {
   try {
     const token = getLocalStorage("auth");
@@ -208,7 +208,7 @@ export const handlePaymentFromClerk = async (
           tableNo,
           transactions: structuredItems,
         }),
-      },
+      }
     );
 
     if (response.ok) {
@@ -233,7 +233,7 @@ export const handlePaymentFromGuestSide = async (
   user_email,
   payment_type,
   serving_type,
-  tableNo,
+  tableNo
 ) => {
   try {
     const token = getLocalStorage("authGuestSide");
@@ -262,7 +262,7 @@ export const handlePaymentFromGuestSide = async (
           tableNo,
           transactions: structuredItems,
         }),
-      },
+      }
     );
     const res = await response.json();
     console.log(res);
@@ -289,7 +289,7 @@ export const handlePaymentFromGuestDevice = async (
   serving_type,
   tableNo,
   notes,
-  socketId,
+  socketId
 ) => {
   try {
     const token = getLocalStorage("auth");
@@ -319,7 +319,7 @@ export const handlePaymentFromGuestDevice = async (
           notes: notes,
           socketId,
         }),
-      },
+      }
     );
 
     if (response.ok) {
@@ -364,7 +364,7 @@ const getHeaders = (method = "GET") => {
 export const getFavourite = async (cafeId) => {
   const response = await fetch(
     `${API_BASE_URL}/transaction/get-favourite/${cafeId}`,
-    getHeaders(),
+    getHeaders()
   );
   return response.json();
 };
@@ -377,7 +377,7 @@ export const getAnalytics = async (cafeId, filter) => {
       headers: {
         "Content-Type": "application/json",
       },
-    },
+    }
   );
   return response.json();
 };
@@ -385,7 +385,7 @@ export const getAnalytics = async (cafeId, filter) => {
 export const getIncome = async (cafeId) => {
   const response = await fetch(
     `${API_BASE_URL}/transaction/get-income/${cafeId}`,
-    getHeaders(),
+    getHeaders()
   );
   return response.json();
 };

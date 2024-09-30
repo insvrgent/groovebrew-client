@@ -9,7 +9,6 @@ import {
 } from "../helpers/transactionHelpers";
 import { getTables } from "../helpers/tableHelper";
 import TableCanvas from "../components/TableCanvas";
-import ButtonWithReplica from "../components/ButtonWithReplica";
 
 export default function Transactions({ propsShopId, sendParam, deviceType }) {
   const { shopId, tableId } = useParams();
@@ -110,7 +109,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 setSelectedTable(transaction.Table || { tableId: 0 })
               }
             >
-              {transaction.paymentClaimed && (
+              {transaction.paymentClaimed && transaction.confirmed < 2 && (
                 <div className={styles.RibbonBanner}>
                   <img src={"https://i.imgur.com/yt6osgL.png"}></img>
                   <h1>payment claimed</h1>
@@ -144,11 +143,14 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 </span>
               </div>
               <div className={styles.TotalContainer}>
-                <ButtonWithReplica />
                 <button
                   className={styles.PayButton}
                   onClick={() => handleConfirm(transaction.transactionId)}
-                  disabled={transaction.confirmed !== 0 || isPaymentLoading} // Disable button if confirmed (1) or declined (-1) or loading
+                  disabled={
+                    transaction.confirmed === -1 ||
+                    transaction.confirmed === 3 ||
+                    isPaymentLoading
+                  } // Disable button if confirmed (1) or declined (-1) or loading
                 >
                   {isPaymentLoading ? (
                     <ColorRing height="50" width="50" color="white" />

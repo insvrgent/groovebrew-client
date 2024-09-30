@@ -98,6 +98,24 @@
   text-align: center; /* Center the text within the button */
   margin-bottom: 23px; /* Space at the bottom to match the PayButton */
 }
+
+.DeclineButton.active {
+  position: relative;
+  z-index: 201;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 20px;
+  padding: 12px 24px; /* Add some padding for spacing */
+  color: rgba(88, 55, 50, 1);
+  background-color: transparent; /* No background */
+  border: none; /* No border */
+  margin: 0 auto; /* Center horizontally */
+  cursor: pointer;
+  display: block; /* Center the text horizontally */
+  text-align: center; /* Center the text within the button */
+  margin-bottom: 23px; /* Space at the bottom to match the PayButton */
+}
 .RoundedRectangle {
   position: relative;
   border-radius: 20px;

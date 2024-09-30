@@ -58,6 +58,7 @@ function App() {
   const [shopItems, setShopItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const [nextModalContent, setNextModalContent] = useState(null);
 
   useEffect(() => {
     const calculateTotalsFromLocalStorage = () => {
@@ -115,9 +116,9 @@ function App() {
                 items: cafe.items.filter((item) =>
                   filteredData.some((filtered) =>
                     filtered.itemList.some(
-                      (i) => i.itemId === item.itemId && i.availability,
-                    ),
-                  ),
+                      (i) => i.itemId === item.itemId && i.availability
+                    )
+                  )
                 ),
               };
             }
@@ -221,13 +222,11 @@ function App() {
     });
 
     socket.on("checkUserTokenRes", async (data) => {
-      console.log(data)
       if (data.status !== 200) {
         removeLocalStorage("auth");
         setDeviceType("guestDevice");
       } else {
         setUser(data.data.user);
-        console.log('setting user')
         if (
           data.data.user.password == "unsetunsetunset" &&
           localStorage.getItem("settings")
@@ -290,7 +289,10 @@ function App() {
 
   // Function to open the modal
   const setModal = (content, params = {}) => {
-    // Prepare query parameters
+    if (modalContent) {
+      setNextModalContent(content);
+      return;
+    } // Prepare query parameters
     const queryParams = new URLSearchParams(location.search);
 
     // Update the modal and any additional params
@@ -312,8 +314,9 @@ function App() {
   // Function to close the modal
   const closeModal = (closeTheseContent = []) => {
     if (
-      closeTheseContent.length === 0 ||
-      closeTheseContent.includes(modalContent)
+      Array.isArray(closeTheseContent) &&
+      (closeTheseContent.length === 0 ||
+        closeTheseContent.includes(modalContent))
     ) {
       setIsModalOpen(false);
       document.body.style.overflow = "auto";
@@ -322,9 +325,13 @@ function App() {
 
       // Remove the 'modal' parameter
       queryParams.delete("modal");
+      queryParams.delete("transactionId");
 
       // Update the URL without the 'modal' parameter
       navigate({ search: queryParams.toString() }, { replace: true });
+
+      if (nextModalContent) setModal(nextModalContent);
+      setNextModalContent("");
     }
   };
 
@@ -366,11 +373,9 @@ function App() {
       }
     };
     const handleLoad = async () => {
-      while (modalContent !== "transaction_pending" || modalContent !== "transaction_confirmed") {
       if (user != null && (user.roleId < 3 || user.roleId > 2)) {
         await askNotificationPermission();
       }
-    }
     };
     handleLoad();
     if ("serviceWorker" in navigator) {
