@@ -1,25 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
-import jsQR from "jsqr"; // Import jsQR library
+import jsQR from "jsqr";
 import { getImageUrl } from "../helpers/itemHelper";
 import {
   getCafe,
   saveCafeDetails,
   setConfirmationStatus,
-} from "../helpers/cafeHelpers"; // Import the helper function
+} from "../helpers/cafeHelpers";
 import Switch from "react-switch";
 
+// Main Component
 const SetPaymentQr = ({ shopId }) => {
   const [qrPosition, setQrPosition] = useState([50, 50]);
   const [qrSize, setQrSize] = useState(50);
   const [qrPayment, setQrPayment] = useState();
   const [qrCodeDetected, setQrCodeDetected] = useState(false);
   const qrPaymentInputRef = useRef(null);
-  const overlayTextRef = useRef(null);
   const qrCodeContainerRef = useRef(null);
   const [isNeedConfirmation, setIsNeedConfirmation] = useState(false);
-  const [cafe, setCafe] = useState([]);
+  const [cafe, setCafe] = useState({});
 
-  // Use useEffect to detect QR code after qrPayment updates
+  // Fetch cafe details on mount or shopId change
   useEffect(() => {
     const fetchCafe = async () => {
       try {
@@ -29,119 +29,100 @@ const SetPaymentQr = ({ shopId }) => {
         setIsNeedConfirmation(response.needsConfirmation);
         setQrPosition([response.xposition, response.yposition]);
         setQrSize(response.scale);
-        console.log(response);
       } catch (error) {
         console.error("Error fetching cafe:", error);
       }
     };
-
     fetchCafe();
   }, [shopId]);
 
+  // Detect QR code when qrPayment updates
   useEffect(() => {
     if (qrPayment) {
       detectQRCodeFromContainer();
     }
   }, [qrPayment]);
 
+  // Handle file input change
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const newqrPayment = URL.createObjectURL(file); // Create a temporary URL for display
+      const newqrPayment = URL.createObjectURL(file);
       setQrPayment(newqrPayment);
     }
   };
 
+  // Detect QR code from the container
   const detectQRCodeFromContainer = () => {
     const container = qrCodeContainerRef.current;
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-
-    // Create an image element to load the background image
     const img = new Image();
-    img.crossOrigin = "Anonymous"; // Handle CORS if needed
+    img.crossOrigin = "Anonymous";
     img.onload = () => {
-      // Set canvas size
       canvas.width = container.offsetWidth;
       canvas.height = container.offsetHeight;
-
-      // Draw image on canvas
       context.drawImage(img, 0, 0, canvas.width, canvas.height);
-
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
-
+      setQrCodeDetected(!!qrCode);
       if (qrCode) {
-        setQrCodeDetected(true);
         console.log("QR Code detected:", qrCode.data);
-      } else {
-        setQrCodeDetected(false);
-        console.log("No QR Code detected");
       }
     };
-    img.src = qrPayment; // Load the image URL
+    img.src = qrPayment;
   };
 
-  const handleSave = () => {
-    const qrPaymentFile = qrPaymentInputRef.current.files[0]; // Get the selected file for qrPayment
-
-    // Prepare the details object
+  // Save cafe details
+  const handleSave = async () => {
+    const qrPaymentFile = qrPaymentInputRef.current.files[0];
     const details = {
       qrPosition,
       qrSize,
-      qrPaymentFile, // Include qrPayment file
+      qrPaymentFile,
     };
 
-    // Call saveCafeDetails function with the updated details object
-    saveCafeDetails(cafe.cafeId, details)
-      .then((response) => {
-        console.log("Cafe details saved:", response);
-        // handleQrSave(qrPosition, qrSize, qrPayment);
-      })
-      .catch((error) => {
-        console.error("Error saving cafe details:", error);
-      });
+    try {
+      const response = await saveCafeDetails(cafe.cafeId, details);
+      console.log("Cafe details saved:", response);
+    } catch (error) {
+      console.error("Error saving cafe details:", error);
+    }
   };
 
+  // Toggle confirmation status
   const handleChange = async () => {
-    console.log(isNeedConfirmation);
-    setIsNeedConfirmation(!isNeedConfirmation);
-    console.log(!isNeedConfirmation);
     try {
-      // Wait for the updateItemAvailability response
       const response = await setConfirmationStatus(
         cafe.cafeId,
         !isNeedConfirmation
       );
-
       setIsNeedConfirmation(response.needsConfirmation);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsNeedConfirmation(cafe.needsConfirmation);
     }
   };
 
   return (
-    <div>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Payment QRIS</h2>
       <div
         id="qr-code-container"
         ref={qrCodeContainerRef}
         style={{
-          position: "relative",
-          width: "300px",
-          height: "300px",
-          background: `center center / contain no-repeat url(${qrPayment})`,
+          ...styles.qrCodeContainer,
+          backgroundImage: `url(${qrPayment})`,
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
           backgroundSize: "contain",
-          overflow: "hidden",
-          border: "1px solid #ddd",
         }}
       >
         <div
-          ref={overlayTextRef}
           style={styles.overlayText}
           onClick={() => qrPaymentInputRef.current.click()}
         >
-          Click To Change Image
+          Click To Change
         </div>
         <input
           type="file"
@@ -151,51 +132,90 @@ const SetPaymentQr = ({ shopId }) => {
           onChange={handleFileChange}
         />
       </div>
-      <div style={{ marginTop: "20px" }}>
+      <div style={styles.resultMessage}>
         {qrCodeDetected ? <p>QR Code Detected</p> : <p>No QR Code Detected</p>}
-        <div style={{ marginTop: "20px" }}>
-          <button
-            onClick={handleSave}
-            style={{
-              padding: "10px 20px",
-              fontSize: "16px",
-              backgroundColor: "#28a745",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              transition: "background-color 0.3s",
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#218838")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#28a745")
-            }
-          >
-            Save
-          </button>
-        </div>
       </div>
-
-      <Switch onChange={() => handleChange()} checked={isNeedConfirmation} />
+      <div style={styles.buttonContainer}>
+        <button onClick={handleSave} style={styles.saveButton}>
+          Save
+        </button>
+      </div>
+      <div style={styles.switchContainer}>
+        <h1>Double Check tem Availability</h1>
+        <p style={styles.description}>
+          Turn on the switch for the clerk to double check before customer pay.
+        </p>
+        <Switch onChange={handleChange} checked={isNeedConfirmation} />
+      </div>
     </div>
   );
 };
 
+// Styles
 const styles = {
+  container: {
+    backgroundColor: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+    textAlign: "center", // Center text and children
+  },
+  title: {
+    marginBottom: "20px",
+    fontSize: "24px",
+    fontWeight: "bold",
+  },
+  qrCodeContainer: {
+    position: "relative",
+    width: "300px",
+    height: "300px",
+    backgroundSize: "contain",
+    border: "1px solid #ddd",
+    overflow: "hidden",
+    margin: "0 auto", // Center the QR code container
+  },
   overlayText: {
     position: "absolute",
+    width: "100%",
+    height: "100%",
+    fontSize: "550%",
+    textAlign: "left",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "#fff",
+    color: "rgba(256, 256, 256, 0.5)",
     padding: "10px",
     borderRadius: "5px",
     cursor: "pointer",
   },
-  // Other styles omitted for brevity
+  resultMessage: {
+    marginTop: "20px",
+    textAlign: "center",
+  },
+  buttonContainer: {
+    marginTop: "20px",
+    textAlign: "center",
+  },
+  saveButton: {
+    padding: "10px 20px",
+    fontSize: "16px",
+    backgroundColor: "#28a745",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
+  },
+  switchContainer: {
+    marginTop: "20px",
+    textAlign: "center",
+  },
+  description: {
+    margin: "10px 0",
+    fontSize: "14px",
+    color: "#666",
+  },
 };
 
 export default SetPaymentQr;

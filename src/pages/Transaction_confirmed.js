@@ -123,14 +123,8 @@ export default function Transactions({
             onClick={() =>
               setSelectedTable(transaction.Table || { tableId: 0 })
             }
-            style={{ overflow: isPaymentOpen ? "hidden" : "" }}
+            style={{ overflow: "hidden" }}
           >
-            {transaction.paymentClaimed && transaction.confirmed < 2 && (
-              <div className={styles.RibbonBanner}>
-                <img src={"https://i.imgur.com/yt6osgL.png"}></img>
-                <h1>payment claimed</h1>
-              </div>
-            )}
             <h2 className={styles["Transactions-detail"]}>
               Transaction ID: {transaction.transactionId}
             </h2>
@@ -138,13 +132,17 @@ export default function Transactions({
               Payment Type: {transaction.payment_type}
             </h2>
             <ul>
-              {transaction.DetailedTransactions.map((detail) => (
+              {(isPaymentOpen
+                ? transaction.DetailedTransactions.slice(0, 2)
+                : transaction.DetailedTransactions
+              ).map((detail) => (
                 <li key={detail.detailedTransactionId}>
                   <span>{detail.Item.name}</span> - {detail.qty} x Rp{" "}
                   {detail.Item.price}
                 </li>
               ))}
             </ul>
+
             <h2 className={styles["Transactions-detail"]}>
               {transaction.serving_type === "pickup"
                 ? "Self pickup"

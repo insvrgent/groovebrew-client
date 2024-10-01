@@ -55,7 +55,9 @@ export default function ItemType({
       <div
         onClick={onClick}
         className={styles["item-type-rect"]}
-        style={{ top: selected ? "-10px" : "initial" }}
+        style={{
+          top: selected ? "-10px" : "initial",
+        }}
       >
         <img
           src={previewUrl}
@@ -89,7 +91,10 @@ export default function ItemType({
         value={name}
         onChange={handleNameChange}
         disabled={!blank}
-        style={{ top: selected ? "-5px" : "initial" }}
+        style={{
+          top: selected ? "-5px" : "initial",
+          borderBottom: selected ? "1px solid #000" : "none",
+        }}
       />
       {blank && (
         <button className={styles["item-type-create"]} onClick={handleCreate}>

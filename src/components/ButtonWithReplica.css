@@ -29,7 +29,7 @@
   width: 140px;
   border-radius: 30px;
   position: absolute;
-  background-color: rgb(146, 146, 146); /* Semi-transparent blue */
+  background-color: rgba(146, 146, 146, 0); /* Semi-transparent blue */
   border: none;
   transition: all 0.5s ease-in-out;
   top: 50%;

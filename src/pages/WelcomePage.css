@@ -1,0 +1,56 @@
+/* WelcomePage.css */
+.welcome-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.image-container {
+  width: 150px; /* Adjust as needed */
+  height: 150px; /* Adjust as needed */
+  overflow: hidden;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.circular-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.welcoming-text {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-family: poppins;
+}
+
+.get-started-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  font-family: poppins;
+}
+
+.get-started-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Fullscreen styles */
+.fullscreen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+}

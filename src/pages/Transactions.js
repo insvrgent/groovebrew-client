@@ -3,6 +3,7 @@ import styles from "./Transactions.module.css";
 import { useParams } from "react-router-dom";
 import { ColorRing } from "react-loader-spinner";
 import {
+  getMyTransactions,
   getTransactions,
   confirmTransaction,
   declineTransaction,
@@ -22,7 +23,11 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await getTransactions(shopId || propsShopId, 5);
+        let response;
+        if (deviceType == "clerk")
+          response = await getTransactions(shopId || propsShopId, 5);
+        else if (deviceType == "guestDevice")
+          response = await getMyTransactions(shopId || propsShopId, 5);
         setTransactions(response);
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -147,25 +152,53 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                   className={styles.PayButton}
                   onClick={() => handleConfirm(transaction.transactionId)}
                   disabled={
-                    transaction.confirmed === -1 ||
-                    transaction.confirmed === 3 ||
-                    isPaymentLoading
-                  } // Disable button if confirmed (1) or declined (-1) or loading
+                    isPaymentLoading || // Disable if loading
+                    (deviceType === "clerk" &&
+                      transaction.confirmed !== 1 &&
+                      transaction.confirmed !== 2 &&
+                      transaction.confirmed !== 0) || // Disable for clerk when not Confirm has paid, Confirm item is ready, or Confirm availability
+                    (deviceType !== "clerk" &&
+                      transaction.confirmed !== 1 &&
+                      transaction.paymentClaimed) || // Disable for buyer when not Claim has paid
+                    transaction.confirmed === 3 || // Disable if Transaction success
+                    transaction.confirmed === -1 || // Disable if Declined
+                    transaction.confirmed === -2 || // Disable if Canceled
+                    transaction.confirmed === 2 || // Disable if In process
+                    (transaction.confirmed === 1 && transaction.paymentClaimed) // Disable if verifying payment
+                  }
                 >
-                  {isPaymentLoading ? (
+                  {deviceType === "clerk" ? (
+                    isPaymentLoading ? (
+                      <ColorRing height="50" width="50" color="white" />
+                    ) : transaction.confirmed === 1 ? (
+                      "Confirm has paid"
+                    ) : transaction.confirmed === -1 ? (
+                      "Declined"
+                    ) : transaction.confirmed === -2 ? (
+                      "Canceled"
+                    ) : transaction.confirmed === 2 ? (
+                      "Confirm item is ready"
+                    ) : transaction.confirmed === 3 ? (
+                      "Transaction success"
+                    ) : (
+                      "Confirm availability"
+                    )
+                  ) : isPaymentLoading ? (
                     <ColorRing height="50" width="50" color="white" />
-                  ) : transaction.confirmed === 1 ? (
-                    "Confirm has paid" // Display "Confirm has paid" if the transaction is confirmed (1)
+                  ) : transaction.confirmed === 1 &&
+                    !transaction.paymentClaimed ? (
+                    "Claim has paid"
+                  ) : transaction.confirmed === 1 &&
+                    transaction.paymentClaimed ? (
+                    "Verifying your payment"
                   ) : transaction.confirmed === -1 ? (
-                    "Declined" // Display "Declined" if the transaction is declined (-1)
+                    "Declined"
                   ) : transaction.confirmed === -2 ? (
-                    "Canceled" // Display "Declined" if the transaction is declined (-1)
+                    "Canceled"
                   ) : transaction.confirmed === 2 ? (
-                    "Confirm item has ready" // Display "Item ready" if the transaction is ready (2)
-                  ) : transaction.confirmed === 3 ? (
-                    "Transaction success" // Display "Item ready" if the transaction is ready (2)
+                    "In process"
                   ) : (
-                    "Confirm availability" // Display "Confirm availability" if the transaction is not confirmed (0)
+                    "Transaction success"
                   )}
                 </button>
               </div>

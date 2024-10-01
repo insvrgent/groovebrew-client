@@ -149,6 +149,30 @@ export async function getTransaction(transactionId) {
   }
 }
 
+export async function getMyTransactions(shopId, demand) {
+  try {
+    const token = getLocalStorage("auth");
+    const response = await fetch(
+      `${API_BASE_URL}/transaction/get-my-transactions`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const transactions = await response.json();
+    return transactions;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 export async function getTransactions(shopId, demand) {
   try {
     const token = getLocalStorage("auth");

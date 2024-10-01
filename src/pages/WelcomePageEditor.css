@@ -1,0 +1,56 @@
+/* WelcomePageEditor.css */
+.welcome-page-editor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+input[type="file"] {
+  margin-bottom: 20px;
+}
+
+textarea {
+  width: 100%;
+  height: 100px; /* Adjust as needed */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+textarea:focus {
+  border-color: #007bff; /* Highlight border color on focus */
+  outline: none;
+}
+
+label {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.welcome-preview {
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #ccc; /* Preview border style */
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff; /* Background for preview area */
+}

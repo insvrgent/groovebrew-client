@@ -23,6 +23,40 @@ export async function getCafe(cafeId) {
     console.error("Error:", error);
   }
 }
+// api.js
+export const saveWelcomePageConfig = async (details) => {
+  const formData = new FormData();
+
+  // Append image file if it exists
+  if (details.image) {
+    const blob = await fetch(details.image).then((res) => res.blob());
+    formData.append("image", blob, "welcome-image.png"); // Specify filename if needed
+  }
+
+  // Append other form fields
+  formData.append("welcomingText", details.welcomingText);
+  formData.append("backgroundColor", details.backgroundColor);
+  formData.append("textColor", details.textColor);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/welcome-config`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`, // Assuming you have an auth token
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save welcome page configuration");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error saving welcome page config:", error);
+    return null;
+  }
+};
 
 export async function getOwnedCafes(userId) {
   try {

@@ -84,7 +84,7 @@ const MaterialList = ({ cafeId }) => {
     ? mutations.filter((mutation) => mutation.materialId === selectedMaterialId)
     : [];
 
-    const sortedMutations = filteredMutations
+  const sortedMutations = filteredMutations
     .filter((mutation) => mutation.materialId === selectedMaterialId)
     .sort((a, b) => {
       if (sortOrder === "asc") {
@@ -206,7 +206,7 @@ const MaterialList = ({ cafeId }) => {
     const date = new Date(timestamp);
     return date.toLocaleString();
   };
-  
+
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>Materials List</h1>
@@ -317,7 +317,7 @@ const MaterialList = ({ cafeId }) => {
                     -
                   </button>
                   <button style={styles.quantityDisplay}>
-                  {currentQuantity + quantityChange}
+                    {currentQuantity + quantityChange}
                   </button>
                   <button
                     onClick={() => handleQuantityChange(1)}
@@ -372,7 +372,7 @@ const MaterialList = ({ cafeId }) => {
           onChange={handleSortChange}
           style={styles.sortSelect}
         >
-        <option value="desc">latest</option>
+          <option value="desc">latest</option>
           <option value="asc">oldest</option>
         </select>
       </div>
@@ -382,7 +382,9 @@ const MaterialList = ({ cafeId }) => {
           {sortedMutations.length > 0 ? (
             sortedMutations.map((mutation) => (
               <div key={mutation.id} style={styles.mutationCard}>
-                <h4 style={styles.mutationTitle}>{formatDate(mutation.createdAt)}</h4>
+                <h4 style={styles.mutationTitle}>
+                  {formatDate(mutation.createdAt)}
+                </h4>
                 <p>Details: {mutation.reason}</p>
                 <p>stok {mutation.newStock}</p>
               </div>
@@ -404,6 +406,7 @@ const styles = {
     margin: "0 auto",
     height: "100%", // Adjust height based on your needs
     overflowY: "auto", // Enables vertical scrolling
+    backgroundColor: "white",
   },
   heading: {
     textAlign: "center",

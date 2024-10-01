@@ -58,7 +58,6 @@ function App() {
   const [shopItems, setShopItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
-  const [nextModalContent, setNextModalContent] = useState(null);
 
   useEffect(() => {
     const calculateTotalsFromLocalStorage = () => {
@@ -213,6 +212,8 @@ function App() {
       console.log("transaction notification");
       setModal("new_transaction", data);
 
+      let permission = Notification.permission;
+      if (permission != "granted") return;
       navigator.serviceWorker.ready.then((registration) => {
         registration.showNotification("New Transaction", {
           body: `A new transaction was created: ${data.transactionDetails}`, // Customize as needed
@@ -289,10 +290,6 @@ function App() {
 
   // Function to open the modal
   const setModal = (content, params = {}) => {
-    if (modalContent) {
-      setNextModalContent(content);
-      return;
-    } // Prepare query parameters
     const queryParams = new URLSearchParams(location.search);
 
     // Update the modal and any additional params
@@ -329,9 +326,6 @@ function App() {
 
       // Update the URL without the 'modal' parameter
       navigate({ search: queryParams.toString() }, { replace: true });
-
-      if (nextModalContent) setModal(nextModalContent);
-      setNextModalContent("");
     }
   };
 
@@ -373,8 +367,11 @@ function App() {
       }
     };
     const handleLoad = async () => {
-      if (user != null && (user.roleId < 3 || user.roleId > 2)) {
+      const ses = sessionStorage.getItem("notifAsk");
+
+      if (!ses && user != null && (user.roleId < 3 || user.roleId > 2)) {
         await askNotificationPermission();
+        sessionStorage.setItem("notifAsk", true);
       }
     };
     handleLoad();

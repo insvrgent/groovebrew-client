@@ -192,7 +192,7 @@ export default function Transactions({ propsShopId, sendParam, deviceType }) {
                 )}
               </button>
             </div>
-            {transaction.confirmed < 2 && (
+            {transaction.confirmed >= 0 && transaction.confirmed < 2 && (
               <h5
                 className={styles.DeclineButton}
                 onClick={() => handleDecline(transaction.transactionId)}

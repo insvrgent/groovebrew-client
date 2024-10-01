@@ -134,20 +134,22 @@ const ButtonWithReplica = ({
       >
         {children}
       </button>
-      <div className={`replica ${isActive ? "active" : ""}`}></div>
-      <QRCodeSVG
-        className={`bussinessQR ${isActive ? "active" : ""}`}
-        bgColor={"transparent"}
-        fgColor={fgColor}
-        value={QRValue}
-      />
-      <div className={`bussinessName ${isActive ? "active" : ""}`}>
-        <h2>{qrisComponent.merchantName}</h2>
-        {qrisComponent.nmid != "" && <h4>NMID : {qrisComponent.nmid}</h4>}
-      </div>
-      <div className={`price ${isActive ? "active" : ""}`}>
-        <h1>{price}</h1>
-      </div>
+      <>
+        <div className={`replica ${isActive ? "active" : ""}`}></div>
+        <QRCodeSVG
+          className={`bussinessQR ${isActive ? "active" : ""}`}
+          bgColor={"transparent"}
+          fgColor={fgColor}
+          value={QRValue}
+        />
+        <div className={`bussinessName ${isActive ? "active" : ""}`}>
+          <h2>{qrisComponent.merchantName}</h2>
+          {qrisComponent.nmid != "" && <h4>NMID : {qrisComponent.nmid}</h4>}
+        </div>
+        <div className={`price ${isActive ? "active" : ""}`}>
+          <h1>{price}</h1>
+        </div>
+      </>
     </div>
   );
 };

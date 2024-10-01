@@ -14,7 +14,7 @@ import MaterialList from "../pages/MaterialList.js";
 import MaterialMutationsPage from "../pages/MaterialMutationsPage.js";
 import Reports from "../pages/Reports.js";
 import NotificationBlocked from "../pages/NotificationBlocked.js";
-
+import WelcomePageEditor from "../pages/WelcomePageEditor.js";
 const Modal = ({ shop, isOpen, onClose, modalContent }) => {
   if (!isOpen) return null;
 
@@ -63,6 +63,7 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
         {modalContent === "update_stock" && (
           <MaterialMutationsPage cafeId={shop.cafeId} />
         )}
+        {modalContent === "welcome_config" && <WelcomePageEditor />}
         {modalContent === "reports" && <Reports cafeId={shop.cafeId} />}
       </div>
     </div>
