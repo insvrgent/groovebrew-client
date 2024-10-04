@@ -423,6 +423,7 @@ function App() {
                 <CafePage
                   table={table}
                   sendParam={handleSetParam}
+                  welcomePageConfig={shop.welcomePageConfig}
                   shopName={shop.name}
                   shopOwnerId={shop.ownerId}
                   shopItems={shopItems}

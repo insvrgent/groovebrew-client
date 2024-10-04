@@ -24,22 +24,25 @@ export async function getCafe(cafeId) {
   }
 }
 // api.js
-export const saveWelcomePageConfig = async (details) => {
+export const saveWelcomePageConfig = async (cafeId, details) => {
   const formData = new FormData();
 
   // Append image file if it exists
   if (details.image) {
     const blob = await fetch(details.image).then((res) => res.blob());
-    formData.append("image", blob, "welcome-image.png"); // Specify filename if needed
+    formData.append("cafeLogo", blob, "welcome-image.png"); // Specify filename if needed
   }
 
   // Append other form fields
   formData.append("welcomingText", details.welcomingText);
   formData.append("backgroundColor", details.backgroundColor);
   formData.append("textColor", details.textColor);
+  
+  // Append the isWelcomePageActive field
+  formData.append("isWelcomePageActive", details.isWelcomePageActive);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/welcome-config`, {
+    const response = await fetch(`${API_BASE_URL}/cafe/welcome-config/${cafeId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${getAuthToken()}`, // Assuming you have an auth token
@@ -57,6 +60,7 @@ export const saveWelcomePageConfig = async (details) => {
     return null;
   }
 };
+
 
 export async function getOwnedCafes(userId) {
   try {

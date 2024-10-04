@@ -63,7 +63,7 @@ const Modal = ({ shop, isOpen, onClose, modalContent }) => {
         {modalContent === "update_stock" && (
           <MaterialMutationsPage cafeId={shop.cafeId} />
         )}
-        {modalContent === "welcome_config" && <WelcomePageEditor />}
+        {modalContent === "welcome_config" && <WelcomePageEditor cafeId={shop.cafeId} welcomePageConfig={shop.welcomePageConfig} />}
         {modalContent === "reports" && <Reports cafeId={shop.cafeId} />}
       </div>
     </div>

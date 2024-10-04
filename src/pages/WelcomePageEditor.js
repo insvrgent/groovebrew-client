@@ -1,16 +1,32 @@
 // WelcomePageEditor.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import WelcomePage from "./WelcomePage";
 import { saveWelcomePageConfig } from "../helpers/cafeHelpers"; // Import the API function
+import Switch from "react-switch"; // Import react-switch
 import "./WelcomePageEditor.css";
+import { getImageUrl } from "../helpers/itemHelper.js";
 
-const WelcomePageEditor = () => {
+const WelcomePageEditor = ({ cafeId, welcomePageConfig }) => {
   const [image, setImage] = useState("");
   const [welcomingText, setWelcomingText] = useState("Enjoy your coffee!");
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [textColor, setTextColor] = useState("#000000");
+  const [isWelcomePageActive, setIsWelcomePageActive] = useState(false); // State for the switch
   const [loading, setLoading] = useState(false); // Loading state
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Load existing welcome page configuration when component mounts
+  useEffect(() => {
+    if (welcomePageConfig) {
+      const config = JSON.parse(welcomePageConfig);
+      setImage(getImageUrl(config.image) || ""); // Load image path
+      setWelcomingText(config.welcomingText || "Enjoy your coffee!");
+      setBackgroundColor(config.backgroundColor || "#ffffff");
+      setTextColor(config.textColor || "#000000");
+      setIsWelcomePageActive(config.isWelcomePageActive === "true"); // Convert string to boolean
+    }
+    console.log(welcomePageConfig);
+  }, [welcomePageConfig]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -43,10 +59,11 @@ const WelcomePageEditor = () => {
       welcomingText,
       backgroundColor,
       textColor,
+      isWelcomePageActive, // Include the isWelcomePageActive state
     };
 
     try {
-      const result = await saveWelcomePageConfig(details);
+      const result = await saveWelcomePageConfig(cafeId, details);
       console.log("Configuration saved:", result);
     } catch (error) {
       console.error("Error saving configuration:", error);
@@ -54,18 +71,6 @@ const WelcomePageEditor = () => {
       setLoading(false);
     }
   };
-
-  if (isFullscreen)
-    return (
-      <WelcomePage
-        image={image}
-        welcomingText={welcomingText}
-        backgroundColor={backgroundColor}
-        textColor={textColor}
-        isFullscreen={true}
-        onGetStarted={() => setIsFullscreen(false)}
-      />
-    );
 
   return (
     <div
@@ -99,6 +104,17 @@ const WelcomePageEditor = () => {
             />
           </label>
         </div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <label style={{ marginRight: "10px" }}>Is Welcome Page Active:</label>
+          <Switch
+            onChange={() => setIsWelcomePageActive(!isWelcomePageActive)}
+            checked={isWelcomePageActive}
+            offColor="#888"
+            onColor="#0a0"
+            uncheckedIcon={false}
+            checkedIcon={false}
+          />
+        </div>
         <button onClick={handleSave} disabled={loading}>
           {loading ? "Saving..." : "Save Configuration"}
         </button>
@@ -111,6 +127,8 @@ const WelcomePageEditor = () => {
           welcomingText={welcomingText}
           backgroundColor={backgroundColor}
           textColor={textColor}
+          onGetStarted={() => setIsFullscreen(false)}
+          isFullscreen={isFullscreen}
         />
         <div style={{ position: "absolute", bottom: 0, right: 0 }}>
           <svg

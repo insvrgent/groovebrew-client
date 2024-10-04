@@ -18,7 +18,7 @@
   right: 0;
   height: 122px;
   /* Adjust height as needed */
-  background-image: url('https://s3-alpha-sig.figma.com/img/3678/baa2/4bf884c3841dee965b827acbd7555b98?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bKQcSkMF~H8797MOcDHKeUzRWE1Ei9V2SWIyc4LsB-xzHOzMfd5WUNyFnDVr5pOMJdOWNI2xtsxaeVoH4h6g84vAyK6MUrCvWKhsxYrRK4O-3A0VTeIdGKICTMMj~EXZ7mjFoG5JwSGAGyj7Jx8iKS1OkoT0mTl7RDCRTvdChWZyv24BQaXsl~DfbNizjInhvwCvl3IcsdZBEnGYNSq2BbM4ZzU6w07-zMvNvC~EYPm33pAYXkDUsMh4XEQGc9gMAsNxJJZ4a5bo2vGwHREkkBDYgNGhwetefH6B0iZ7OnTqEFm3mcO3bAZtKdH0Evrcu2hNL-62pkK4JtdQ6~Anww__');
+  background-image: url("https://s3-alpha-sig.figma.com/img/3678/baa2/4bf884c3841dee965b827acbd7555b98?Expires=1719792000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bKQcSkMF~H8797MOcDHKeUzRWE1Ei9V2SWIyc4LsB-xzHOzMfd5WUNyFnDVr5pOMJdOWNI2xtsxaeVoH4h6g84vAyK6MUrCvWKhsxYrRK4O-3A0VTeIdGKICTMMj~EXZ7mjFoG5JwSGAGyj7Jx8iKS1OkoT0mTl7RDCRTvdChWZyv24BQaXsl~DfbNizjInhvwCvl3IcsdZBEnGYNSq2BbM4ZzU6w07-zMvNvC~EYPm33pAYXkDUsMh4XEQGc9gMAsNxJJZ4a5bo2vGwHREkkBDYgNGhwetefH6B0iZ7OnTqEFm3mcO3bAZtKdH0Evrcu2hNL-62pkK4JtdQ6~Anww__");
   background-size: cover;
   /* Adjust background image size */
   background-position: center;
@@ -103,7 +103,7 @@
   left: 0;
   right: 0;
   height: 25px;
-  background-color: rgb(108, 255, 128);
+  background-color: rgb(29, 185, 84);
   border-radius: 0 0 15px 15px;
   /* Rounded corners at the bottom */
   cursor: pointer;
@@ -117,7 +117,7 @@
 }
 
 .expand-button:hover {
-  background-color: rgb(108, 255, 128);
+  background-color: rgb(29, 185, 84);
 }
 
 /* Adjust height of the music player container when expanded */
@@ -130,7 +130,7 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: rgb(108, 255, 128);
+  background-color: rgb(29, 185, 84);
 }
 
 .search-box input[type="text"] {

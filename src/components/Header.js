@@ -353,6 +353,10 @@ const Header = ({
                           onChange={() => setIsEditMode(!isEditMode)}
                         />
                       </div>
+
+                      <Child onClick={() => setModal("welcome_config")}>
+                        welcoming page
+                      </Child>
                       <Child onClick={() => setModal("add_material")}>
                         stock
                       </Child>

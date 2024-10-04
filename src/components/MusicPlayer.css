@@ -104,7 +104,7 @@
   position: relative;
   left: 0;
   right: 0;
-  background-color: rgb(108, 255, 128);
+  background-color: rgb(29, 185, 84);
   /* background-color: rgb(218 163 99); */
   border-radius: 0 0 23px 23px;
   /* Rounded corners at the bottom */
@@ -121,7 +121,7 @@
 }
 
 .expand-button:hover {
-  background-color: rgb(108, 255, 128);
+  background-color: rgb(29, 185, 84);
 }
 
 /* Adjust height of the music player container when expanded */
@@ -134,7 +134,7 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: rgb(108, 255, 128);
+  background-color: rgb(29, 185, 84);
 }
 
 .search-box input[type="text"] {
@@ -167,7 +167,7 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: rgb(108, 255, 128);
+  background-color: rgb(29, 185, 84);
 }
 
 .auth-box input[type="text"] {

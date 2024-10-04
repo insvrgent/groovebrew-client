@@ -9,6 +9,8 @@ import {
 } from "react-router-dom";
 
 import "../App.css";
+
+import { getImageUrl } from "../helpers/itemHelper.js";
 import SearchInput from "../components/SearchInput";
 import ItemTypeLister from "../components/ItemTypeLister";
 import { MusicPlayer } from "../components/MusicPlayer";
@@ -29,6 +31,7 @@ import WelcomePage from "./WelcomePage.js";
 function CafePage({
   table,
   sendParam,
+  welcomePageConfig,
   shopName,
   shopOwnerId,
   shopItems,
@@ -58,27 +61,34 @@ function CafePage({
   const [filterId, setFilterId] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
 
-  useEffect(() => {
-    // Check sessionStorage for 'getStartedClicked' on mount
-    const clicked = sessionStorage.getItem("getStartedClicked");
-    if (clicked) setIsStarted(true);
-    else document.body.style.overflow = "hidden";
+  const [config, setConfig] = useState({});
 
-    // Define a custom event
-    const handleStorageChange = (event) => {
-      if (event.detail === "getStartedClicked") {
+  const checkWelcomePageConfig = () => {
+    const parsedConfig = JSON.parse(welcomePageConfig);
+    if (parsedConfig.isWelcomePageActive == "true") {
+      const clicked = sessionStorage.getItem("getStartedClicked");
+      if (!clicked) {
+        sessionStorage.setItem("getStartedClicked", true);
+        document.body.style.overflow = "hidden";
         setIsStarted(true);
       }
-    };
+    }
+    setLoading(false);
+  };
 
-    // Listen for custom events
-    window.addEventListener("storageChange", handleStorageChange);
-
-    // Cleanup the event listener
-    return () => {
-      window.removeEventListener("storageChange", handleStorageChange);
-    };
-  }, []);
+  useEffect(() => {
+    if (welcomePageConfig) {
+      const parsedConfig = JSON.parse(welcomePageConfig);
+      setConfig({
+        image: getImageUrl(parsedConfig.image) || "",
+        welcomingText: parsedConfig.welcomingText || "Enjoy your coffee!",
+        backgroundColor: parsedConfig.backgroundColor || "#ffffff",
+        textColor: parsedConfig.textColor || "#000000",
+        isActive: parsedConfig.isWelcomePageActive === "true",
+      });
+      checkWelcomePageConfig();
+    }
+  }, [welcomePageConfig]);
   useEffect(() => {
     if (user.cafeId != null && user.cafeId !== shopId) {
       // Preserve existing query parameters
@@ -106,10 +116,6 @@ function CafePage({
   };
 
   useEffect(() => {
-    setLoading(false);
-  }, [shopItems]);
-
-  useEffect(() => {
     async function fetchData() {
       socket.on("joined-room", (response) => {
         const { isSpotifyNeedLogin } = response;
@@ -120,6 +126,11 @@ function CafePage({
     if (socket) fetchData();
   }, [socket]);
 
+  const handleGetStarted = () => {
+    setIsStarted(false);
+
+    document.body.style.overflow = "auto";
+  };
   if (loading)
     return (
       <div className="Loader">
@@ -132,80 +143,94 @@ function CafePage({
   else
     return (
       <>
-        {!isStarted && <WelcomePage></WelcomePage>}
-        <div className="App">
-          <body className="App-header">
-            <Header
-              HeaderText={"Menu"}
-              showProfile={true}
-              setModal={setModal}
-              isLogout={handleLogout}
-              shopId={shopId}
-              shopName={shopName}
-              shopOwnerId={shopOwnerId}
-              shopClerks={shopClerks}
-              tableCode={table.tableCode}
-              user={user}
-              guestSides={guestSides}
-              guestSideOfClerk={guestSideOfClerk}
-              removeConnectedGuestSides={removeConnectedGuestSides}
-              setIsEditMode={(e) => setIsEditMode(e)}
-              isEditMode={isEditMode}
-            />
-            <div style={{ marginTop: "5px" }}></div>
-            <SearchInput shopId={shopId} tableCode={table.tableCode} />
-            <div style={{ marginTop: "15px" }}></div>
-            <ItemTypeLister
-              user={user}
-              shopOwnerId={shopOwnerId}
-              shopId={shopId}
-              itemTypes={shopItems}
-              isEditMode={isEditMode}
-              onFilterChange={(e) => setFilterId(e)}
-              filterId={filterId}
-            />
-            <div style={{ marginTop: "-13px" }}></div>
-            {filterId === 0 ? (
-              <>
-                <h2 className="title">Music Req.</h2>
-                <MusicPlayer
-                  socket={socket}
+        {welcomePageConfig && isStarted ? (
+          <WelcomePage
+            image={config.image}
+            welcomingText={config.welcomingText}
+            backgroundColor={config.backgroundColor}
+            textColor={config.textColor}
+            isActive={config.isActive}
+            onGetStarted={handleGetStarted}
+            isFullscreen={true}
+          />
+        ) : (
+          welcomePageConfig != null && (
+            <div className="Cafe">
+              <body className="App-header">
+                <Header
+                  HeaderText={"Menu"}
+                  showProfile={true}
+                  setModal={setModal}
+                  isLogout={handleLogout}
                   shopId={shopId}
-                  user={user}
-                  isSpotifyNeedLogin={isSpotifyNeedLogin}
-                />
-              </>
-            ) : (
-              <div style={{ marginTop: "35px" }}></div>
-            )}
-
-            <div style={{ marginTop: "-15px" }}></div>
-            {shopItems
-              .filter(
-                (itemType) => filterId == 0 || itemType.itemTypeId === filterId
-              )
-              .map((itemType) => (
-                <ItemLister
-                  shopId={shopId}
+                  shopName={shopName}
                   shopOwnerId={shopOwnerId}
+                  shopClerks={shopClerks}
+                  tableCode={table.tableCode}
                   user={user}
-                  key={itemType.itemTypeId}
-                  itemTypeId={itemType.itemTypeId}
-                  typeName={itemType.name}
-                  itemList={itemType.itemList}
+                  guestSides={guestSides}
+                  guestSideOfClerk={guestSideOfClerk}
+                  removeConnectedGuestSides={removeConnectedGuestSides}
+                  setIsEditMode={(e) => setIsEditMode(e)}
                   isEditMode={isEditMode}
-                  raw={isEditMode || filterId == 0 ? false : true}
                 />
-              ))}
-          </body>
-          {user.username && (
-            <AccountUpdateModal
-              user={user}
-              isOpen={isModalOpen}
-              onClose={handleModalClose}
-            />
-          )}
-        </div>
+                <div style={{ marginTop: "5px" }}></div>
+                <SearchInput shopId={shopId} tableCode={table.tableCode} />
+                <div style={{ marginTop: "15px" }}></div>
+                <ItemTypeLister
+                  user={user}
+                  shopOwnerId={shopOwnerId}
+                  shopId={shopId}
+                  itemTypes={shopItems}
+                  isEditMode={isEditMode}
+                  onFilterChange={(e) => setFilterId(e)}
+                  filterId={filterId}
+                />
+                <div style={{ marginTop: "-13px" }}></div>
+                {filterId === 0 ? (
+                  <>
+                    <h2 className="title">Music Req.</h2>
+                    <MusicPlayer
+                      socket={socket}
+                      shopId={shopId}
+                      user={user}
+                      isSpotifyNeedLogin={isSpotifyNeedLogin}
+                    />
+                  </>
+                ) : (
+                  <div style={{ marginTop: "35px" }}></div>
+                )}
+
+                <div style={{ marginTop: "-15px" }}></div>
+                {shopItems
+                  .filter(
+                    (itemType) =>
+                      filterId == 0 || itemType.itemTypeId === filterId
+                  )
+                  .map((itemType) => (
+                    <ItemLister
+                      shopId={shopId}
+                      shopOwnerId={shopOwnerId}
+                      user={user}
+                      key={itemType.itemTypeId}
+                      itemTypeId={itemType.itemTypeId}
+                      typeName={itemType.name}
+                      itemList={itemType.itemList}
+                      isEditMode={isEditMode}
+                      raw={isEditMode || filterId == 0 ? false : true}
+                    />
+                  ))}
+              </body>
+              {user.username && (
+                <AccountUpdateModal
+                  user={user}
+                  isOpen={isModalOpen}
+                  onClose={handleModalClose}
+                />
+              )}
+            </div>
+          )
+        )}
       </>
     );
 }

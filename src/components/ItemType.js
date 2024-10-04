@@ -101,6 +101,14 @@ export default function ItemType({
           create
         </button>
       )}
+      <div
+        style={{
+          backgroundColor: "black",
+          width: "200%",
+          height: "200%",
+          position: "absolute",
+        }}
+      ></div>
     </div>
   );
 }
