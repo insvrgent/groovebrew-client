@@ -2,7 +2,7 @@
   width: calc(25vw - 20px);
   height: calc(39vw - 20px);
   margin: 1px 10px -5px;
-  overflow: hidden;
+  overflow: visible;
   text-align: center;
   align-items: center;
   display: flex;
@@ -10,7 +10,28 @@
   justify-content: center;
   position: relative; /* Ensure absolute positioning inside works */
 }
-
+.item-type-rectangular {
+  width: calc(25vw - 20px);
+  height: calc(25vw - 20px);
+  overflow: visible;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative; /* Ensure absolute positioning inside works */
+}
+.item-type-nomargin {
+  width: calc(25vw - 20px);
+  height: calc(39vw - 20px);
+  overflow: visible;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative; /* Ensure absolute positioning inside works */
+}
 .item-type-rect {
   position: relative;
   height: 20vw;

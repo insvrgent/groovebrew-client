@@ -17,3 +17,30 @@
   margin-right: 20px;
   /* Space between items */
 }
+.rect-creator {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: white;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Always 4 columns */
+  gap: 10px; /* Spacing between grid items */
+  padding: 10px; /* Padding inside grid */
+  overflow-y: auto; /* Allow scrolling if items overflow */
+}
+
+.add-button {
+  margin: 10px; /* Margin around the button */
+  padding: 10px 20px; /* Padding for the button */
+  position: absolute; /* Optional, for styling */
+  bottom: 0;
+  align-self: center; /* Center the button horizontally */
+}

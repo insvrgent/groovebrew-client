@@ -9,6 +9,7 @@ export default function ItemType({
   name: initialName = "",
   imageUrl,
   selected,
+  rectangular,
 }) {
   const inputRef = useRef(null);
   const [name, setName] = useState(initialName);
@@ -30,6 +31,7 @@ export default function ItemType({
       reader.readAsDataURL(selectedImage);
     } else {
       setPreviewUrl(getImageUrl(imageUrl));
+      onClick(getImageUrl(imageUrl));
     }
   }, [selectedImage, imageUrl]);
 
@@ -51,9 +53,20 @@ export default function ItemType({
   };
 
   return (
-    <div className={styles["item-type"]}>
+    <div
+      className={
+        styles[
+          name
+            ? "item-type"
+            : rectangular
+            ? "item-type-rectangular"
+            : "item-type-nomargin"
+        ]
+      }
+      style={{ zIndex: blank ? 301 : "inherit" }}
+    >
       <div
-        onClick={onClick}
+        onClick={rectangular ?( blank? null:() => onClick(imageUrl)) : onClick}
         className={styles["item-type-rect"]}
         style={{
           top: selected ? "-10px" : "initial",
@@ -96,19 +109,11 @@ export default function ItemType({
           borderBottom: selected ? "1px solid #000" : "none",
         }}
       />
-      {blank && (
+      {/* {blank && (
         <button className={styles["item-type-create"]} onClick={handleCreate}>
           create
         </button>
-      )}
-      <div
-        style={{
-          backgroundColor: "black",
-          width: "200%",
-          height: "200%",
-          position: "absolute",
-        }}
-      ></div>
+      )} */}
     </div>
   );
 }
