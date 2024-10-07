@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Item.module.css";
-
 const Item = ({
   blank,
   forCart,
@@ -13,8 +12,10 @@ const Item = ({
   onPlusClick,
   onNegativeClick,
   handleCreateItem,
+  handleUpdateItem,
   onRemoveClick,
   isAvailable,
+  isBeingEdit,
 }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(imageUrl);
@@ -24,6 +25,8 @@ const Item = ({
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    console.log(imageUrl);
+    console.log(selectedImage);
     if (selectedImage) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -48,7 +51,10 @@ const Item = ({
   };
 
   const handleCreate = () => {
-    handleCreateItem(itemName, itemPrice, itemQty, selectedImage);
+    handleCreateItem(itemName, itemPrice, selectedImage, previewUrl);
+  };
+  const handleUpdate = () => {
+    handleUpdateItem(itemName, itemPrice, selectedImage, previewUrl);
   };
 
   const handleRemoveClick = () => {
@@ -86,7 +92,11 @@ const Item = ({
       {!forInvoice && (
         <div className={styles.imageContainer}>
           <img
-            src={previewUrl}
+            src={
+              blank || previewUrl || isBeingEdit
+                ? previewUrl
+                : "https://png.pngtree.com/png-vector/20221125/ourmid/pngtree-no-image-available-icon-flatvector-illustration-pic-design-profile-vector-png-image_40966566.jpg"
+            }
             onError={({ currentTarget }) => {
               currentTarget.onerror = null; // prevents looping
               currentTarget.src =
@@ -98,9 +108,12 @@ const Item = ({
             }}
             className={styles.itemImage}
           />
-          {blank && (
+
+          {(isBeingEdit || blank) && (
             <div className={styles.overlay} onClick={handleImageClick}>
-              <span>Click To Add Image</span>
+              <span>
+                {previewUrl ? "Click To Change Image" : "Click To Add Image"}
+              </span>
             </div>
           )}
           <input
@@ -117,13 +130,13 @@ const Item = ({
         <input
           className={`${
             forInvoice ? styles.itemInvoiceName : styles.itemName
-          } ${blank ? styles.blank : styles.notblank} ${
+          } ${isBeingEdit || blank ? styles.blank : styles.notblank} ${
             !isAvailable ? styles.disabled : ""
           }`}
           value={itemName}
           placeholder="name"
           onChange={handleNameChange}
-          disabled={!blank}
+          disabled={!blank && !isBeingEdit}
         />
 
         {forInvoice && (
@@ -135,17 +148,17 @@ const Item = ({
         {!forInvoice && (
           <input
             className={`${styles.itemPrice} ${
-              blank ? styles.blank : styles.notblank
+              isBeingEdit || blank ? styles.blank : styles.notblank
             } ${!isAvailable ? styles.disabled : ""}`}
             value={itemPrice}
             placeholder="price"
             onChange={handlePriceChange}
-            disabled={!blank}
+            disabled={!blank && !isBeingEdit}
           />
         )}
 
         {!forInvoice &&
-          (itemQty != 0 ? (
+          (!isBeingEdit && itemQty != 0 ? (
             <div className={styles.itemQty}>
               <svg
                 className={styles.plusNegative}
@@ -162,14 +175,14 @@ const Item = ({
                   fillRule="nonzero"
                 />
               </svg>
-              {!blank ? (
+              {!blank && !isBeingEdit ? (
                 <p className={styles.itemQtyValue}>{itemQty}</p>
               ) : (
                 <input
                   className={styles.itemQtyInput}
                   value={itemQty}
                   onChange={handleQtyChange}
-                  disabled={!blank}
+                  disabled={!blank && !isBeingEdit}
                 />
               )}
               <svg
@@ -188,7 +201,7 @@ const Item = ({
                 />
               </svg>
             </div>
-          ) : !blank ? (
+          ) : !blank && !isBeingEdit ? (
             <div className={styles.itemQty}>
               <button
                 className={styles.addButton}
@@ -207,9 +220,9 @@ const Item = ({
                   backgroundColor: "#4da94d",
                   width: "150px",
                 }}
-                onClick={handleCreate}
+                onClick={isBeingEdit ? handleUpdate : handleCreate}
               >
-                +
+                {isBeingEdit ? "save" : "+"}
               </button>
             </div>
           ))}

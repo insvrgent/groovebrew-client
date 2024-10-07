@@ -10,7 +10,7 @@ import {
 
 import "../App.css";
 
-import { getImageUrl } from "../helpers/itemHelper.js";
+import { getImageUrl, createItem, updateItem } from "../helpers/itemHelper.js";
 import SearchInput from "../components/SearchInput";
 import ItemTypeLister from "../components/ItemTypeLister";
 import { MusicPlayer } from "../components/MusicPlayer";
@@ -20,11 +20,7 @@ import Header from "../components/Header";
 
 import { ThreeDots } from "react-loader-spinner";
 
-import { getItemTypesWithItems } from "../helpers/itemHelper.js";
-import {
-  getLocalStorage,
-  updateLocalStorage,
-} from "../helpers/localStorageHelpers";
+import { updateLocalStorage } from "../helpers/localStorageHelpers";
 import { unsubscribeUser } from "../helpers/subscribeHelpers.js";
 import WelcomePage from "./WelcomePage.js";
 
@@ -218,6 +214,18 @@ function CafePage({
                       itemList={itemType.itemList}
                       isEditMode={isEditMode}
                       raw={isEditMode || filterId == 0 ? false : true}
+                      handleCreateItem={(name, price, selectedImage) =>
+                        createItem(
+                          shopId,
+                          name,
+                          price,
+                          selectedImage,
+                          itemType.itemTypeId
+                        )
+                      }
+                      handleUpdateItem={(itemId, name, price, selectedImage) =>
+                        updateItem(itemId, name, price, selectedImage)
+                      }
                     />
                   ))}
               </body>

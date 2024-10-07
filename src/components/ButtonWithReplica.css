@@ -70,8 +70,11 @@
   z-index: 201; /* Behind the button */
   font-size: 3vw;
   text-align: center;
+  transition: all 0.5s ease-in-out;
 }
-
+.bussinessName h2 {
+  color: inherit; /* Ensures that it inherits the color from the parent */
+}
 .bussinessQR {
   position: absolute;
   height: 25vh;

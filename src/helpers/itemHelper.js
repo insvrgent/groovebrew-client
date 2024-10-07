@@ -64,7 +64,6 @@ export async function createItem(
   shopId,
   name,
   price,
-  qty,
   selectedImage,
   itemTypeId
 ) {
@@ -73,12 +72,40 @@ export async function createItem(
     const formData = new FormData();
     formData.append("name", name);
     formData.append("price", price);
-    formData.append("stock", qty);
     formData.append("image", selectedImage);
     formData.append("itemTypeId", itemTypeId);
 
     const response = await fetch(`${API_BASE_URL}/item/create/${shopId}`, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Error: ${errorMessage}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to create item type:", error);
+    throw error;
+  }
+}
+
+export async function updateItem(itemId, name, price, selectedImage) {
+  try {
+    console.log(selectedImage);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("image", selectedImage);
+
+    const response = await fetch(`${API_BASE_URL}/item/set-item/${itemId}`, {
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${getAuthToken()}`,
       },

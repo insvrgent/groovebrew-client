@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "./ItemType.module.css";
-import { getImageUrl } from "../helpers/itemHelper";
 
 export default function ItemType({
   onClick,
@@ -26,12 +25,13 @@ export default function ItemType({
     if (selectedImage) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewUrl(reader.result);
+        onClick(reader.result);
+        // setPreviewUrl(reader.result);
       };
       reader.readAsDataURL(selectedImage);
     } else {
-      setPreviewUrl(getImageUrl(imageUrl));
-      onClick(getImageUrl(imageUrl));
+      setPreviewUrl(imageUrl);
+      // onClick(getImageUrl(imageUrl));
     }
   }, [selectedImage, imageUrl]);
 
@@ -66,7 +66,9 @@ export default function ItemType({
       style={{ zIndex: blank ? 301 : "inherit" }}
     >
       <div
-        onClick={rectangular ?( blank? null:() => onClick(imageUrl)) : onClick}
+        onClick={
+          rectangular ? (blank ? null : () => onClick(imageUrl)) : onClick
+        }
         className={styles["item-type-rect"]}
         style={{
           top: selected ? "-10px" : "initial",
@@ -86,24 +88,15 @@ export default function ItemType({
               onChange={handleImageChange}
               id="image-input"
             />
-            Click to add image
-            <label
-              htmlFor="image-input"
-              className={styles["item-type-image-text"]}
-            >
-              Click to add image
-            </label>
           </div>
         )}
       </div>
       <input
         ref={inputRef}
-        className={`${styles["item-type-name"]} ${
-          blank ? styles.border : styles.noborder
-        }`}
+        className={`${styles["item-type-name"]} ${styles.noborder}`}
         value={name}
         onChange={handleNameChange}
-        disabled={!blank}
+        disabled={true}
         style={{
           top: selected ? "-5px" : "initial",
           borderBottom: selected ? "1px solid #000" : "none",

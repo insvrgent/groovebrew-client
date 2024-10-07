@@ -29,11 +29,19 @@
   flex-direction: column;
 }
 
+.inline-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Always 4 columns */
+  gap: 10px; /* Spacing between grid items */
+  padding: 10px; /* Padding inside grid */
+  overflow-y: auto; /* Allow scrolling if items overflow */
+}
 .grid-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* Always 4 columns */
   gap: 10px; /* Spacing between grid items */
   padding: 10px; /* Padding inside grid */
+  max-height: calc(3 * (25vw - 20px) + 20px); /* 3 items + gaps */
   overflow-y: auto; /* Allow scrolling if items overflow */
 }
 

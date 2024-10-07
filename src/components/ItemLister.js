@@ -9,7 +9,6 @@ import {
 } from "../helpers/cartHelpers.js";
 import {
   getImageUrl,
-  createItem,
   updateItemAvalilability,
   updateItemType,
   deleteItemType,
@@ -27,6 +26,8 @@ const ItemLister = ({
   forInvoice,
   isEditMode,
   raw,
+  handleCreateItem,
+  handleUpdateItem,
 }) => {
   const [items, setItems] = useState(
     itemList.map((item) => ({
@@ -45,6 +46,7 @@ const ItemLister = ({
   }, [itemList]);
 
   const [isEdit, setIsEditing] = useState(false);
+  const [onEditItem, setOnEditItem] = useState(0);
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
   const [editedTypeName, setEditedTypeName] = useState(typeName);
   const typeNameInputRef = useRef(null);
@@ -122,6 +124,11 @@ const ItemLister = ({
 
   const toggleAddNewItem = () => {
     setIsAddingNewItem((prev) => !prev);
+    setOnEditItem(0);
+  };
+  const editItem = (itemId) => {
+    setIsAddingNewItem(false);
+    setOnEditItem(itemId);
   };
   const handleChange = async (itemId) => {
     // Find the item in the current items array
@@ -164,6 +171,10 @@ const ItemLister = ({
       updatedItems[itemIndex].availability = item.availability; // revert back
       setItems(updatedItems);
     }
+  };
+  const onCreateItem = (itemName, itemPrice, selectedImage, previewUrl) => {
+    handleCreateItem(itemName, itemPrice, selectedImage, previewUrl);
+    setIsAddingNewItem(false);
   };
 
   return (
@@ -238,52 +249,62 @@ const ItemLister = ({
                       >
                         ↩
                       </button>
-                      <Item
-                        blank={true}
-                        handleCreateItem={(name, price, qty, selectedImage) =>
-                          createItem(
-                            shopId,
-                            name,
-                            price,
-                            qty,
-                            selectedImage,
-                            itemTypeId
-                          )
-                        }
-                      />
+                      <Item blank={true} handleCreateItem={onCreateItem} />
                     </>
                   )}
                 </>
               )}
             {items.map((item) => {
               return !forCart || (forCart && item.qty > 0) ? (
-                <div className={styles["itemWrapper"]}>
-                  {isEditMode && (
-                    <div className={styles["editModeLayout"]}>
-                      {isEditMode && (
-                        <Switch
-                          onChange={() => handleChange(item.itemId)}
-                          checked={item.availability}
-                        />
-                      )}
-                      <h3>{item.availability ? "available" : "unavailable"}</h3>
-                    </div>
+                <>
+                  {onEditItem == item.itemId && (
+                    <button
+                      className={styles["add-item-button"]}
+                      onClick={() => editItem(0)}
+                      style={{ display: "inline-block" }}
+                    >
+                      ↩
+                    </button>
                   )}
-                  <Item
-                    key={item.itemId}
-                    forCart={forCart}
-                    forInvoice={forInvoice}
-                    name={item.name}
-                    price={item.price}
-                    qty={item.qty}
-                    imageUrl={getImageUrl(item.image)}
-                    onPlusClick={() => handlePlusClick(item.itemId)}
-                    onNegativeClick={() => handleNegativeClick(item.itemId)}
-                    onRemoveClick={() => handleRemoveClick(item.itemId)}
-                    isEditMode={isEditMode}
-                    isAvailable={item.availability}
-                  />
-                </div>
+                  <div className={styles["itemWrapper"]}>
+                    {isEditMode && onEditItem != item.itemId && (
+                      <div className={styles["editModeLayout"]}>
+                        {isEditMode && (
+                          <Switch
+                            onChange={() => handleChange(item.itemId)}
+                            checked={item.availability}
+                          />
+                        )}
+                        <h3>
+                          {item.availability ? "available" : "unavailable"}
+                        </h3>
+                        <button onClick={() => editItem(item.itemId)}>
+                          edit
+                        </button>
+                      </div>
+                    )}
+
+                    <Item
+                      key={item.itemId}
+                      forCart={forCart}
+                      forInvoice={forInvoice}
+                      name={item.name}
+                      price={item.price}
+                      qty={item.qty}
+                      imageUrl={
+                        itemTypeId ? getImageUrl(item.image) : item.image
+                      }
+                      onPlusClick={() => handlePlusClick(item.itemId)}
+                      onNegativeClick={() => handleNegativeClick(item.itemId)}
+                      onRemoveClick={() => handleRemoveClick(item.itemId)}
+                      isBeingEdit={onEditItem == item.itemId}
+                      isAvailable={item.availability}
+                      handleUpdateItem={(name, price, image) =>
+                        handleUpdateItem(item.itemId, name, price, image)
+                      }
+                    />
+                  </div>
+                </>
               ) : null;
             })}
 

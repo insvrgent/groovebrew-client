@@ -4,6 +4,7 @@ import "./ItemTypeLister.css";
 import ItemType from "./ItemType";
 import { createItemType } from "../helpers/itemHelper.js";
 import { getImageUrl } from "../helpers/itemHelper";
+import ItemLister from "./ItemLister";
 
 const ItemTypeLister = ({
   shopId,
@@ -16,6 +17,21 @@ const ItemTypeLister = ({
 }) => {
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
   const newItemDivRef = useRef(null);
+  const [items, setItems] = useState([]);
+  const handleCreateItem = (name, price, selectedImage, previewUrl) => {
+    console.log(previewUrl);
+    const newItem = {
+      itemId: items.length + 1,
+      name,
+      price,
+      selectedImage,
+      image: previewUrl,
+      availability: true,
+    };
+
+    // Update the items state with the new item
+    setItems((prevItems) => [...prevItems, newItem]);
+  };
 
   // Effect to handle changes to isAddingNewItem
   useEffect(() => {
@@ -72,7 +88,11 @@ const ItemTypeLister = ({
       className="item-type-lister"
       style={{ overflowX: isAddingNewItem ? "hidden" : "" }}
     >
-      <div ref={newItemDivRef} className="item-type-list" style={{display: isAddingNewItem?'block':'inline-flex'}}>
+      <div
+        ref={newItemDivRef}
+        className="item-type-list"
+        style={{ display: isAddingNewItem ? "block" : "inline-flex" }}
+      >
         {isEditMode &&
           !isAddingNewItem &&
           user &&
@@ -81,7 +101,7 @@ const ItemTypeLister = ({
             <ItemType
               onClick={toggleAddNewItem}
               name={"create"}
-              imageUrl={"uploads/addnew.png"}
+              imageUrl={getImageUrl("uploads/addnew.png")}
             />
           )}
         {user &&
@@ -92,110 +112,122 @@ const ItemTypeLister = ({
               <ItemType
                 blank={true}
                 imageUrl={previewUrl}
-                name={"blank"}
+                name={"‎ "}
                 onCreate={handleCreate}
               />
               <div className="rect-creator">
                 <div
-                  className="grid-container"
+                  className="inline-container"
                   style={{ visibility: "hidden" }}
                 >
                   <ItemType
                     onClick={() => onFilterChange(0)}
-                    imageUrl={"uploads/1718732420960.png"}
+                    imageUrl={getImageUrl("uploads/1718732420960.png")}
+                  />
+                  <input></input>
+                  {/* <ItemType
+                    onClick={() => onFilterChange(0)}
+                    imageUrl={getImageUrl("uploads/1718732420960.png")}
                   />
                   <ItemType
                     onClick={() => onFilterChange(0)}
-                    imageUrl={"uploads/1718732420960.png"}
+                    imageUrl={getImageUrl("uploads/1718732420960.png")}
                   />
                   <ItemType
                     onClick={() => onFilterChange(0)}
-                    imageUrl={"uploads/1718732420960.png"}
-                  />
-                  <ItemType
-                    onClick={() => onFilterChange(0)}
-                    imageUrl={"uploads/1718732420960.png"}
-                  />
+                    imageUrl={getImageUrl("uploads/1718732420960.png")}
+                  /> */}
                 </div>
                 <div className="grid-container" style={{ paddingTop: "15px" }}>
                   <ItemType
                     rectangular={true}
+                    blank={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/beverage1.png"}
+                    imageUrl={getImageUrl("uploads/addnew.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/beverage2.png"}
+                    imageUrl={getImageUrl("uploads/beverage1.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/beverage3.png"}
+                    imageUrl={getImageUrl("uploads/beverage2.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/dessert1.png"}
+                    imageUrl={getImageUrl("uploads/beverage3.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/dessert2.jpg"}
+                    imageUrl={getImageUrl("uploads/dessert1.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/food1.png"}
+                    imageUrl={getImageUrl("uploads/dessert2.jpg")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/food2.jpg"}
+                    imageUrl={getImageUrl("uploads/food1.png")}
+                  />
+                  <ItemType
+                    rectangular={true}
+                    onClick={(e) => handleImageChange(e)}
+                    imageUrl={getImageUrl("uploads/food2.jpg")}
                   />
 
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/food3.png"}
+                    imageUrl={getImageUrl("uploads/food3.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/packet1.png"}
+                    imageUrl={getImageUrl("uploads/packet1.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/packet2.png"}
+                    imageUrl={getImageUrl("uploads/packet2.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/snack1.png"}
+                    imageUrl={getImageUrl("uploads/snack1.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/snack2.png"}
+                    imageUrl={getImageUrl("uploads/snack2.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/snack3.png"}
+                    imageUrl={getImageUrl("uploads/snack3.png")}
                   />
                   <ItemType
                     rectangular={true}
                     onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/snack4.png"}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    blank={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={"uploads/addnew.png"}
+                    imageUrl={getImageUrl("uploads/snack4.png")}
                   />
                 </div>
+
+                <ItemLister
+                  shopId={shopId}
+                  shopOwnerId={shopOwnerId}
+                  user={user}
+                  typeName={"add new"}
+                  itemList={items}
+                  isEditMode={true}
+                  raw={true}
+                  handleCreateItem={handleCreateItem}
+                />
                 <button onClick={toggleAddNewItem} className="add-button">
                   back
                 </button>
@@ -208,7 +240,7 @@ const ItemTypeLister = ({
           <ItemType
             name={"All"}
             onClick={() => onFilterChange(0)}
-            imageUrl={"uploads/1718732420960.png"}
+            imageUrl={getImageUrl("uploads/1718732420960.png")}
           />
         )}
         {itemTypes &&
@@ -219,7 +251,7 @@ const ItemTypeLister = ({
                 <ItemType
                   key={itemType.itemTypeId}
                   name={itemType.name}
-                  imageUrl={itemType.image}
+                  imageUrl={getImageUrl(itemType.image)}
                   onClick={() => onFilterChange(itemType.itemTypeId)}
                   selected={filterId === itemType.itemTypeId}
                 />
