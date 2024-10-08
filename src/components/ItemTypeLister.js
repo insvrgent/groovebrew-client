@@ -5,7 +5,6 @@ import ItemType from "./ItemType";
 import { createItemType } from "../helpers/itemHelper.js";
 import { getImageUrl } from "../helpers/itemHelper";
 import ItemLister from "./ItemLister";
-
 const ItemTypeLister = ({
   shopId,
   shopOwnerId,
@@ -18,6 +17,8 @@ const ItemTypeLister = ({
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
   const newItemDivRef = useRef(null);
   const [items, setItems] = useState([]);
+  
+  const [itemTypeName, setItemTypeName] = useState('');
   const handleCreateItem = (name, price, selectedImage, previewUrl) => {
     console.log(previewUrl);
     const newItem = {
@@ -91,7 +92,7 @@ const ItemTypeLister = ({
       <div
         ref={newItemDivRef}
         className="item-type-list"
-        style={{ display: isAddingNewItem ? "block" : "inline-flex" }}
+        style={{ display: isAddingNewItem ? "inline-flex" : "inline-flex" }}
       >
         {isEditMode &&
           !isAddingNewItem &&
@@ -109,22 +110,30 @@ const ItemTypeLister = ({
           user.userId === shopOwnerId &&
           isAddingNewItem && (
             <>
-              <ItemType
-                blank={true}
-                imageUrl={previewUrl}
-                name={"‎ "}
-                onCreate={handleCreate}
-              />
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <ItemType
+                  blank={true}
+                  imageUrl={previewUrl}
+                  name={"‎ "}
+                  onCreate={handleCreate}
+                />
+                <input
+                  className="item-type-name"
+                  value={itemTypeName}
+                  onChange={(e)=>setItemTypeName(e.target.value)}
+                  placeholder="type name"
+                  style={{ marginLeft: "10px" }} // Adjust spacing as needed
+                />
+              </div>
               <div className="rect-creator">
                 <div
                   className="inline-container"
-                  style={{ visibility: "hidden" }}
+                  style={{ overflowX: "hidden", visibility: "hidden" }}
                 >
                   <ItemType
                     onClick={() => onFilterChange(0)}
                     imageUrl={getImageUrl("uploads/1718732420960.png")}
                   />
-                  <input></input>
                   {/* <ItemType
                     onClick={() => onFilterChange(0)}
                     imageUrl={getImageUrl("uploads/1718732420960.png")}

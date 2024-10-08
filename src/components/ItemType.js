@@ -91,17 +91,19 @@ export default function ItemType({
           </div>
         )}
       </div>
-      <input
-        ref={inputRef}
-        className={`${styles["item-type-name"]} ${styles.noborder}`}
-        value={name}
-        onChange={handleNameChange}
-        disabled={true}
-        style={{
-          top: selected ? "-5px" : "initial",
-          borderBottom: selected ? "1px solid #000" : "none",
-        }}
-      />
+      {(rectangular || !blank) && (
+        <input
+          ref={inputRef}
+          className={`${styles["item-type-name"]} ${styles.noborder}`}
+          value={name}
+          onChange={handleNameChange}
+          disabled={true}
+          style={{
+            top: selected ? "-5px" : "initial",
+            borderBottom: selected ? "1px solid #000" : "none",
+          }}
+        />
+      )}
       {/* {blank && (
         <button className={styles["item-type-create"]} onClick={handleCreate}>
           create

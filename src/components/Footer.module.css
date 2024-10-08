@@ -68,7 +68,7 @@
   align-items: center;
   justify-content: center;
   transition: height 0.3s ease;
-  z-index: 200;
+  z-index: 197;
 }
 
 .scanMeja.stretched {

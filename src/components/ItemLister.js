@@ -28,6 +28,8 @@ const ItemLister = ({
   raw,
   handleCreateItem,
   handleUpdateItem,
+  beingEditedType,
+  setBeingEditedType,
 }) => {
   const [items, setItems] = useState(
     itemList.map((item) => ({
@@ -125,10 +127,12 @@ const ItemLister = ({
   const toggleAddNewItem = () => {
     setIsAddingNewItem((prev) => !prev);
     setOnEditItem(0);
+    setBeingEditedType(itemTypeId);
   };
   const editItem = (itemId) => {
     setIsAddingNewItem(false);
     setOnEditItem(itemId);
+    setBeingEditedType(itemTypeId);
   };
   const handleChange = async (itemId) => {
     // Find the item in the current items array
@@ -297,7 +301,10 @@ const ItemLister = ({
                       onPlusClick={() => handlePlusClick(item.itemId)}
                       onNegativeClick={() => handleNegativeClick(item.itemId)}
                       onRemoveClick={() => handleRemoveClick(item.itemId)}
-                      isBeingEdit={onEditItem == item.itemId}
+                      isBeingEdit={
+                        onEditItem == item.itemId &&
+                        beingEditedType == itemTypeId
+                      }
                       isAvailable={item.availability}
                       handleUpdateItem={(name, price, image) =>
                         handleUpdateItem(item.itemId, name, price, image)

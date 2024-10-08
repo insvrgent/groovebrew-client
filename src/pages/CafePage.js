@@ -59,6 +59,8 @@ function CafePage({
 
   const [config, setConfig] = useState({});
 
+  const [beingEditedType, setBeingEditedType] = useState(0);
+
   const checkWelcomePageConfig = () => {
     const parsedConfig = JSON.parse(welcomePageConfig);
     if (parsedConfig.isWelcomePageActive == "true") {
@@ -213,6 +215,8 @@ function CafePage({
                       typeName={itemType.name}
                       itemList={itemType.itemList}
                       isEditMode={isEditMode}
+                      beingEditedType={beingEditedType}
+                      setBeingEditedType={setBeingEditedType}
                       raw={isEditMode || filterId == 0 ? false : true}
                       handleCreateItem={(name, price, selectedImage) =>
                         createItem(

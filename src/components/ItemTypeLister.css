@@ -52,3 +52,13 @@
   bottom: 0;
   align-self: center; /* Center the button horizontally */
 }
+.item-type-name {
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  height: 20vw;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: black;
+  text-transform: capitalize;
+  z-index: 301;
+}

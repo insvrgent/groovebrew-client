@@ -30,7 +30,7 @@ const ProfileName = styled.h2`
   font-weight: 500;
   font-style: normal;
   font-size: 30px;
-  z-index: 11;
+  z-index: 199;
   overflow: hidden;
   white-space: nowrap;
   animation: ${(props) => {
@@ -92,7 +92,7 @@ const ProfileImage = styled.img`
   height: 60px;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 12;
+  z-index: 199;
   animation: ${(props) => {
       if (props.animate === "grow") return g;
       if (props.animate === "shrink") return s;
@@ -165,7 +165,7 @@ const Rectangle = styled.div`
   width: 200px;
   max-height: 87vh; /* or another appropriate value */
   background-color: white;
-  z-index: 10;
+  z-index: 198;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: ${(props) => (props.animate === "grow" ? grow : shrink)} 0.5s
     forwards;
