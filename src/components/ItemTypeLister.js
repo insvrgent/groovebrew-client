@@ -13,12 +13,14 @@ const ItemTypeLister = ({
   onFilterChange,
   filterId,
   isEditMode,
+  beingEditedType,
+  setBeingEditedType,
 }) => {
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
   const newItemDivRef = useRef(null);
   const [items, setItems] = useState([]);
-  
-  const [itemTypeName, setItemTypeName] = useState('');
+
+  const [itemTypeName, setItemTypeName] = useState("");
   const handleCreateItem = (name, price, selectedImage, previewUrl) => {
     console.log(previewUrl);
     const newItem = {
@@ -120,7 +122,7 @@ const ItemTypeLister = ({
                 <input
                   className="item-type-name"
                   value={itemTypeName}
-                  onChange={(e)=>setItemTypeName(e.target.value)}
+                  onChange={(e) => setItemTypeName(e.target.value)}
                   placeholder="type name"
                   style={{ marginLeft: "10px" }} // Adjust spacing as needed
                 />
@@ -236,6 +238,8 @@ const ItemTypeLister = ({
                   isEditMode={true}
                   raw={true}
                   handleCreateItem={handleCreateItem}
+                  beingEditedType={beingEditedType}
+                  setBeingEditedType={setBeingEditedType}
                 />
                 <button onClick={toggleAddNewItem} className="add-button">
                   back

@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import "./RouletteWheel.css";
 import coffeeImage from "./coffee.png"; // Update the path to your image
 
-const RouletteWheel = ({ isForRegister, onSign }) => {
+import { ThreeDots } from "react-loader-spinner";
+
+const RouletteWheel = ({ isForRegister, onSignIn, onSignUp }) => {
   const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startAngleRef = useRef(0);
@@ -12,20 +14,31 @@ const RouletteWheel = ({ isForRegister, onSign }) => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const emailInputRef = useRef(null);
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
 
-  const handleSign = () => {
-    onSign(email, username, password);
+  const handleSignIn = () => {
+    setError(false); // Reset error state before login attempt
+    onSignIn(email, username, password, setLoading, setError);
   };
 
+  const handleSignUp = () => {
+    setError(false); // Reset error state before login attempt
+    onSignUp(email, username, password, setLoading, setError);
+  };
   const handleStart = (x, y) => {
     setIsDragging(true);
     startAngleRef.current = getAngle(x, y);
     startRotationRef.current = rotation;
   };
+
+  useEffect(() => {
+    setError(false);
+  }, [error]);
 
   const handleMove = (x, y) => {
     if (isDragging) {
@@ -153,87 +166,89 @@ const RouletteWheel = ({ isForRegister, onSign }) => {
         onTouchStart={handleTouchStart}
         style={{ transform: `rotate(${rotation}deg)` }}
       >
-        {!isForRegister ? (
-          <>
-            <input
-              className={`roulette-input ${
-                isVisible(rotation % 360 !== -0) ? "" : "hidden"
-              }`}
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              ref={usernameInputRef}
-              style={{ transform: "translate(90%, -120%) rotate(0deg)" }}
-            />
-            <input
-              className={`roulette-input ${
-                isVisible(rotation % 360 !== -90) ? "" : "hidden"
-              }`}
-              placeholder="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              ref={passwordInputRef}
-              style={{ transform: "translate(30%, 350%) rotate(90deg)" }}
-            />
-            <button
-              className={`roulette-input ${
-                isVisible(rotation % 360 !== -90) ? "" : "hidden"
-              }`}
-              onClick={handleSign}
-              onMouseDown={handleChildMouseDown}
-              onTouchStart={handleChildTouchStart}
-              style={{ transform: "translate(10%, 320%) rotate(90deg)" }}
-            >
-              Sign in
-            </button>
-          </>
-        ) : (
-          <>
-            <input
-              className={`roulette-input ${
-                isVisible(rotation % 360 !== -0) ? "" : "hidden"
-              }`}
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              ref={emailInputRef}
-              style={{ transform: "translate(90%, -120%) rotate(0deg)" }}
-            />
-            <input
-              className={`roulette-input ${
-                isVisible(rotation % 360 !== -90) ? "" : "hidden"
-              }`}
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              ref={usernameInputRef}
-              style={{ transform: "translate(30%, 350%) rotate(90deg)" }}
-            />
-            <input
-              className={`roulette-input ${
-                isVisible(rotation % 360 !== -180) ? "" : "hidden"
-              }`}
-              placeholder="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              ref={passwordInputRef}
-              style={{ transform: "translate(-90%, 115%) rotate(180deg)" }}
-            />
-            <button
-              className={`roulette-button ${
-                isVisible(rotation % 360 !== -180) ? "" : "hidden"
-              }`}
-              onClick={handleSign}
-              onMouseDown={handleChildMouseDown}
-              onTouchStart={handleChildTouchStart}
-              style={{ transform: "translate(-90%, 30%) rotate(180deg)" }}
-            >
-              Sign up
-            </button>
-          </>
-        )}
+        <input
+          className={`roulette-input ${
+            isVisible(rotation % 360 !== -0) ? "" : "hidden"
+          }`}
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          ref={usernameInputRef}
+          style={{ transform: "translate(60%, -220%) rotate(0deg)" }}
+        />
+        <input
+          className={`roulette-input ${
+            isVisible(rotation % 360 !== -0) ? "" : "hidden"
+          }`}
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          ref={passwordInputRef}
+          style={{ transform: "translate(90%, -90%) rotate(0deg)" }}
+        />
+        <button
+          className={`roulette-button  ${error ? "error" : ""}  ${
+            isVisible(rotation % 360 !== -0) ? "" : "hidden"
+          }`}
+          disabled={loading}
+          onClick={handleSignIn}
+          onMouseDown={handleChildMouseDown}
+          onTouchStart={handleChildTouchStart}
+          style={{ transform: "translate(110%, -10%) rotate(0deg)" }}
+        >
+          {loading ? (
+            <ThreeDots color="black" height={15} width={40} /> // Show loader when loading
+          ) : (
+            "Sign in"
+          )}
+        </button>
+        <input
+          className={`roulette-input ${
+            isVisible(rotation % 360 !== -90) ? "" : "hidden"
+          }`}
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          ref={emailInputRef}
+          style={{ transform: "translate(30%, 320%) rotate(90deg)" }}
+        />
+        <input
+          className={`roulette-input ${
+            isVisible(rotation % 360 !== -90) ? "" : "hidden"
+          }`}
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          ref={usernameInputRef}
+          style={{ transform: "translate(10%, 320%) rotate(90deg)" }}
+        />
+        <input
+          className={`roulette-input ${
+            isVisible(rotation % 360 !== -90) ? "" : "hidden"
+          }`}
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          ref={passwordInputRef}
+          style={{ transform: "translate(-10%, 320%) rotate(90deg)" }}
+        />
+        <button
+          className={`roulette-button  ${error ? "error" : ""} ${
+            isVisible(rotation % 360 !== -90) ? "" : "hidden"
+          } `}
+          onClick={handleSignUp}
+          onMouseDown={handleChildMouseDown}
+          onTouchStart={handleChildTouchStart}
+          style={{ transform: "translate(-60%, 320%) rotate(90deg)" }}
+        >
+          {loading ? (
+            <ThreeDots color="black" height={15} width={40} /> // Show loader when loading
+          ) : (
+            "Sign Up"
+          )}
+        </button>
         <img src={coffeeImage} className="roulette-image" alt="Coffee" />
       </div>
     </div>

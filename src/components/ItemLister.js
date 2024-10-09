@@ -53,6 +53,7 @@ const ItemLister = ({
   const [editedTypeName, setEditedTypeName] = useState(typeName);
   const typeNameInputRef = useRef(null);
 
+
   const handlePlusClick = (itemId) => {
     const updatedItems = items.map((item) => {
       if (item.itemId === itemId) {
@@ -124,6 +125,14 @@ const ItemLister = ({
     }
   };
 
+  useEffect(() => {
+    if(beingEditedType == itemTypeId)return;
+    
+    setOnEditItem(0); 
+    setIsAddingNewItem(false);
+    console.log(itemTypeId)
+  }, [beingEditedType]);
+
   const toggleAddNewItem = () => {
     setIsAddingNewItem((prev) => !prev);
     setOnEditItem(0);
@@ -184,16 +193,13 @@ const ItemLister = ({
   return (
     <>
       {(items.length > 0 ||
-        (user && user.roleId == 1 && user.userId == shopOwnerId)) && (
+        (user && (user.cafeId == shopId || user.userId == shopOwnerId))) && (
         <div className={styles["item-lister"]}>
           {!raw && (
             <div className={styles["title-container"]}>
               <input
                 ref={typeNameInputRef}
                 className={`${styles.title} ${
-                  user &&
-                  user.roleId == 1 &&
-                  user.userId == shopOwnerId &&
                   isEdit
                     ? styles.border
                     : styles.noborder
@@ -202,10 +208,7 @@ const ItemLister = ({
                 onChange={(e) => setEditedTypeName(e.target.value)}
                 disabled={!isEdit}
               />
-              {isEditMode &&
-                user &&
-                user.roleId == 1 &&
-                user.userId == shopOwnerId && (
+              {isEditMode && (
                   <>
                     <button
                       className={styles["edit-typeItem-button"]}
@@ -271,7 +274,8 @@ const ItemLister = ({
                     </button>
                   )}
                   <div className={styles["itemWrapper"]}>
-                    {isEditMode && onEditItem != item.itemId && (
+                    {isEditMode && onEditItem != item.itemId&&
+                        (
                       <div className={styles["editModeLayout"]}>
                         {isEditMode && (
                           <Switch
@@ -302,8 +306,7 @@ const ItemLister = ({
                       onNegativeClick={() => handleNegativeClick(item.itemId)}
                       onRemoveClick={() => handleRemoveClick(item.itemId)}
                       isBeingEdit={
-                        onEditItem == item.itemId &&
-                        beingEditedType == itemTypeId
+                        onEditItem == item.itemId 
                       }
                       isAvailable={item.availability}
                       handleUpdateItem={(name, price, image) =>

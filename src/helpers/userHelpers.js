@@ -94,6 +94,31 @@ export async function removeConnectedGuestSides(guestSideSessionId) {
   }
   return { ok: false };
 }
+export const signUpUser = async (email, username, password) => {
+  try {
+    const response = await fetch(API_BASE_URL + `/user/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, username, password }),
+    });
+    console.log(username, password);
+    const responseData = await response.json();
+
+    if (response.ok) {
+      return {
+        success: true,
+        token: responseData.token,
+      };
+    } else {
+      return { success: false, token: null };
+    }
+  } catch (error) {
+    console.error("Error occurred while logging in:", error.message);
+    return { success: false, token: null };
+  }
+};
 
 export const loginUser = async (username, password) => {
   try {

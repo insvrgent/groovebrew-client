@@ -183,6 +183,8 @@ function CafePage({
                   isEditMode={isEditMode}
                   onFilterChange={(e) => setFilterId(e)}
                   filterId={filterId}
+                  beingEditedType={beingEditedType}
+                  setBeingEditedType={setBeingEditedType}
                 />
                 <div style={{ marginTop: "-13px" }}></div>
                 {filterId === 0 ? (
