@@ -215,6 +215,7 @@ function CafePage({
                       key={itemType.itemTypeId}
                       itemTypeId={itemType.itemTypeId}
                       typeName={itemType.name}
+                      typeImage={itemType.image}
                       itemList={itemType.itemList}
                       isEditMode={isEditMode}
                       beingEditedType={beingEditedType}

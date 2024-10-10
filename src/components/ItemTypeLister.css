@@ -43,6 +43,8 @@
   padding: 10px; /* Padding inside grid */
   max-height: calc(3 * (25vw - 20px) + 20px); /* 3 items + gaps */
   overflow-y: auto; /* Allow scrolling if items overflow */
+  padding-top: 15px;
+  height: calc(43vw - 20px);
 }
 
 .add-button {

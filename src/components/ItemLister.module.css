@@ -10,9 +10,30 @@
 .item-lister:last-child {
   margin-bottom: 50px;
 }
+.fullscreen {
+  position: fixed; /* Keep the container fixed */
+  top: 0; /* Adjust the top position as needed */
+  bottom: 0; /* Occupy the full height of the viewport */
+  left: 0; /* Align to the left */
+  right: 0; /* Align to the right */
+  background-color: white; /* Background color */
+  z-index: 1000; /* Layering */
+  overflow-y: auto; /* Allow vertical scrolling */
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  /* padding: 10px; */
+  max-height: calc(3 * (25vw - 20px) + 20px);
+  overflow-y: auto;
+  height: calc(49vw - 20px);
+}
+
 .title-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .title {
@@ -77,4 +98,60 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.PaymentOption {
+  overflow-x: hidden;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgba(88, 55, 50, 1);
+  border-radius: 15px 15px 0 0;
+
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+
+  z-index: 300;
+}
+
+.TotalContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  margin: 0 auto;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 1.5em;
+  padding: 10px 0;
+  margin-bottom: 17px;
+}
+
+.PayButton {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 32px;
+
+  width: 80vw;
+  height: 18vw;
+  border-radius: 50px;
+  background-color: rgba(88, 55, 50, 1);
+  color: white;
+  border: none;
+  margin: 0px auto;
+  cursor: pointer;
+  margin-bottom: 23px;
+}
+
+.Pay2Button {
+  text-align: center;
+  color: rgba(88, 55, 50, 1);
+  font-size: 1em;
+  margin-bottom: 25px;
+  cursor: pointer;
 }

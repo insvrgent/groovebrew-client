@@ -91,7 +91,7 @@ export default function ItemType({
           </div>
         )}
       </div>
-      {(rectangular || !blank) && (
+      {(!rectangular && !blank) && (
         <input
           ref={inputRef}
           className={`${styles["item-type-name"]} ${styles.noborder}`}
