@@ -15,9 +15,11 @@ import {
   deleteItemType,
 } from "../helpers/itemHelper.js";
 import ItemType from "./ItemType.js";
+import { createItemType } from "../helpers/itemHelper.js";
 
 const ItemLister = ({
   itemTypeId,
+  typeVisibility=true,
   refreshTotal,
   shopId,
   shopOwnerId,
@@ -28,11 +30,12 @@ const ItemLister = ({
   forCart,
   forInvoice,
   isEditMode,
-  raw,
   handleCreateItem,
   handleUpdateItem,
+  handleUnEdit,
   beingEditedType,
   setBeingEditedType,
+  alwaysEdit,
 }) => {
   const [items, setItems] = useState(
     itemList.map((item) => ({
@@ -50,11 +53,14 @@ const ItemLister = ({
     );
   }, [itemList]);
 
-  const [isEdit, setIsEditing] = useState(false);
-  const [onEditItem, setOnEditItem] = useState(0);
-  const [isAddingNewItem, setIsAddingNewItem] = useState(false);
+  const [isVisible, setIsVisible] = useState(typeVisibility);
+  const [isEdit, setIsEditing] = useState(alwaysEdit);
+  const [isEditItem, setisEditItem] = useState(0);
+  const [isAddingNewItem, setIsAddingNewItem] = useState(alwaysEdit);
   const [editedTypeName, setEditedTypeName] = useState(typeName);
   const typeNameInputRef = useRef(null);
+  const [itemsToCreate, setItemsToCreate] = useState([]);
+  const [itemsToUpdate, setItemsToUpdate] = useState([]);
 
   const handlePlusClick = (itemId) => {
     const updatedItems = items.map((item) => {
@@ -103,15 +109,6 @@ const ItemLister = ({
     setIsEditing((prev) => !prev);
   };
 
-  const handleSaveType = async () => {
-    try {
-      await updateItemType(shopId, itemTypeId, typeNameInputRef.current.value);
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Failed to save item type:", error);
-    }
-  };
-
   const handleRemoveType = async () => {
     try {
       await deleteItemType(shopId, itemTypeId);
@@ -125,22 +122,80 @@ const ItemLister = ({
   useEffect(() => {
     if (beingEditedType == itemTypeId) return;
 
-    setOnEditItem(0);
+    setisEditItem(0);
     setIsAddingNewItem(false);
   }, [beingEditedType]);
 
   const toggleAddNewItem = () => {
     setBeingEditedType(itemTypeId);
     setIsAddingNewItem((prev) => !prev);
-    setOnEditItem(0);
+    setisEditItem(0);
   };
   const editItem = (itemId) => {
     setBeingEditedType(itemTypeId);
     setIsAddingNewItem(false);
-    setOnEditItem(itemId);
+    setisEditItem(itemId);
   };
-  const handleChange = async (itemId) => {
-    // Find the item in the current items array
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(getImageUrl(typeImage));
+  // useEffect(() => {
+  //   if (!selectedImage) {
+  //     setPreviewUrl(getImageUrl(typeImage));
+  //   } else {
+  //     setPreviewUrl(selectedImage);
+  //   }
+  //   console.log(selectedImage);
+  // }, [selectedImage]);
+
+  const handleImageChange = (previewUrl, selectedImage) => {
+    setSelectedImage(selectedImage);
+    console.log(selectedImage);
+    setPreviewUrl(previewUrl);
+  };
+
+  const onCreateItem = (itemName, itemPrice, selectedImage, previewUrl) => {
+    if (isEdit)
+      setItemsToCreate((prevItems) => [
+        ...prevItems,
+        {
+          itemId: -(prevItems.length + 1),
+          name: itemName,
+          price: itemPrice,
+          selectedImage,
+          image: previewUrl,
+        },
+      ]);
+    else handleCreateItem(itemTypeId, itemName, itemPrice, selectedImage);
+
+    console.log(items);
+    console.log(itemsToCreate);
+
+    setIsAddingNewItem(false);
+  };
+  const updateItemInCreate = (
+    itemId,
+    name,
+    price,
+    selectedImage,
+    previewUrl
+  ) => {
+    setItemsToCreate((prevItems) =>
+      prevItems.map((item) =>
+        item.itemId === itemId
+          ? { ...item, name, price, selectedImage, image: previewUrl }
+          : item
+      )
+    );
+  };
+  const onUpdateItem = (itemId, name, price, image) => {
+    if (isEdit)
+      setItemsToUpdate((prev) => [...prev, { itemId, name, price, image }]);
+    else handleUpdateItem(itemId, name, price, image);
+    console.log(itemsToUpdate);
+  };
+
+  const handleChange = (itemId) => {
     console.log(itemId);
     const itemIndex = items.findIndex((item) => item.itemId === itemId);
     if (itemIndex === -1) return; // Item not found
@@ -159,13 +214,33 @@ const ItemLister = ({
     // Update the state with the local change
     setItems(updatedItems);
 
-    try {
-      // Wait for the updateItemAvailability response
-      const response = await updateItemAvalilability(itemId, newAvailability);
+    if (isEdit) {
+      // If isEdit, add item to the list of items to update
+      setItemsToUpdate((prev) => [...prev, { itemId, newAvailability }]);
+    } else {
+      // If not isEdit, immediately execute the update
+      executeUpdateAvailability(
+        itemId,
+        newAvailability,
+        updatedItems,
+        itemIndex
+      );
+    }
+    console.log(itemsToUpdate);
+  };
 
-      // Assuming response contains the updated item data
+  const executeUpdateAvailability = async (
+    itemId,
+    newAvailability,
+    updatedItems,
+    itemIndex
+  ) => {
+    try {
+      console.log(itemId + newAvailability);
+      const response = await updateItemAvalilability(itemId, newAvailability);
       const updatedItem = response;
       console.log(updatedItem);
+
       // Update only the specified item in the state
       setItems((prevItems) =>
         prevItems.map((prevItem) =>
@@ -173,31 +248,85 @@ const ItemLister = ({
         )
       );
     } catch (error) {
-      // Handle error (e.g., revert the change or show an error message)
       console.error("Error updating item availability:", error);
-
-      // Optionally revert to the previous availability if needed
-      updatedItems[itemIndex].availability = item.availability; // revert back
+      updatedItems[itemIndex].availability = !newAvailability; // revert back
       setItems(updatedItems);
     }
   };
-  const onCreateItem = (itemName, itemPrice, selectedImage, previewUrl) => {
-    handleCreateItem(itemName, itemPrice, selectedImage, previewUrl);
-    setIsAddingNewItem(false);
-  };
-  console.log(getImageUrl(typeImage));
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
-  useEffect(() => {
-    if (selectedImage) {
-      setPreviewUrl(selectedImage);
-    } else {
-      setPreviewUrl(getImageUrl(typeImage));
+
+  const handleSaveType = async () => {
+    try {
+      console.log(isVisible);
+      if (itemTypeId) {
+        await updateItemType(
+          shopId,
+          itemTypeId,
+          typeNameInputRef.current.value,
+          previewUrl,
+          selectedImage,
+          isVisible
+        );
+
+        // Iterate through itemsToUpdate and call the API
+        for (const {
+          itemId,
+          newAvailability,
+          name,
+          price,
+          image,
+        } of itemsToUpdate) {
+          if (newAvailability != undefined)
+            await executeUpdateAvailability(
+              itemId,
+              newAvailability,
+              items,
+              items.findIndex((item) => item.itemId === itemId)
+            );
+          else await handleUpdateItem(itemId, name, price, image);
+        }
+        for (const { name, price, selectedImage } of itemsToCreate) {
+          handleCreateItem(itemTypeId, name, price, selectedImage);
+        }
+      } else {
+        const itemType = await createItemType(
+          shopId,
+          editedTypeName,
+          selectedImage
+        );
+        console.log(itemType);
+        for (const { name, price, selectedImage } of itemsToCreate) {
+          handleCreateItem(itemType.itemTypeId, name, price, selectedImage);
+        }
+      }
+      // Clear the itemsToUpdate after saving
+      setItemsToUpdate([]);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save item type:", error);
     }
-  }, [selectedImage]);
-  const handleImageChange = (e) => {
-    setSelectedImage(e);
   };
+
+  const resetItems = () => {
+    // Create a copy of the current items to revert
+    const updatedItems = [...items];
+
+    // Iterate over itemsToUpdate and reset the availability
+    itemsToUpdate.forEach(({ itemId, newAvailability }) => {
+      const itemIndex = updatedItems.findIndex(
+        (item) => item.itemId === itemId
+      );
+      if (itemIndex !== -1) {
+        updatedItems[itemIndex].availability = !newAvailability; // revert back to original
+      }
+    });
+
+    // Update the items state and clear itemsToUpdate
+    setItems(updatedItems);
+    setItemsToUpdate([]);
+    setIsEditing(false);
+    if (handleUnEdit) handleUnEdit();
+  };
+
   return (
     <>
       {(items.length > 0 ||
@@ -206,117 +335,168 @@ const ItemLister = ({
           className={`${styles["item-lister"]} ${
             isEdit ? styles["fullscreen"] : ""
           }`}
-          style={{ paddingBottom: isEdit ? "25vh" : "" }}
+          style={{ paddingBottom: isEdit ? "28vh" : "" }}
         >
-          {!raw && (
-            <div className={styles["title-container"]}>
-              {isEdit && <ItemType blank={true} imageUrl={previewUrl} />}
-              <input
-                ref={typeNameInputRef}
-                className={`${styles.title} ${
-                  isEdit ? styles.border : styles.noborder
-                }`}
-                value={editedTypeName}
-                onChange={(e) => setEditedTypeName(e.target.value)}
-                disabled={!isEdit}
-              />
-              {isEditMode && !isEdit && (
-                <>
-                  <button
-                    className={styles["edit-typeItem-button"]}
-                    onClick={toggleEditTypeItem}
-                  >
-                    Edit
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <div className={styles["title-container"]}>
+            {isEdit && <ItemType blank={true} imageUrl={previewUrl} />}
+            <input
+              ref={typeNameInputRef}
+              className={`${styles.title} ${
+                isEdit ? styles.border : styles.noborder
+              }`}
+              value={editedTypeName}
+              onChange={(e) => setEditedTypeName(e.target.value)}
+              disabled={!isEdit}
+            />
+            {isEditMode && !isEdit && (
+              <>
+                <button
+                  className={styles["edit-typeItem-button"]}
+                  onClick={toggleEditTypeItem}
+                >
+                  Edit
+                </button>
+              </>
+            )}
+          </div>
           {isEdit && (
             <div className={styles["grid-container"]}>
               <ItemType
                 rectangular={true}
                 blank={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/addnew.png")}
               />
-              {typeImage != null && !previewUrl.includes(typeImage) && (
+              {/* {typeImage != null && !previewUrl.includes(typeImage) && (
                 <ItemType
                   rectangular={true}
-                  onClick={(e) => handleImageChange(e)}
+                  onClick={(previewUrl, selectedImage) =>
+                    handleImageChange(previewUrl, selectedImage)
+                  }
                   imageUrl={getImageUrl(typeImage)}
                 />
-              )}
+              )} */}
 
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
+                imageUrl={getImageUrl("uploads/beverage4.jpg")}
+              />
+              <ItemType
+                rectangular={true}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/beverage1.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/beverage2.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/beverage3.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
+                imageUrl={getImageUrl("uploads/snack5.jpg")}
+              />
+              <ItemType
+                rectangular={true}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/dessert1.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/dessert2.jpg")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
+                imageUrl={getImageUrl("uploads/food4.jpg")}
+              />
+              <ItemType
+                rectangular={true}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/food1.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/food2.jpg")}
               />
 
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/food3.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/packet1.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/packet2.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/snack1.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/snack2.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/snack3.png")}
               />
               <ItemType
                 rectangular={true}
-                onClick={(e) => handleImageChange(e)}
+                onClick={(previewUrl, selectedImage) =>
+                  handleImageChange(previewUrl, selectedImage)
+                }
                 imageUrl={getImageUrl("uploads/snack4.png")}
               />
             </div>
@@ -355,10 +535,11 @@ const ItemLister = ({
                   )}
                 </>
               )}
-            {items.map((item) => {
+
+            {itemsToCreate.map((item) => {
               return !forCart || (forCart && item.qty > 0) ? (
                 <>
-                  {onEditItem == item.itemId && (
+                  {isEditItem == item.itemId && (
                     <button
                       className={styles["add-item-button"]}
                       onClick={() => editItem(0)}
@@ -368,7 +549,59 @@ const ItemLister = ({
                     </button>
                   )}
                   <div className={styles["itemWrapper"]}>
-                    {isEditMode && onEditItem != item.itemId && (
+                    {isEditMode && isEditItem != item.itemId && (
+                      <div className={styles["editModeLayout"]}>
+                        {isEditMode && (
+                          <Switch
+                            onChange={() => handleChange(item.itemId)}
+                            checked={item.availability}
+                          />
+                        )}
+                        <h3>
+                          {item.availability ? "available" : "unavailable"}
+                        </h3>
+                        <button onClick={() => editItem(item.itemId)}>
+                          edit
+                        </button>
+                      </div>
+                    )}
+
+                    <Item
+                      key={item.itemId}
+                      forCart={forCart}
+                      forInvoice={forInvoice}
+                      name={item.name}
+                      price={item.price}
+                      qty={item.qty}
+                      imageUrl={item.image}
+                      onPlusClick={() => handlePlusClick(item.itemId)}
+                      onNegativeClick={() => handleNegativeClick(item.itemId)}
+                      onRemoveClick={() => handleRemoveClick(item.itemId)}
+                      isBeingEdit={isEditItem == item.itemId}
+                      isAvailable={item.availability}
+                      handleUpdateItem={(name, price, image) =>
+                        updateItemInCreate(item.itemId, name, price, image)
+                      }
+                    />
+                  </div>
+                </>
+              ) : null;
+            })}
+
+            {items.map((item) => {
+              return !forCart || (forCart && item.qty > 0) ? (
+                <>
+                  {isEditItem == item.itemId && (
+                    <button
+                      className={styles["add-item-button"]}
+                      onClick={() => editItem(0)}
+                      style={{ display: "inline-block" }}
+                    >
+                      ↩
+                    </button>
+                  )}
+                  <div className={styles["itemWrapper"]}>
+                    {isEditMode && isEditItem != item.itemId && (
                       <div className={styles["editModeLayout"]}>
                         {isEditMode && (
                           <Switch
@@ -398,10 +631,10 @@ const ItemLister = ({
                       onPlusClick={() => handlePlusClick(item.itemId)}
                       onNegativeClick={() => handleNegativeClick(item.itemId)}
                       onRemoveClick={() => handleRemoveClick(item.itemId)}
-                      isBeingEdit={onEditItem == item.itemId}
+                      isBeingEdit={isEditItem == item.itemId}
                       isAvailable={item.availability}
                       handleUpdateItem={(name, price, image) =>
-                        handleUpdateItem(item.itemId, name, price, image)
+                        onUpdateItem(item.itemId, name, price, image)
                       }
                     />
                   </div>
@@ -427,34 +660,25 @@ const ItemLister = ({
             <div className={styles.PaymentOption}>
               <div className={styles.TotalContainer}>
                 <span>Pengaturan</span>
-                <span className="svg-container">
-  <svg 
-    enable-background="new 0 0 91 91" 
-    height="91px" 
-    id="Layer_1" 
-    version="1.1" 
-    viewBox="0 0 91 91" 
-    width="40px" 
-  >
-    <g>
-      <path d="M45.574,38.253c-5.443,0-9.871,4.428-9.871,9.871s4.428,9.871,9.871,9.871s9.871-4.428,9.871-9.871 S51.018,38.253,45.574,38.253z M45.574,54.595c-3.568,0-6.471-2.904-6.471-6.471c0-3.568,2.902-6.471,6.471-6.471 c3.566,0,6.471,2.902,6.471,6.471C52.045,51.69,49.141,54.595,45.574,54.595z"/>
-      <path d="M64.057,27.726l-6.975,4.029c-0.971-0.686-2.004-1.281-3.086-1.781v-8.061H37.152v8.061 c-1.008,0.467-1.979,1.021-2.898,1.654l-6.936-4.111l-8.586,14.488l6.936,4.109c-0.078,0.709-0.115,1.373-0.115,2.01 c0,0.574,0.029,1.158,0.092,1.785l-6.98,4.031l8.422,14.584l6.979-4.031c0.973,0.686,2.004,1.281,3.088,1.781v8.061h16.844v-8.061 c1.008-0.467,1.977-1.021,2.896-1.654l6.936,4.111l8.586-14.488l-6.934-4.109c0.078-0.705,0.115-1.371,0.115-2.01 c0-0.576-0.029-1.158-0.092-1.785l6.98-4.031L64.057,27.726z M61.824,44.538l0.17,1.143c0.137,0.928,0.203,1.703,0.203,2.443 c0,0.797-0.076,1.656-0.232,2.631l-0.182,1.141l5.973,3.539l-5.119,8.639l-5.973-3.541l-0.914,0.713 c-1.244,0.969-2.617,1.754-4.078,2.33l-1.076,0.424v6.936H40.551v-6.934l-1.074-0.426c-1.533-0.605-2.955-1.428-4.23-2.443 l-0.906-0.723l-6.01,3.471l-5.021-8.695l6.016-3.475l-0.17-1.143c-0.137-0.928-0.203-1.703-0.203-2.443 c0-0.801,0.074-1.639,0.232-2.635l0.178-1.139l-5.971-3.537l5.119-8.639l5.973,3.543l0.914-0.713 c1.248-0.971,2.621-1.756,4.08-2.332l1.074-0.424v-6.936h10.045v6.934l1.076,0.426c1.529,0.605,2.953,1.428,4.229,2.443 l0.908,0.723l6.008-3.469l5.023,8.693L61.824,44.538z"/>
-    </g>
-  </svg>
-</span>
-
+                <span></span>
               </div>
-              <button className={styles.PayButton}>
+              <div className={styles.OptionContainer}>
+                <span>sembunyikan semua</span>
+                <span>
+                  <Switch
+                    onChange={() => setIsVisible(!isVisible)}
+                    checked={!isVisible}
+                  />
+                </span>
+              </div>
+              <button onClick={handleSaveType} className={styles.PayButton}>
                 {false ? (
                   <ColorRing height="50" width="50" color="white" />
                 ) : (
                   "Simpan"
                 )}
               </button>
-              <div
-                className={styles.Pay2Button}
-                onClick={() => setIsEditing(false)}
-              >
+              <div className={styles.Pay2Button} onClick={resetItems}>
                 Kembali
               </div>
             </div>

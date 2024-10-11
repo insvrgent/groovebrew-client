@@ -25,7 +25,7 @@ export default function ItemType({
     if (selectedImage) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        onClick(reader.result);
+        onClick(reader.result, selectedImage);
         // setPreviewUrl(reader.result);
       };
       reader.readAsDataURL(selectedImage);
@@ -37,6 +37,8 @@ export default function ItemType({
 
   const handleImageChange = (e) => {
     setSelectedImage(e.target.files[0]);
+    console.log(e.target.files[0]);
+    e.target.value = null; // This clears the input
   };
 
   const handleNameChange = (e) => {
@@ -83,7 +85,7 @@ export default function ItemType({
           <div className={styles["item-type-image-container"]}>
             <input
               type="file"
-              accept="image/*"
+              accept=".png, .jpg, .jpeg"
               className={styles["item-type-image-input"]}
               onChange={handleImageChange}
               id="image-input"
@@ -91,7 +93,7 @@ export default function ItemType({
           </div>
         )}
       </div>
-      {(!rectangular && !blank) && (
+      {!rectangular && !blank && (
         <input
           ref={inputRef}
           className={`${styles["item-type-name"]} ${styles.noborder}`}

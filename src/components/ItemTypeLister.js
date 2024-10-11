@@ -112,141 +112,19 @@ const ItemTypeLister = ({
           user.userId === shopOwnerId &&
           isAddingNewItem && (
             <>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <ItemType
-                  blank={true}
-                  imageUrl={previewUrl}
-                  name={"‎ "}
-                  onCreate={handleCreate}
-                />
-                <input
-                  className="item-type-name"
-                  value={itemTypeName}
-                  onChange={(e) => setItemTypeName(e.target.value)}
-                  placeholder="type name"
-                  style={{ marginLeft: "10px" }} // Adjust spacing as needed
-                />
-              </div>
-              <div className="rect-creator">
-                <div
-                  className="inline-container"
-                  style={{ overflowX: "hidden", visibility: "hidden" }}
-                >
-                  <ItemType
-                    onClick={() => onFilterChange(0)}
-                    imageUrl={getImageUrl("uploads/1718732420960.png")}
-                  />
-                  {/* <ItemType
-                    onClick={() => onFilterChange(0)}
-                    imageUrl={getImageUrl("uploads/1718732420960.png")}
-                  />
-                  <ItemType
-                    onClick={() => onFilterChange(0)}
-                    imageUrl={getImageUrl("uploads/1718732420960.png")}
-                  />
-                  <ItemType
-                    onClick={() => onFilterChange(0)}
-                    imageUrl={getImageUrl("uploads/1718732420960.png")}
-                  /> */}
-                </div>
-                <div className="grid-container" style={{ paddingTop: "15px" }}>
-                  <ItemType
-                    rectangular={true}
-                    blank={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/addnew.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/beverage1.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/beverage2.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/beverage3.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/dessert1.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/dessert2.jpg")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/food1.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/food2.jpg")}
-                  />
-
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/food3.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/packet1.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/packet2.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/snack1.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/snack2.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/snack3.png")}
-                  />
-                  <ItemType
-                    rectangular={true}
-                    onClick={(e) => handleImageChange(e)}
-                    imageUrl={getImageUrl("uploads/snack4.png")}
-                  />
-                </div>
-
-                <ItemLister
-                  shopId={shopId}
-                  shopOwnerId={shopOwnerId}
-                  user={user}
-                  typeName={"add new"}
-                  itemList={items}
-                  isEditMode={true}
-                  raw={true}
-                  handleCreateItem={handleCreateItem}
-                  beingEditedType={beingEditedType}
-                  setBeingEditedType={setBeingEditedType}
-                />
-                <button onClick={toggleAddNewItem} className="add-button">
-                  back
-                </button>
-              </div>
-
-              <h1>please select the icon</h1>
+              <ItemLister
+                shopId={shopId}
+                shopOwnerId={shopOwnerId}
+                user={user}
+                typeName={"add new"}
+                itemList={items}
+                isEditMode={true}
+                handleCreateItem={handleCreateItem}
+                beingEditedType={beingEditedType}
+                setBeingEditedType={setBeingEditedType}
+                alwaysEdit={true}
+                handleUnEdit={toggleAddNewItem}
+              />
             </>
           )}
         {itemTypes && itemTypes.length > 0 && (

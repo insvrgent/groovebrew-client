@@ -88,7 +88,6 @@ const RouletteWheel = ({ isForRegister, onSignIn, onSignUp }) => {
   };
 
   const handleTouchEnd = (e) => {
-    e.preventDefault();
     handleEnd();
   };
 

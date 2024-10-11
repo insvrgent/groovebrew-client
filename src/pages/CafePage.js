@@ -84,8 +84,8 @@ function CafePage({
         textColor: parsedConfig.textColor || "#000000",
         isActive: parsedConfig.isWelcomePageActive === "true",
       });
-      checkWelcomePageConfig();
     }
+    checkWelcomePageConfig();
   }, [welcomePageConfig]);
   useEffect(() => {
     if (user.cafeId != null && user.cafeId !== shopId) {
@@ -217,17 +217,23 @@ function CafePage({
                       typeName={itemType.name}
                       typeImage={itemType.image}
                       itemList={itemType.itemList}
+                      typeVisibility={itemType.visibility}
                       isEditMode={isEditMode}
                       beingEditedType={beingEditedType}
                       setBeingEditedType={setBeingEditedType}
                       raw={isEditMode || filterId == 0 ? false : true}
-                      handleCreateItem={(name, price, selectedImage) =>
+                      handleCreateItem={(
+                        itemTypeID,
+                        name,
+                        price,
+                        selectedImage
+                      ) =>
                         createItem(
                           shopId,
                           name,
                           price,
                           selectedImage,
-                          itemType.itemTypeId
+                          itemTypeID
                         )
                       }
                       handleUpdateItem={(itemId, name, price, selectedImage) =>
